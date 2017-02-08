@@ -14,44 +14,38 @@ module csoc_test #(
 )(
 	input  wire clk, // -- System clock
 
-	// UART	
+	// UART
 	input  wire rx,  // -- Serial input
 	output wire tx,  // -- Serial output
 
 	// DEBUG
-	output reg [7:0] leds,  // -- Board leds
-	output reg [7:0] sseg,  // -- Board 7Segment Display
-	output reg [3:0] an,    // -- 7Segment Display enable
+	output wire [7:0] leds, // -- Board leds
+	output wire [7:0] sseg, // -- Board 7Segment Display
+	output wire [3:0] an,   // -- 7Segment Display enable
 
 	// CSoC
-	input  wire  csoc_uart_write,
-	output wire  csoc_uart_read,
-	output wire  csoc_reset,
+	output wire  csoc_clk,
+	output wire  csoc_rstn,
 	output wire  csoc_test_se,
 	output wire  csoc_test_tm,
-	output wire  csoc_clk,
+
+	input  wire  csoc_uart_write,
+	output wire  csoc_uart_read,
 	input  [7:0] csoc_data_i,
 	output [7:0] csoc_data_o
 );
 
-wire rcv;         // -- Received character signal
-wire [7:0] data;  // -- Received data
-reg rstn = 0;     // -- Reset signal
-wire ready;       // -- Transmitter ready signal
+wire rcv;        // -- Received character signal
+wire [7:0] data; // -- Received data
+reg rstn = 0;    // -- Reset signal
+wire ready;      // -- Transmitter ready signal
 
-// -- Initialization
-always @(posedge clk)
+
+always @(posedge clk) begin
 	rstn <= 1;
+end
 
-// -- Turn on all the red leds
-//assign leds = 4'hF;
-
-// -- Show the 4 less significant bits in the leds
-always @(posedge clk)
-	leds = data[3:0];
-
-// -- Receiver unit instantation
-uart_rx #(.BAUDRATE(BAUDRATE)) RX0 (
+uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
 	.clk(clk),
 	.rstn(rstn),
 	.rx(rx),
@@ -59,8 +53,7 @@ uart_rx #(.BAUDRATE(BAUDRATE)) RX0 (
 	.data(data)
 );
 
-// -- Transmitter unit instantation
-uart_tx #(.BAUDRATE(BAUDRATE)) TX0 (
+uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 	.clk(clk),
 	.rstn(rstn),
 	.start(rcv),
@@ -69,10 +62,25 @@ uart_tx #(.BAUDRATE(BAUDRATE)) TX0 (
 	.ready(ready)
 );
 
-// -- Capeta scan chain control
-// csoc_scanchain_ctrl SCC (
-// 	.clk(clk),
-// 	.rstn(rstn)
-// );
+cmd_parser cp0 (
+	.clk(clk),
+	.rstn(rstn),
+	.tx_data(),
+	.new_tx_data(),
+	.tx_busy(),
+	.rx_data(data),
+	.new_rx_data(rcv),
+	.leds(leds),
+	.sseg(sseg),
+	.an(an),
+	.csoc_clk(csoc_clk),
+	.csoc_rstn(csoc_rstn),
+	.csoc_test_se(csoc_test_se),
+	.csoc_test_tm(csoc_test_tm),
+	.csoc_uart_write(csoc_uart_write),
+	.csoc_uart_read(csoc_uart_read),
+	.csoc_data_i(csoc_data_i),
+	.csoc_data_o(csoc_data_o)
+);
 
 endmodule

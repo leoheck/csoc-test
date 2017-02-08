@@ -5,16 +5,16 @@ ucf = nexsy2.ucf
 
 src = $(shell find  *.v)
 
-define colorecho
-	@tput bold
-	@echo -e "\n-------------------"
-	@echo $1
-	@tput sgr0
-endef
-
 all: $(top).xst $(top).bit
 
-$(top).xst:
+xst: $(top).ngc;
+ngdbuild: $(top).ngd
+map: $(top).ncd
+par: $(top)-routed.ncd
+bitgen: $(top).bit
+
+$(top).xst: $(src)
+	@ echo "Creating $(top).xst"
 	@ echo " \
 		run \
 		-ifn $(top).prj \
@@ -28,30 +28,27 @@ $(top).xst:
 		> $(top).xst
 
 $(top).prj: $(src)
+	@ echo "Creating $(top).prj"
 	@ rm -f $(top).prj
 	@ for i in $(shell echo $^); do \
 		echo "verilog work $$i" >> $(top).prj; \
 	done
 
 $(top).ngc: $(top).prj
-	$(call colorecho,"#> Running XST")
-	xst -ifn $(top).xst | ./color.sh
+	@ color.sh xst -ifn $(top).xst
 
 $(top).ngd: $(top).ngc $(ucf)
-	$(call colorecho,"#> Running NGDBUILD")
-	ngdbuild -uc $(ucf) $(top).ngc | ./color.sh
+	@ color.sh ngdbuild -uc $(ucf) $(top).ngc
 
 $(top).ncd: $(top).ngd
-	$(call colorecho,"#> Running MAP")
-	map $(top).ngd 2>&1 | ./color.sh
+	@ color.sh map $(top).ngd 2>&1
 
 $(top)-routed.ncd: $(top).ncd
-	$(call colorecho,"#> Running PAR")
-	par -ol high -w $(top).ncd $(top)-routed.ncd | ./color.sh
+	@ color.sh par -ol high -w $(top).ncd $(top)-routed.ncd
 
 $(top).bit: $(top)-routed.ncd
-	$(call colorecho,"#> Running BITGEN")
-	bitgen -w $(top)-routed.ncd $(top).bit | ./color.sh
+	@ color.sh bitgen -w $(top)-routed.ncd $(top).bit
+	@ du -sh $(top).bit
 
 #====
 

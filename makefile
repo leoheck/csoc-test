@@ -1,9 +1,16 @@
 
-top = echo
+top = csoc_test
 target = xc3s1200e-fg320-4
 ucf = nexsy2.ucf
 
 src = $(shell find  *.v)
+
+define colorecho
+	@tput bold
+	@echo -e "\n-------------------"
+	@echo $1
+	@tput sgr0
+endef
 
 all: $(top).xst $(top).bit
 
@@ -27,18 +34,23 @@ $(top).prj: $(src)
 	done
 
 $(top).ngc: $(top).prj
+	$(call colorecho,"#> Running XST")
 	xst -ifn $(top).xst | ./color.sh
 
 $(top).ngd: $(top).ngc $(ucf)
+	$(call colorecho,"#> Running NGDBUILD")
 	ngdbuild -uc $(ucf) $(top).ngc | ./color.sh
 
 $(top).ncd: $(top).ngd
-	map $(top).ngd | ./color.sh
+	$(call colorecho,"#> Running MAP")
+	map $(top).ngd 2>&1 | ./color.sh
 
 $(top)-routed.ncd: $(top).ncd
+	$(call colorecho,"#> Running PAR")
 	par -ol high -w $(top).ncd $(top)-routed.ncd | ./color.sh
 
 $(top).bit: $(top)-routed.ncd
+	$(call colorecho,"#> Running BITGEN")
 	bitgen -w $(top)-routed.ncd $(top).bit | ./color.sh
 
 #====

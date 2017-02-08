@@ -7,6 +7,15 @@ if which tput >/dev/null 2>&1; then
 	ncolors=$(tput colors)
 fi
 
+# 0 – Black
+# 1 – Red
+# 2 – Green
+# 3 – Yellow
+# 4 – Blue
+# 5 – Magenta
+# 6 – Cyan
+# 7 – White
+
 if [ -t 1 ] && [ -n "$ncolors" ] && [ "$ncolors" -ge 8 ]; then
 	RED="$(tput setaf 1)"
 	GREEN="$(tput setaf 2)"
@@ -28,8 +37,8 @@ do
   echo "$line" | \
   	sed "s/\(erro[^ \t]*\)/$BOLD$RED\1$NORMAL/gI" |
   	sed "s/\(warn[^ \t]*\)/$BOLD$YELLOW\1$NORMAL/gI" |
-  	sed "s/\(info[^ \t]*\)/$BOLD$BLUE\1$NORMAL/gI" |
-	sed "s/\((xst|ngdbuild|map|par|bitgen)\)/$BOLD$NORMAL\1$NORMAL/gI"
+  	sed "s/\(info[^ \t]*\)/$BOLD$BLUE\1$NORMAL/gI"
 
+	# sed "s/\((xst|ngdbuild|map|par|bitgen)\)/$BOLD$NORMAL\1$NORMAL/gI"
 done < "${1:-/dev/stdin}"
 

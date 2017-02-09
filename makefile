@@ -7,6 +7,12 @@ src = $(shell find  *.v)
 
 all: $(top).xst $(top).bit
 
+xst      = xst      -intstyle silent
+ngdbuild = ngdbuild -intstyle silent
+map      = map      -intstyle silent
+par      = par      -intstyle silent
+bitgen   = bitgen   -intstyle silent
+
 xst: $(top).ngc;
 ngdbuild: $(top).ngd
 map: $(top).ncd
@@ -35,19 +41,19 @@ $(top).prj: $(src)
 	done
 
 $(top).ngc: $(top).prj
-	@ color.sh xst -ifn $(top).xst
+	@ color.sh $(xst) -ifn $(top).xst
 
 $(top).ngd: $(top).ngc $(ucf)
-	@ color.sh ngdbuild -uc $(ucf) $(top).ngc
+	@ color.sh $(ngdbuild) -uc $(ucf) $(top).ngc
 
 $(top).ncd: $(top).ngd
-	@ color.sh map $(top).ngd 2>&1
+	@ color.sh $(map) $(top).ngd 2>&1
 
 $(top)-routed.ncd: $(top).ncd
-	@ color.sh par -ol high -w $(top).ncd $(top)-routed.ncd
+	@ color.sh $(par) -ol high -w $(top).ncd $(top)-routed.ncd
 
 $(top).bit: $(top)-routed.ncd
-	@ color.sh bitgen -w $(top)-routed.ncd $(top).bit
+	@ color.sh $(bitgen) -w $(top)-routed.ncd $(top).bit
 	@ du -sh $(top).bit
 
 #====

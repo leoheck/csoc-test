@@ -1,8 +1,8 @@
 
 # ATPG Files
 <!-- ~/Dropbox/CSOC-DFT-Tests/dft-psynth/atpg/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.logic.ex1.ts2
-~/Dropbox/CSOC-DFT-Tests/dft-psynth/atpg/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.scan.ex1.ts1
- -->
+~/Dropbox/CSOC-DFT-Tests/dft-psynth/atpg/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.scan.ex1.ts1 -->
+
 - `VER.FULLSCAN.capeta_soc_pads_atpg.data.logic.ex1.ts2`
 - `VER.FULLSCAN.capeta_soc_pads_atpg.data.scan.ex1.ts1`
 
@@ -24,8 +24,8 @@ Codigos de comando dentro do arquivo de ATPG (Cadence ET)
 - `900`: 
 - `901`: 
 
-# Setup
-<img src="samples/verilog/csoc_test/setup.svg"  width="600px">
+<!-- # Setup
+<img src="samples/verilog/csoc_test/setup.svg"  width="600px"> -->
 
-# FPGA
-<img src="samples/verilog/csoc_test/blocks.svg" width="600px">
+<!-- # FPGA
+<img src="samples/verilog/csoc_test/blocks.svg" width="600px"> -->

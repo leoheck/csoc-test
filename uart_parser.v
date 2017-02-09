@@ -35,12 +35,13 @@ always @(posedge clk) begin
 	leds[3:0] =  rx_data[3:0];
 end
 
+reg          counting;
 reg  [27:0]  sevenseg;
+
 reg  [3:0]   sec0;
 reg  [3:0]   sec1;
 reg  [3:0]   min0;
 reg  [3:0]   min1;
-reg          counting;
 wire          dp;
 
 
@@ -48,7 +49,6 @@ reg  [3:0]   data0;
 reg  [3:0]   data1;
 reg  [3:0]   data2;
 reg  [3:0]   data3;
-
 
 sevenseg ss0 (
 	.clk(clk),
@@ -62,61 +62,27 @@ sevenseg ss0 (
 	.dp(dp)
 );
 
-always @(posedge clk) begin
-	counting <= ~counting;
-end
+// clk = 100 MHz, 10ns
+// contador = 50000000
+// tempo = 50000000 * 10 ns = 500000000 ns = 0.5 s = 500 ms
+// parameter TIMEOUT = 50000000;
 
 always @(posedge clk) begin
-	if (counting == 1'b1) begin
+	if (rstn) begin
+		data0 <= 4'hc;
+		data1 <= 4'ha;
+		data2 <= 4'hf;
+		data3 <= 4'he;
+	end else begin
 		sevenseg <= sevenseg + 1;
 		if (sevenseg == 50000000) begin
 			sevenseg <= 1;
-			sec0 <= sec0 + 1;
-			data0 <= 4'hc;
-			data1 <= 4'ha;
-			data2 <= 4'hf;
-			data3 <= 4'he;
-		end
-
-		if (sec0 == 4'hA) begin
 			data0 <= data1;
 			data1 <= data2;
 			data2 <= data3;
 			data3 <= data0;
 		end
-
-		// if (sec0 == 4'hA) begin
-		// 	sec1 <= sec1 + 1;
-		// 	sec0 <= 0;
-		// end
-
-		// if (sec1 == 4'h6) begin
-		// 	min0 <= min0 + 1;
-		// 	sec1 <= 0;
-		// end
-
-		// if (min0 == 4'hA) begin
-		// 	min1 <= min1 + 1;
-		// 	min0 <= 0;
-		// end
-
-		// if (min1 == 4'h6) min1 <= 0;
 	end
 end
-
-// always @(posedge clk) begin
-// 	if (!rstn) begin
-// 		data0 <= 4'hc;
-// 		data1 <= 4'ha;
-// 		data2 <= 4'hf;
-// 		data3 <= 4'he;
-// 	end
-// 	else if (clk) begin
-// 		data0 <= data1;
-// 		data1 <= data2;
-// 		data2 <= data3;
-// 		data3 <= data0;
-// 	end
-// end
 
 endmodule

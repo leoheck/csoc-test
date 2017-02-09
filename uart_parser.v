@@ -62,13 +62,13 @@ sevenseg ss0 (
 	.dp(dp)
 );
 
-// clk = 100 MHz, 10ns
+// clk = 50 MHz, 20ns
 // contador = 50000000
-// tempo = 50000000 * 10 ns = 500000000 ns = 0.5 s = 500 ms
+// tempo = 50000000 * 20 ns = 1000000000 ns = 1 s
 // parameter TIMEOUT = 50000000;
 
 always @(posedge clk) begin
-	if (rstn) begin
+	if (!rstn) begin
 		data0 <= 4'hc;
 		data1 <= 4'ha;
 		data2 <= 4'hf;

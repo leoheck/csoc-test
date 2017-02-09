@@ -16,19 +16,15 @@ module cmd_parser
 	output [3:0] an,    // -- 7Segment Display enable
 
 	// CSoC
-	output reg       csoc_clk,
-	output reg       csoc_rstn,
-	output reg       csoc_test_se,
-	output reg       csoc_test_tm,
-
+	output reg        csoc_clk,
+	output reg        csoc_rstn,
+	output reg        csoc_test_se,
+	output reg        csoc_test_tm,
 	input  wire       csoc_uart_write,
-	output            csoc_uart_read,
+	output reg        csoc_uart_read,
 	input  wire [7:0] csoc_data_i,
-	output      [7:0] csoc_data_o
+	output reg  [7:0] csoc_data_o
 );
-
-assign csoc_data_o = csoc_data_i;
-assign csoc_uart_read = csoc_uart_write;
 
 always @(posedge clk) begin
 	leds[7:4] = ~leds[3:0];
@@ -67,12 +63,12 @@ sevenseg ss0 (
 // tempo = 50000000 * 20 ns = 1000000000 ns = 1 s
 // parameter TIMEOUT = 50000000;
 
-always @(posedge clk) begin
+always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
-		data0 <= 4'hc;
-		data1 <= 4'ha;
-		data2 <= 4'hf;
-		data3 <= 4'he;
+		data0 <= 4'h0;
+		data1 <= 4'h1;
+		data2 <= 4'h2;
+		data3 <= 4'h3;
 	end else begin
 		sevenseg <= sevenseg + 1;
 		if (sevenseg == 50000000) begin
@@ -82,6 +78,23 @@ always @(posedge clk) begin
 			data2 <= data3;
 			data3 <= data0;
 		end
+	end
+end
+
+
+// # CSOC INTERFACE
+
+always @(posedge clk or negedge rstn) begin
+	if (!rstn) begin
+		csoc_clk = 1'b0;
+		csoc_rstn = 1'b0;
+		csoc_test_se = 1'b0;
+		csoc_test_tm = 1'b0;
+		csoc_uart_read = 1'b0;
+		csoc_data_o = 8'b0;
+	end
+	else begin
+		csoc_clk = ~csoc_clk;
 	end
 end
 

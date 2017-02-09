@@ -107,6 +107,4 @@ clean:
 	rm -rf _xmsgs
 	rm -rf xst
 	rm -f *.xst
-
-cleanall: clean
 	rm -f *.bit

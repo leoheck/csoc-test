@@ -27,7 +27,7 @@ module cmd_parser
 );
 
 always @(posedge clk) begin
-	leds[7:4] = ~leds[3:0];
+	// leds[7:4] = ~leds[3:0];
 	leds[3:0] =  rx_data[3:0];
 end
 
@@ -95,6 +95,9 @@ always @(posedge clk or negedge rstn) begin
 	end
 	else begin
 		csoc_clk = ~csoc_clk;
+		leds[7] = csoc_test_se;
+		leds[6] = csoc_test_tm;
+		leds[5] = csoc_uart_read;
 	end
 end
 

@@ -26,10 +26,14 @@ module cmd_parser
 	output reg  [7:0] csoc_data_o
 );
 
-always @(posedge clk) begin
-	// leds[7:4] = ~leds[3:0];
-	leds[3:0] =  rx_data[3:0];
-end
+
+reg [7:0] csoc_data_i_s;
+reg csoc_data_write_s;
+
+// always @(posedge clk) begin
+// 	// leds[7:4] = ~leds[3:0];
+// 	leds[3:0] =  rx_data[3:0];
+// end
 
 reg          counting;
 reg  [27:0]  sevenseg;
@@ -39,7 +43,6 @@ reg  [3:0]   sec1;
 reg  [3:0]   min0;
 reg  [3:0]   min1;
 wire          dp;
-
 
 reg  [3:0]   data0;
 reg  [3:0]   data1;
@@ -86,18 +89,28 @@ end
 
 always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
-		csoc_clk = 1'b0;
-		csoc_rstn = 1'b0;
-		csoc_test_se = 1'b0;
-		csoc_test_tm = 1'b0;
-		csoc_uart_read = 1'b0;
-		csoc_data_o = 8'b0;
+		csoc_clk <= 1'b0;
+		csoc_rstn <= 1'b0;
+		csoc_test_se <= 1'b0;
+		csoc_test_tm <= 1'b0;
+		csoc_uart_read <= 1'b0;
+		csoc_data_o <= 8'b0;
+
+		csoc_data_i_s <= 8'b0;
+		csoc_data_write_s <= 1'b0;
 	end
 	else begin
-		csoc_clk = ~csoc_clk;
-		leds[7] = csoc_test_se;
-		leds[6] = csoc_test_tm;
-		leds[5] = csoc_uart_read;
+		csoc_clk <= ~csoc_clk;
+		csoc_data_i_s <= ~csoc_data_i_s;
+		csoc_data_write_s <= ~csoc_data_write_s;
+		leds[7] <= csoc_clk;
+		leds[6] <= csoc_rstn;
+		leds[5] <= csoc_test_se;
+		leds[4] <= csoc_test_tm;
+		leds[3] <= csoc_uart_read;
+		leds[2] <= csoc_data_write_s;
+		leds[1] <= &csoc_data_o;
+		leds[0] <= &csoc_data_i_s;
 	end
 end
 

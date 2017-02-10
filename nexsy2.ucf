@@ -2,35 +2,67 @@
 # NEXYS2 50 MHz cristal oscillator
 NET "clk" LOC = "B8";
 
-# CSOC INTERFACE                      # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
-NET "csoc_data_o<6>"  LOC = "L15";   # part_PIs[0002] - JA-1    - P3-1	 
-NET "csoc_data_o<5>"  LOC = "K12";   # part_PIs[0003] - JA-2    - P3-2	
-NET "csoc_data_o<4>"  LOC = "L17";   # part_PIs[0004] - JA-3    - P3-3	
-NET "csoc_data_o<3>"  LOC = "M15";   # part_PIs[0005] - JA-4    - P3-4	
-NET "csoc_data_o<2>"  LOC = "K13";   # part_PIs[0006] - JA-7    - P3-5	
-NET "csoc_data_o<1>"  LOC = "L16";   # part_PIs[0007] - JA-8    - P3-6	
-NET "csoc_data_o<0>"  LOC = "M14";   # part_PIs[0008] - JA-9    - P3-7	
-NET "csoc_clk"        LOC = "M16";   # part_PIs[0009] - JA-10   - P3-8	 
+# CSOC INTERFACE                       # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
+# NET "csoc_data_o<6>"  LOC = "L15";   # part_PIs[0002] - JA-1    - P3-1
+# NET "csoc_data_o<5>"  LOC = "K12";   # part_PIs[0003] - JA-2    - P3-2
+# NET "csoc_data_o<4>"  LOC = "L17";   # part_PIs[0004] - JA-3    - P3-3
+# NET "csoc_data_o<3>"  LOC = "M15";   # part_PIs[0005] - JA-4    - P3-4
+# NET "csoc_data_o<2>"  LOC = "K13";   # part_PIs[0006] - JA-7    - P3-5
+# NET "csoc_data_o<1>"  LOC = "L16";   # part_PIs[0007] - JA-8    - P3-6
+# NET "csoc_data_o<0>"  LOC = "M14";   # part_PIs[0008] - JA-9    - P3-7
+# NET "csoc_clk"        LOC = "M16";   # part_PIs[0009] - JA-10   - P3-8
+
+# CSOC INTERFACE                       # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
+# NET "csoc_rstn"       LOC = "M13";   # part_PIs[0010] - JB-1    - P2-1
+# NET "csoc_uart_write" LOC = "R18";   # part_POs[0010] - JB-2    - P2-2
+# NET "csoc_uart_read"  LOC = "R15";   # part_PIs[0013] - JB-3    - P2-3
+# NET "csoc_data_o<7>"  LOC = "T17";   # part_POs[0009] - JB-4    - P2-4
+# NET "csoc_test_se"    LOC = "P17";   # part_PIs[0011] - JB-7    - P2-5
+# NET "csoc_test_tm"    LOC = "R16";   # part_PIs[0012] - JB-8    - P2-6
+##GN D                                 # part_PIs[0012] - JB-5    - P2-7
+##GN D                                 # part_PIs[0012] - JB-11   - P2-8
+
+# CSOC INTERFACE                       # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
+# NET "csoc_data_i<0>"  LOC = "G15";   # part_POs[0002] - JC-1    - P1-1
+# NET "csoc_data_i<1>"  LOC = "J16";   # part_POs[0003] - JC-2    - P1-2
+# NET "csoc_data_i<2>"  LOC = "G13";   # part_POs[0004] - JC-3    - P1-3
+# NET "csoc_data_i<3>"  LOC = "H16";   # part_POs[0005] - JC-4    - P1-4
+# NET "csoc_data_i<4>"  LOC = "H15";   # part_POs[0006] - JC-7    - P1-5
+# NET "csoc_data_i<5>"  LOC = "F14";   # part_POs[0007] - JC-8    - P1-6
+# NET "csoc_data_i<6>"  LOC = "G16";   # part_POs[0008] - JC-9    - P1-7
+# NET "csoc_data_i<7>"  LOC = "J12";   # part_POs[0009] - JC-10   - P1-8
+
 
 # CSOC INTERFACE                     # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
-NET "csoc_rstn"       LOC = "M13";   # part_PIs[0010] - JB-1    - P2-1 
-NET "csoc_uart_write" LOC = "R18";   # part_POs[0010] - JB-2    - P2-2
-NET "csoc_uart_read"  LOC = "R15";   # part_PIs[0013] - JB-3    - P2-3 
-NET "csoc_data_o<7>"  LOC = "T17";   # part_POs[0009] - JB-4    - P2-4
-NET "csoc_test_se"    LOC = "P17";   # part_PIs[0011] - JB-7    - P2-5 
-NET "csoc_test_tm"    LOC = "R16";   # part_PIs[0012] - JB-8    - P2-6 
-#GND                                 # part_PIs[0012] - JB-5    - P2-7
-#GND                                 # part_PIs[0012] - JB-11   - P2-8
+NET "csoc_clk"        LOC = "K13";   # part_PIs[0006] - JA-7    - P3-5
+NET "csoc_data_o<0>"  LOC = "L15";   # part_PIs[0002] - JA-1    - P3-1
+NET "csoc_data_o<1>"  LOC = "L16";   # part_PIs[0007] - JA-8    - P3-6
+NET "csoc_data_o<2>"  LOC = "K12";   # part_PIs[0003] - JA-2    - P3-2
+NET "csoc_data_o<3>"  LOC = "M14";   # part_PIs[0008] - JA-9    - P3-7
+NET "csoc_data_o<4>"  LOC = "L17";   # part_PIs[0004] - JA-3    - P3-3
+NET "csoc_data_o<5>"  LOC = "M16";   # part_PIs[0009] - JA-10   - P3-8
+NET "csoc_data_o<6>"  LOC = "M15";   # part_PIs[0005] - JA-4    - P3-4
 
-# CSOC INTERFACE                     # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD   
-NET "csoc_data_i<0>"  LOC = "G15";   # part_POs[0002] - JC-1    - P1-1
-NET "csoc_data_i<1>"  LOC = "J16";   # part_POs[0003] - JC-2    - P1-2
-NET "csoc_data_i<2>"  LOC = "G13";   # part_POs[0004] - JC-3    - P1-3
-NET "csoc_data_i<3>"  LOC = "H16";   # part_POs[0005] - JC-4    - P1-4
-NET "csoc_data_i<4>"  LOC = "H15";   # part_POs[0006] - JC-7    - P1-5
+# CSOC INTERFACE                     # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
+#GND                                 # part_PIs[0012] - JB-11   - P2-8
+#GND                                 # part_PIs[0012] - JB-5    - P2-7
+NET "csoc_test_tm"    LOC = "P17";   # part_PIs[0011] - JB-7    - P2-5
+NET "csoc_test_se"    LOC = "M13";   # part_PIs[0010] - JB-1    - P2-1
+NET "csoc_data_o<7>"  LOC = "R16";   # part_PIs[0012] - JB-8    - P2-6
+NET "csoc_uart_read"  LOC = "R18";   # part_POs[0010] - JB-2    - P2-2
+NET "csoc_uart_write" LOC = "T18";   # part_POs[0009] - JB-9    - P2-4
+NET "csoc_rstn"       LOC = "R15";   # part_PIs[0013] - JB-3    - P2-3
+
+# CSOC INTERFACE                     # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
+NET "csoc_data_i<7>"  LOC = "H15";   # part_POs[0006] - JC-7    - P1-5
+NET "csoc_data_i<6>"  LOC = "G15";   # part_POs[0002] - JC-1    - P1-1
 NET "csoc_data_i<5>"  LOC = "F14";   # part_POs[0007] - JC-8    - P1-6
-NET "csoc_data_i<6>"  LOC = "G16";   # part_POs[0008] - JC-9    - P1-7
-NET "csoc_data_i<7>"  LOC = "J12";   # part_POs[0009] - JC-10   - P1-8
+NET "csoc_data_i<4>"  LOC = "J16";   # part_POs[0003] - JC-2    - P1-2
+NET "csoc_data_i<3>"  LOC = "G16";   # part_POs[0008] - JC-9    - P1-7
+NET "csoc_data_i<2>"  LOC = "G13";   # part_POs[0004] - JC-3    - P1-3
+NET "csoc_data_i<1>"  LOC = "J12";   # part_POs[0009] - JC-10   - P1-8
+NET "csoc_data_i<0>"  LOC = "H16";   # part_POs[0005] - JC-4    - P1-4
+
 
 # NEXYS2 UART
 NET "rx" LOC = "U6";

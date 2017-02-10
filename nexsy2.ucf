@@ -1,13 +1,42 @@
 
-# NET "rst"  LOC = "G18";
+# NEXYS2 50 MHz cristal oscillator
 NET "clk" LOC = "B8";
-# NET "clk" PERIOD = 20 HIGH 50%;
 
-# UART
+# CSOC INTERFACE                      # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
+NET "csoc_data_o<6>"  LOC = "L15";   # part_PIs[0002] - JA-1    - P3-1	 
+NET "csoc_data_o<5>"  LOC = "K12";   # part_PIs[0003] - JA-2    - P3-2	
+NET "csoc_data_o<4>"  LOC = "L17";   # part_PIs[0004] - JA-3    - P3-3	
+NET "csoc_data_o<3>"  LOC = "M15";   # part_PIs[0005] - JA-4    - P3-4	
+NET "csoc_data_o<2>"  LOC = "K13";   # part_PIs[0006] - JA-7    - P3-5	
+NET "csoc_data_o<1>"  LOC = "L16";   # part_PIs[0007] - JA-8    - P3-6	
+NET "csoc_data_o<0>"  LOC = "M14";   # part_PIs[0008] - JA-9    - P3-7	
+NET "csoc_clk"        LOC = "M16";   # part_PIs[0009] - JA-10   - P3-8	 
+
+# CSOC INTERFACE                     # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
+NET "csoc_rstn"       LOC = "M13";   # part_PIs[0010] - JB-1    - P2-1 
+NET "csoc_uart_write" LOC = "R18";   # part_POs[0010] - JB-2    - P2-2
+NET "csoc_uart_read"  LOC = "R15";   # part_PIs[0013] - JB-3    - P2-3 
+NET "csoc_data_o<7>"  LOC = "T17";   # part_POs[0009] - JB-4    - P2-4
+NET "csoc_test_se"    LOC = "P17";   # part_PIs[0011] - JB-7    - P2-5 
+NET "csoc_test_tm"    LOC = "R16";   # part_PIs[0012] - JB-8    - P2-6 
+#GND                                 # part_PIs[0012] - JB-5    - P2-7
+#GND                                 # part_PIs[0012] - JB-11   - P2-8
+
+# CSOC INTERFACE                     # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD   
+NET "csoc_data_i<0>"  LOC = "G15";   # part_POs[0002] - JC-1    - P1-1
+NET "csoc_data_i<1>"  LOC = "J16";   # part_POs[0003] - JC-2    - P1-2
+NET "csoc_data_i<2>"  LOC = "G13";   # part_POs[0004] - JC-3    - P1-3
+NET "csoc_data_i<3>"  LOC = "H16";   # part_POs[0005] - JC-4    - P1-4
+NET "csoc_data_i<4>"  LOC = "H15";   # part_POs[0006] - JC-7    - P1-5
+NET "csoc_data_i<5>"  LOC = "F14";   # part_POs[0007] - JC-8    - P1-6
+NET "csoc_data_i<6>"  LOC = "G16";   # part_POs[0008] - JC-9    - P1-7
+NET "csoc_data_i<7>"  LOC = "J12";   # part_POs[0009] - JC-10   - P1-8
+
+# NEXYS2 UART
 NET "rx" LOC = "U6";
 NET "tx" LOC = "P9";
 
-# LEDS
+# NEXYS2 LEDS
 NET "leds<0>"  LOC = "J14";
 NET "leds<1>"  LOC = "J15";
 NET "leds<2>"  LOC = "K15";
@@ -17,65 +46,18 @@ NET "leds<5>"  LOC = "P16";
 NET "leds<6>"  LOC = "E4" ;
 NET "leds<7>"  LOC = "P4" ;
 
-# 7 SEGMENT DISPLAY
-NET "sseg<0>"      LOC = "L18";     # Bank = 1, Pin name = IO_L10P_1, Type = I/O,                         Sch name = CA
-NET "sseg<1>"      LOC = "F18";     # Bank = 1, Pin name = IO_L19P_1, Type = I/O,                         Sch name = CB
-NET "sseg<2>"      LOC = "D17";     # Bank = 1, Pin name = IO_L23P_1/HDC, Type = DUAL,                    Sch name = CC
-NET "sseg<3>"      LOC = "D16";     # Bank = 1, Pin name = IO_L23N_1/LDC0, Type = DUAL,                   Sch name = CD
-NET "sseg<4>"      LOC = "G14";     # Bank = 1, Pin name = IO_L20P_1, Type = I/O,                         Sch name = CE
-NET "sseg<5>"      LOC = "J17";     # Bank = 1, Pin name = IO_L13P_1/A6/RHCLK4/IRDY1, Type = RHCLK/DUAL,  Sch name = CF
-NET "sseg<6>"      LOC = "H14";     # Bank = 1, Pin name = IO_L17P_1, Type = I/O,                         Sch name = CG
-NET "sseg<7>"      LOC = "C17";     # Bank = 1, Pin name = IO_L24N_1/LDC2, Type = DUAL,                   Sch name = DP
+# NEXYS2 7 SEGMENT DISPLAY
+NET "sseg<0>"  LOC = "L18";
+NET "sseg<1>"  LOC = "F18";
+NET "sseg<2>"  LOC = "D17";
+NET "sseg<3>"  LOC = "D16";
+NET "sseg<4>"  LOC = "G14";
+NET "sseg<5>"  LOC = "J17";
+NET "sseg<6>"  LOC = "H14";
+NET "sseg<7>"  LOC = "C17";
 
-# 7 SEGMENT DISPLAY ENABLE
-NET "an<0>"       LOC = "F17";     # Bank = 1, Pin name = IO_L19N_1, Type = I/O,                         Sch name = AN0
-NET "an<1>"       LOC = "H17";     # Bank = 1, Pin name = IO_L16N_1/A0, Type = DUAL,                     Sch name = AN1
-NET "an<2>"       LOC = "C18";     # Bank = 1, Pin name = IO_L24P_1/LDC1, Type = DUAL,                   Sch name = AN2
-NET "an<3>"       LOC = "F15";     # Bank = 1, Pin name = IO_L21P_1, Type = I/O,                         Sch name = AN3
-
-# ## SWITCHES
-# NET "switch<0>"     LOC = "G18";     # Bank = 1, Pin name = IP, Type = INPUT,                              Sch name = SW0
-# NET "switch<1>"     LOC = "H18";     # Bank = 1, Pin name = IP/VREF_1, Type = VREF,                        Sch name = SW1
-# NET "switch<2>"     LOC = "K18";     # Bank = 1, Pin name = IP, Type = INPUT,                              Sch name = SW2
-# NET "switch<3>"     LOC = "K17";     # Bank = 1, Pin name = IP, Type = INPUT,                              Sch name = SW3
-# NET "switch<4>"     LOC = "L14";     # Bank = 1, Pin name = IP, Type = INPUT,                              Sch name = SW4
-# NET "switch<5>"     LOC = "L13";     # Bank = 1, Pin name = IP, Type = INPUT,                              Sch name = SW5
-# NET "switch<6>"     LOC = "N17";     # Bank = 1, Pin name = IP, Type = INPUT,                              Sch name = SW6
-# NET "switch<7>"     LOC = "R17";     # Bank = 1, Pin name = IP, Type = INPUT,                              Sch name = SW7
-
-
-# ===================================================================================
-# PIN CONNECTION TO CAPETA DFT BOARD HEADERS
-# ===================================================================================
-
-# DFT part_PIs[0001] - FPGA SCH Name = JB10
-
-## NEXYS JC - CAPETA DFT ADAPTER P1
-NET "csoc_data_i<0>"    LOC = "G15";   # DFT part_POs[0002] - FPGA SCH Name = JC1
-NET "csoc_data_i<1>"    LOC = "J16";   # DFT part_POs[0003] - FPGA SCH Name = JC2
-NET "csoc_data_i<2>"    LOC = "G13";   # DFT part_POs[0004] - FPGA SCH Name = JC3
-NET "csoc_data_i<3>"    LOC = "H16";   # DFT part_POs[0005] - FPGA SCH Name = JC4
-NET "csoc_data_i<4>"    LOC = "H15";   # DFT part_POs[0006] - FPGA SCH Name = JC7
-NET "csoc_data_i<5>"    LOC = "F14";   # DFT part_POs[0007] - FPGA SCH Name = JC8
-NET "csoc_data_i<6>"    LOC = "G16";   # DFT part_POs[0008] - FPGA SCH Name = JC9
-NET "csoc_data_i<7>"    LOC = "J12";   # DFT part_POs[0009] - FPGA SCH Name = JB4
-
-## NEXYS JB - CAPETA DFT ADAPTER P2
-NET "csoc_rstn"       LOC = "M13";  # DFT part_PIs[0010] - FPGA SCH Name = JB3
-NET "csoc_uart_write" LOC = "R18";  # DFT part_POs[0010] - FPGA SCH Name = JB1
-NET "csoc_uart_read"  LOC = "R15";  # DFT part_PIs[0013] - FPGA SCH Name = JB2
-NET "csoc_data_o<7>"  LOC = "T17";  # DFT part_POs[0009] - FPGA SCH Name = JB4
-NET "csoc_test_se"    LOC = "P17";  # DFT part_PIs[0011] - FPGA SCH Name = JB7
-NET "csoc_test_tm"    LOC = "R16";  # DFT part_PIs[0012] - FPGA SCH Name = JB8
-# NET ""              LOC = "T18";  # GND
-# NET ""              LOC = "U18";  # GND
-
-## NEXYS JA - CAPETA DFT ADAPTER P3
-NET "csoc_data_o<6>"    LOC = "L15";  # DFT part_PIs[0002] - FPGA SCH name = JA1
-NET "csoc_data_o<5>"    LOC = "K12";  # DFT part_PIs[0003] - FPGA SCH name = JA2
-NET "csoc_data_o<4>"    LOC = "L17";  # DFT part_PIs[0004] - FPGA SCH name = JA3
-NET "csoc_data_o<3>"    LOC = "M15";  # DFT part_PIs[0005] - FPGA SCH name = JA4
-NET "csoc_data_o<2>"    LOC = "K13";  # DFT part_PIs[0006] - FPGA SCH name = JA7
-NET "csoc_data_o<1>"    LOC = "L16";  # DFT part_PIs[0007] - FPGA SCH name = JA8
-NET "csoc_data_o<0>"    LOC = "M14";  # DFT part_PIs[0008] - FPGA SCH name = JA9
-NET "csoc_clk"          LOC = "M16";  # DFT part_PIs[0009] - FPGA SCH name = JA10
+# NEXYS2 7 SEGMENT DISPLAY ENABLE
+NET "an<0>"    LOC = "F17";
+NET "an<1>"    LOC = "H17";
+NET "an<2>"    LOC = "C18";
+NET "an<3>"    LOC = "F15";

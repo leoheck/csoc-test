@@ -29,12 +29,22 @@ parameter CHAR_C = 7'b1000110;
 parameter CHAR_D = 7'b0100001;
 parameter CHAR_E = 7'b0000110;
 parameter CHAR_F = 7'b0001110;
-parameter CHAR_S = 7'b0010010;
+parameter CHAR_S = 7'b0010010; // 5
 parameter char_o = 7'b0100011;
+
+parameter CHAR_T = 7'b1111000; // 7
+parameter CHAR_G = 7'b0000010; // 6
+parameter CHAR_P = 7'b0001100;
+parameter CHAR_H = 7'b0001001;
+
+parameter SPACE     = 7'b1111111;
+parameter HYPHEN    = 7'b0111111;
+parameter UNDERLINE = 7'b1110111;
 
 // SCoC
 // TEST
 // 2017
+// GAPH
 
 reg  [16:0] cnt;
 reg  [3:0]  digit;
@@ -63,18 +73,22 @@ always @(cnt[16:15] or digit0 or digit1 or digit2 or digit3) begin
 		4'h1:    seg <= CHAR_S;
 		4'h2:    seg <= char_o;
 		4'h3:    seg <= CHAR_C;
-		4'h4:    seg <= NUM_4;
-		4'h5:    seg <= NUM_5;
-		4'h6:    seg <= NUM_6;
+
+		4'h4:    seg <= NUM_2;
+		4'h5:    seg <= NUM_0;
+		4'h6:    seg <= NUM_1;
 		4'h7:    seg <= NUM_7;
-		4'h8:    seg <= NUM_8;
-		4'h9:    seg <= NUM_9;
-		4'hA:    seg <= CHAR_A;
-		4'hB:    seg <= CHAR_B;
-		4'hC:    seg <= CHAR_C;
-		4'hD:    seg <= CHAR_D;
-		4'hE:    seg <= CHAR_E;
-		default: seg <= CHAR_F;
+
+		4'h8:    seg <= CHAR_G;
+		4'h9:    seg <= CHAR_A;
+		4'hA:    seg <= CHAR_P;
+		4'hB:    seg <= CHAR_H;
+
+		4'hC:    seg <= CHAR_T;
+		4'hD:    seg <= CHAR_E;
+		4'hE:    seg <= CHAR_S;
+
+		default: seg <= SPACE;
 	endcase
 end
 

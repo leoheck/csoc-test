@@ -31,19 +31,39 @@ reg [7:0] csoc_data_i_s;
 reg csoc_data_write_s;
 
 wire dp;
+reg        counting;
+reg [27:0] sevenseg;
+integer i;
+reg  [4:0] banner [0:19]; // "SCoC TEST GAPH 2017 "
+
+// Banner ROM initialization
+initial begin
+	$readmemh("banner.txt", banner);
+end
 
 sevenseg ss0 (
 	.clk(clk),
-	.digit0(4'h0),
-	.digit1(4'h1),
-	.digit2(4'h2),
-	.digit3(4'h3),
+	.digit0(banner[0]),
+	.digit1(banner[1]),
+	.digit2(banner[2]),
+	.digit3(banner[3]),
 	.decplace(2'b10),
 	.seg(sseg),
 	.an(an),
 	.dp(dp)
 );
 
+parameter TIMEOUT = 10000000;
+always @(posedge clk) begin
+	sevenseg <= sevenseg + 1;
+	if (sevenseg == TIMEOUT) begin
+		sevenseg <= 1;
+		banner[19] <= banner[0];
+		for(i=0; i<19; i=i+1) begin
+			banner[i] <= banner[i+1];
+		end
+	end
+end
 
 
 

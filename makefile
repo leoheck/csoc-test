@@ -5,7 +5,8 @@ ucf = nexsy2.ucf
 
 src = $(shell find  *.v)
 
-all: $(top).xst $(top).bit
+compile: $(top).xst $(top).bit
+all: compile upload screen
 
 xst      = xst      -intstyle silent
 ngdbuild = ngdbuild -intstyle silent
@@ -65,11 +66,14 @@ fpga_init:
 	djtgcfg init -d DOnbUsb
 
 upload:
-	djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
+	/usr/bin/time -f "%E real, %U user, %S sys" \
+		djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
 
 
 dev=/dev/ttyUSB0
+# baud=115200
 baud=9600
+# to exit screen (Ctrl-A \)
 screen:
 	screen $(dev) $(baud)
 

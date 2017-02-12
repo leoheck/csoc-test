@@ -2,53 +2,49 @@
 module sevenseg
 (
 	input             clk,
-	input       [3:0] digit0,
-	input       [3:0] digit1,
-	input       [3:0] digit2,
-	input       [3:0] digit3,
+	input       [7:0] display_0,
+	input       [7:0] display_1,
+	input       [7:0] display_2,
+	input       [7:0] display_3,
 	input       [1:0] decplace,
 	output reg  [6:0] seg,
 	output reg  [3:0] an,
 	output            dp
 );
 
-// NUM & CHAR         gfedcba
-localparam NUM_0  = 7'b1000000;
-localparam NUM_1  = 7'b1111001;
-localparam NUM_2  = 7'b0100100;
-localparam NUM_3  = 7'b0110000;
-localparam NUM_4  = 7'b0011001;
-localparam NUM_5  = 7'b0010010;
-localparam NUM_6  = 7'b0000010;
-localparam NUM_7  = 7'b1111000;
-localparam NUM_8  = 7'b0000000;
-localparam NUM_9  = 7'b0010000;
-localparam CHAR_A = 7'b0001000;
-localparam CHAR_B = 7'b0000011;
-localparam CHAR_C = 7'b1000110;
-localparam CHAR_D = 7'b0100001;
-localparam CHAR_E = 7'b0000110;
-localparam CHAR_F = 7'b0001110;
-localparam CHAR_G = 7'b0000010; // 6
-localparam CHAR_H = 7'b0001001;
-localparam CHAR_K = 7'b0001111;
-localparam char_o = 7'b0100011;
-localparam CHAR_S = 7'b0010010; // 5
-localparam CHAR_T = 7'b1111000; // 7
-localparam CHAR_P = 7'b0001100;
+// CHARACTERS             Hgfedcba
+localparam NUM_0     = 8'b11000000;
+localparam NUM_1     = 8'b11111001;
+localparam NUM_2     = 8'b10100100;
+localparam NUM_3     = 8'b10110000;
+localparam NUM_4     = 8'b10011001;
+localparam NUM_5     = 8'b10010010;
+localparam NUM_6     = 8'b10000010;
+localparam NUM_7     = 8'b11111000;
+localparam NUM_8     = 8'b10000000;
+localparam NUM_9     = 8'b10010000;
+localparam CHAR_A    = 8'b10001000;
+localparam CHAR_B    = 8'b10000011;
+localparam CHAR_C    = 8'b11000110;
+localparam CHAR_D    = 8'b10100001;
+localparam CHAR_E    = 8'b10000110;
+localparam CHAR_F    = 8'b10001110;
+localparam CHAR_G    = 8'b10000010; // 6
+localparam CHAR_H    = 8'b10001001;
+localparam CHAR_K    = 8'b10001111;
+localparam CHAR_L    = 8'b11000111;
+localparam CHAR_o    = 8'b10100011;
+localparam CHAR_S    = 8'b10010010; // 5
+localparam CHAR_T    = 8'b11111000; // 7
+localparam CHAR_P    = 8'b10001100;
+localparam SPACE     = 8'b11111111;
+localparam HYPHEN    = 8'b10111111;
+localparam UNDERLINE = 8'b11110111;
+localparam OVERRLINE = 8'b11111110;
 
-localparam SPACE     = 7'b1111111;
-localparam HYPHEN    = 7'b0111111;
-localparam UNDERLINE = 7'b1110111;
-
-// SCoC
-// TEST
-// 2017
-// GAPH
-// HECK
 
 reg  [16:0] cnt;
-reg  [3:0]  digit;
+reg  [7:0]  digit;
 
 // Anode
 always @(cnt[16:15]) begin
@@ -61,43 +57,40 @@ always @(cnt[16:15]) begin
 end
 
 // Cathode
-always @(cnt[16:15] or digit0 or digit1 or digit2 or digit3) begin
+always @(cnt[16:15] or display_0 or display_1 or display_2 or display_3) begin
 	case (cnt[16:15])
-		2'b00:   digit <= digit0;
-		2'b01:   digit <= digit1;
-		2'b10:   digit <= digit2;
-		default: digit <= digit3;
+		2'b00:   digit <= display_0;
+		2'b01:   digit <= display_1;
+		2'b10:   digit <= display_2;
+		default: digit <= display_3;
 	endcase
 
+	// TODO: Add missing/required characters here
 	case (digit)
-		4'h0:    seg <= CHAR_C;
-		4'h1:    seg <= CHAR_S;
-		4'h2:    seg <= char_o;
-		4'h3:    seg <= CHAR_C;
-
-		4'h4:    seg <= NUM_2;
-		4'h5:    seg <= NUM_0;
-		4'h6:    seg <= NUM_1;
-		4'h7:    seg <= NUM_7;
-
-		4'h8:    seg <= CHAR_G;
-		4'h9:    seg <= CHAR_A;
-		4'hA:    seg <= CHAR_P;
-		4'hB:    seg <= CHAR_H;
-
-		4'hC:    seg <= CHAR_T;
-		4'hD:    seg <= CHAR_E;
-		4'hE:    seg <= CHAR_S;
-
-		default: seg <= SPACE;
+		8'h20: seg <= SPACE;
+		8'h2d: seg <= HYPHEN;
+		8'h30: seg <= NUM_0; 
+		8'h31: seg <= NUM_1; 
+		8'h32: seg <= NUM_2;
+		8'h37: seg <= NUM_7;
+		8'h41: seg <= CHAR_A;
+		8'h43: seg <= CHAR_C;
+		8'h45: seg <= CHAR_E;
+		8'h47: seg <= CHAR_G;
+		8'h48: seg <= CHAR_H;
+		8'h4c: seg <= CHAR_L;
+		8'h50: seg <= CHAR_P;
+		8'h53: seg <= CHAR_S;
+		8'h5f: seg <= UNDERLINE;
+		8'h6f: seg <= CHAR_o;
+		default: seg <= OVERRLINE;
 	endcase
 end
 
-assign dp = ~((decplace[0] ^ cnt[15]) & (decplace[1] ^ cnt[16]));
+ assign dp = ~((decplace[0] ^ cnt[15]) & (decplace[1] ^ cnt[16]));
 
 always @(posedge clk) begin
 	cnt <= cnt + 1;
 end
 
 endmodule
-

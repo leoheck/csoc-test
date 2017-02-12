@@ -26,7 +26,7 @@ module uart_tx #(
 	input wire start,      //-- Set to 1 for starting the transmission
 	input wire [7:0] data, //-- Byte to transmit
 	output reg tx,         //-- Serial data output
-	output reg ready      //-- Transmitter ready (1) / busy (0)
+	output reg ready       //-- Transmitter ready (1) / busy (0)
 );
 
 
@@ -59,9 +59,9 @@ reg [1:0] next_state;
 //-- Transition between states
 always @(posedge clk)
 	if (!rstn)
-	state <= IDLE;
+		state <= IDLE;
 	else
-	state <= next_state;
+		state <= next_state;
 
 //-- Control signal generation and next states
 always @(*) begin
@@ -141,12 +141,12 @@ always @(posedge clk)
 //-- When load = 0, the sent bits are counted (with the raising edge of clk_baud)
 always @(posedge clk)
 	if (!rstn)
-	bitc <= 0;
+		bitc <= 0;
 
 	else if (load == 1)
-	bitc <= 0;
+		bitc <= 0;
 	else if (load == 0 && clk_baud == 1)
-	bitc <= bitc + 1;
+		bitc <= bitc + 1;
 
 //-- The less significant bit is transmited through tx
 //-- It is a registed output, because tx is connected to an Asynchronous bus
@@ -156,11 +156,11 @@ always @(posedge clk)
 
 //-- Baud generator
 baudgen_tx #( .BAUDRATE(BAUDRATE))
-BAUD0 (
-	.rstn(rstn),
-	.clk(clk),
-	.clk_ena(baud_en),
-	.clk_out(clk_baud)
+	BAUD0 (
+		.rstn(rstn),
+		.clk(clk),
+		.clk_ena(baud_en),
+		.clk_out(clk_baud)
 	);
 
 

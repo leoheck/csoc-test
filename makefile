@@ -22,6 +22,7 @@ bitgen: $(top).bit
 
 $(top).xst: $(src)
 	@ echo "Creating $(top).xst"
+	./banner_rom.py > banner.txt 
 	@ echo " \
 		run \
 		-ifn $(top).prj \

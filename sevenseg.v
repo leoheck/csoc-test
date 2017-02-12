@@ -7,9 +7,8 @@ module sevenseg
 	input       [7:0] display_2,
 	input       [7:0] display_3,
 	input       [1:0] decplace,
-	output reg  [6:0] seg,
-	output reg  [3:0] an,
-	output            dp
+	output reg  [7:0] seg,
+	output reg  [3:0] an
 );
 
 // CHARACTERS             Hgfedcba
@@ -69,10 +68,18 @@ always @(cnt[16:15] or display_0 or display_1 or display_2 or display_3) begin
 	case (digit)
 		8'h20: seg <= SPACE;
 		8'h2d: seg <= HYPHEN;
+		// 
 		8'h30: seg <= NUM_0; 
 		8'h31: seg <= NUM_1; 
 		8'h32: seg <= NUM_2;
+		8'h33: seg <= NUM_3;
+		8'h34: seg <= NUM_4;
+		8'h35: seg <= NUM_5;
+		8'h36: seg <= NUM_6;
 		8'h37: seg <= NUM_7;
+		8'h38: seg <= NUM_8;
+		8'h39: seg <= NUM_9;
+		// 
 		8'h41: seg <= CHAR_A;
 		8'h43: seg <= CHAR_C;
 		8'h45: seg <= CHAR_E;
@@ -86,8 +93,6 @@ always @(cnt[16:15] or display_0 or display_1 or display_2 or display_3) begin
 		default: seg <= OVERRLINE;
 	endcase
 end
-
- assign dp = ~((decplace[0] ^ cnt[15]) & (decplace[1] ^ cnt[16]));
 
 always @(posedge clk) begin
 	cnt <= cnt + 1;

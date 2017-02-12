@@ -52,8 +52,7 @@ sevenseg ss0 (
 	.display_3(banner[3]),
 	.decplace(2'b10),
 	.seg(sseg),
-	.an(an),
-	.dp(dp)
+	.an(an)
 );
 
 parameter TIMEOUT = 16000000;

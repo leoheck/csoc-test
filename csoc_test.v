@@ -56,11 +56,12 @@ uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
 wire [7:0] tx_data; // -- Received data
 wire new_tx_data; // -- Received data
 wire tx_busy;
+wire tx_start;
 
 uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 	.clk(clk),
 	.rstn(rstn),
-	.start(1'b1),  //-- Start signal always set to 1
+	.start(tx_start),  //-- Start signal always set to 1
 	.data(tx_data),
 	.tx(tx),
 	.ready(ready)
@@ -71,7 +72,7 @@ cmd_parser cp0 (
 	.rstn(rstn),
 	.tx_data(tx_data),
 	.new_tx_data(new_tx_data),
-	.tx_busy(tx_busy),
+	.tx_start(tx_start),
 	.rx_data(data),
 	.new_rx_data(rcv),
 	.leds(leds),

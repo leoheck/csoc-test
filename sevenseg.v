@@ -13,38 +13,39 @@ module sevenseg
 );
 
 // NUM & CHAR         gfedcba
-parameter NUM_0  = 7'b1000000;
-parameter NUM_1  = 7'b1111001;
-parameter NUM_2  = 7'b0100100;
-parameter NUM_3  = 7'b0110000;
-parameter NUM_4  = 7'b0011001;
-parameter NUM_5  = 7'b0010010;
-parameter NUM_6  = 7'b0000010;
-parameter NUM_7  = 7'b1111000;
-parameter NUM_8  = 7'b0000000;
-parameter NUM_9  = 7'b0010000;
-parameter CHAR_A = 7'b0001000;
-parameter CHAR_B = 7'b0000011;
-parameter CHAR_C = 7'b1000110;
-parameter CHAR_D = 7'b0100001;
-parameter CHAR_E = 7'b0000110;
-parameter CHAR_F = 7'b0001110;
-parameter CHAR_S = 7'b0010010; // 5
-parameter char_o = 7'b0100011;
+localparam NUM_0  = 7'b1000000;
+localparam NUM_1  = 7'b1111001;
+localparam NUM_2  = 7'b0100100;
+localparam NUM_3  = 7'b0110000;
+localparam NUM_4  = 7'b0011001;
+localparam NUM_5  = 7'b0010010;
+localparam NUM_6  = 7'b0000010;
+localparam NUM_7  = 7'b1111000;
+localparam NUM_8  = 7'b0000000;
+localparam NUM_9  = 7'b0010000;
+localparam CHAR_A = 7'b0001000;
+localparam CHAR_B = 7'b0000011;
+localparam CHAR_C = 7'b1000110;
+localparam CHAR_D = 7'b0100001;
+localparam CHAR_E = 7'b0000110;
+localparam CHAR_F = 7'b0001110;
+localparam CHAR_G = 7'b0000010; // 6
+localparam CHAR_H = 7'b0001001;
+localparam CHAR_K = 7'b0001111;
+localparam char_o = 7'b0100011;
+localparam CHAR_S = 7'b0010010; // 5
+localparam CHAR_T = 7'b1111000; // 7
+localparam CHAR_P = 7'b0001100;
 
-parameter CHAR_T = 7'b1111000; // 7
-parameter CHAR_G = 7'b0000010; // 6
-parameter CHAR_P = 7'b0001100;
-parameter CHAR_H = 7'b0001001;
-
-parameter SPACE     = 7'b1111111;
-parameter HYPHEN    = 7'b0111111;
-parameter UNDERLINE = 7'b1110111;
+localparam SPACE     = 7'b1111111;
+localparam HYPHEN    = 7'b0111111;
+localparam UNDERLINE = 7'b1110111;
 
 // SCoC
 // TEST
 // 2017
 // GAPH
+// HECK
 
 reg  [16:0] cnt;
 reg  [3:0]  digit;

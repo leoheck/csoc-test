@@ -36,8 +36,6 @@ module csoc_test #(
 	output [7:0] csoc_data_o
 );
 
-wire rstn;          // -- Active low reset
-
 wire rx_rcv;        // -- Received character signal
 wire [7:0] rx_data; // -- Received data
 
@@ -45,15 +43,23 @@ wire [7:0] tx_data; // -- Received data
 wire tx_start;      // -- 
 wire tx_ready;      // -- Transmitter ready signal
 
-assign rstn = ~rst;
 
-// always @(posedge clk) begin
-	// rstn <= 1;
-// end
+reg [2:0] master_rst_n;  // -- Master, active low, asynchonous reset, synchronous release
+
+always @(posedge clk or posedge rst) begin
+	if (rst) begin
+		master_rst_n <= 0;
+	end
+	else begin
+		master_rst_n[1] <= 1;
+		master_rst_n[0] <= master_rst_n[1];
+	end
+end
+
 
 uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
 	.clk(clk),
-	.rstn(rstn),
+	.rstn(master_rst_n[0]),
 	.rcv(rx_rcv),
 	.data(rx_data),
 	.rx(rx)
@@ -61,7 +67,7 @@ uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
 
 uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 	.clk(clk),
-	.rstn(rstn),
+	.rstn(master_rst_n[0]),
 	.start(tx_start),
 	.data(tx_data),
 	.ready(tx_ready),
@@ -70,7 +76,7 @@ uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 
 cmd_parser cp0 (
 	.clk(clk),
-	.rstn(rstn),
+	.rstn(master_rst_n[0]),
 	// 
 	.tx_start_o(tx_start),
 	.tx_data_o(tx_data),

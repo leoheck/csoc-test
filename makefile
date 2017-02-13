@@ -1,4 +1,9 @@
 
+# simulation with isim
+# https://www.xilinx.com/support/documentation/sw_manuals/xilinx13_1/ism_r_entering_simulation_tcl_commands.htm
+
+
+
 top = csoc_test
 target = xc3s1200e-fg320-4
 ucf = nexsy2.ucf
@@ -69,7 +74,7 @@ fpga_init:
 upload:
 	/usr/bin/time -f "%E real, %U user, %S sys" \
 	djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
-
+	@ echo "\n\n ~ DONT FORGET TO RESET THE BOARD ~ \n\n"
 
 dev=/dev/ttyUSB0
 # baud=115200

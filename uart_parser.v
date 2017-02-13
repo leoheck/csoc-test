@@ -27,10 +27,7 @@ module cmd_parser
 );
 
 
-wire scan_i_s;
-wire scan_o_s;
-assign scan_i_s = csoc_data_i[7];
-assign scan_o_s = csoc_data_o[7];
+
 
 
 reg [7:0] csoc_data_i_s;
@@ -62,7 +59,7 @@ sevenseg ss0 (
 	.an(an)
 );
 
-parameter TIMEOUT = 14000000;
+parameter TIMEOUT = 12000000;
 always @(posedge clk) begin
 	if (!rstn) begin
 		sevenseg <= 1;
@@ -81,31 +78,6 @@ end
 
 
 
-
-// CSOC INTERFACE
-always @(posedge clk) begin
-	if (!rstn) begin
-		csoc_clk <= 1'b0;
-		csoc_rstn <= 1'b0;
-		csoc_test_se <= 1'b0;
-		csoc_test_tm <= 1'b0;
-		csoc_uart_read <= 1'b0;
-		csoc_data_o <= 8'b0;
-
-		csoc_data_i_s <= 8'b0;
-		csoc_data_write_s <= 1'b0;
-	end
-	else begin
-		csoc_clk <= ~csoc_clk;
-		csoc_rstn <= 1'b1;
-		
-		// por enquanto removendo warnings do bitgen
-		csoc_data_i_s <= ~csoc_data_i_s;
-		csoc_data_write_s <= ~csoc_data_write_s;
-	end
-end
-
-
 //-- Characters counter
 //-- It only counts when the cena control signal is enabled
 reg [2:0] char_count;
@@ -122,19 +94,19 @@ always @(posedge clk) begin
 end
 
 //-- Multiplexer with the 8-character string to transmit
-always @(*) begin
-	case (char_count)
-		3'd0: tx_data_o <= "\n";
-		3'd1: tx_data_o <= "1";
-		3'd2: tx_data_o <= "2";
-		3'd3: tx_data_o <= "3";
-		3'd4: tx_data_o <= "4";
-		3'd5: tx_data_o <= "5";
-		3'd6: tx_data_o <= "6";
-		3'd7: tx_data_o <= "7";
-		default: tx_data_o <= "_";
-	endcase
-end
+// always @(*) begin
+// 	case (char_count)
+// 		3'd0: tx_data_o <= "\n";
+// 		3'd1: tx_data_o <= "1";
+// 		3'd2: tx_data_o <= "2";
+// 		3'd3: tx_data_o <= "3";
+// 		3'd4: tx_data_o <= "4";
+// 		3'd5: tx_data_o <= "5";
+// 		3'd6: tx_data_o <= "6";
+// 		3'd7: tx_data_o <= "7";
+// 		default: tx_data_o <= "_";
+// 	endcase
+// end
 
 
 //--------------------- CONTROLLER
@@ -148,6 +120,9 @@ localparam STOP = 3;
 reg [1:0] state;
 reg [1:0] next_state;
 
+reg cenb;
+reg tx_done;
+
 //-- Transition between states
 always @(posedge clk) begin
 	if (!rstn) begin
@@ -158,52 +133,139 @@ always @(posedge clk) begin
 	end
 end
 
-//-- Control signal generation and next states
+// -- Control signal generation and next states
 always @(*) begin
 	next_state <= state;
 	tx_start_o <= 0;
-	cena <= 0;
+	tx_done <= 0;
 
 	case (state)
 		//-- Initial state. Start the trasmission
 		INI: begin
-			tx_start_o <= 1;
-			next_state <= TXCAR;
+			if (cenb) begin
+				tx_start_o <= 1;
+				next_state <= TXCAR;				
+			end
 		end
 
 		//-- Wait until one car is transmitted
 		TXCAR: begin
-			if (tx_ready_i)
+			if (tx_ready_i) begin
+				tx_done <= 1;
 				next_state <= NEXTCAR;
+			end
 		end
 
 		//-- Increment the character counter
 		//-- Finish when it is the last character
 		NEXTCAR: begin
-			cena <= 1;
-			if (char_count == 7) begin
-				next_state <= STOP;
-			end
-			else
-				next_state <= INI;
+			next_state <= INI;
 		end
 
 	endcase
 end
 
 
-reg [7:0] column;
+
+
+//================================================================================
+//================================================================================
+
+reg [1:0] my_state;
+reg [1:0] my_next_state;
+
+reg [6:0] column;
 reg [7:0] tx_data;
-always @(*) begin
-	column <= column;
-	tx_data <= tx_data;
-	if (tx_start_o) begin
-		column <= column + 1;
-	end
-	if (column == 79) begin
-		tx_data <= "\n";
-	end
+
+reg [11:0] pulse_count;
+
+localparam MAX_COL = 7;
+localparam NUM_OF_REGS = 20;  // 1919 regs in the scan schain
+localparam RUNNING_TICKS = 10; // deixar o soc executando ate preencher alguns registradores... 
+
+localparam GET_INTERNAL_STATE = 0;
+localparam CSOC_RUN = 1;
+localparam PROCEDURE_DONE = 2;
+
+always @(posedge clk) begin
+	if (!rstn)
+		my_state <= GET_INTERNAL_STATE;
+	else
+		my_state <= my_next_state;
 end
+
+always @(posedge clk) begin
+	if (!rstn)
+		csoc_clk <= 0;
+	else
+		if (tx_ready_i && !csoc_clk)
+			csoc_clk <= 1;
+		else
+			csoc_clk <= 0;
+end
+
+always @(*) begin
+
+	my_next_state <= my_state;
+
+	tx_data <= ".";
+	tx_data_o <= tx_data;
+	cenb <= 0;
+
+	column <= column;
+	pulse_count <= pulse_count;
+
+	csoc_test_tm <= 1;
+	csoc_test_se <= 1;
+	csoc_data_o[7] <= 1'b0;
+
+	case (my_state)
+		
+		GET_INTERNAL_STATE: begin
+
+			cenb <= 1;
+
+			if (csoc_clk) begin
+				pulse_count <= pulse_count + 1;
+				column <= column + 1;
+			end
+
+			if (column > MAX_COL)
+				tx_data <= "\n";
+			else
+				case (csoc_data_i[7])
+					1'b0: tx_data <= "0";
+					1'b1: tx_data <= "1";
+				endcase
+
+			if (pulse_count > NUM_OF_REGS) begin
+				pulse_count <= 0;
+				csoc_test_tm <= 0;
+				csoc_test_se <= 0;
+				my_next_state <= CSOC_RUN;
+				cenb <= 0;
+			end
+		end
+
+		CSOC_RUN: begin
+			if (csoc_clk) begin
+				pulse_count <= pulse_count + 1;
+			end
+			csoc_test_tm <= 0;
+			csoc_test_se <= 0;
+			if (pulse_count == RUNNING_TICKS) begin
+				pulse_count <= 0;
+				my_next_state <= PROCEDURE_DONE;
+			end
+		end	
+
+		// PROCEDURE_DONE: begin
+		// 	// -- TODO
+		// end
+
+	endcase
+end
+
 
 
 endmodule

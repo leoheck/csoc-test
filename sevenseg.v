@@ -85,10 +85,13 @@ always @(cnt[16:15] or display_0 or display_1 or display_2 or display_3) begin
 		8'h45: seg <= CHAR_E;
 		8'h47: seg <= CHAR_G;
 		8'h48: seg <= CHAR_H;
+		8'h4b: seg <= CHAR_K;
 		8'h4c: seg <= CHAR_L;
 		8'h50: seg <= CHAR_P;
 		8'h53: seg <= CHAR_S;
+		//
 		8'h5f: seg <= UNDERLINE;
+		//
 		8'h6f: seg <= CHAR_o;
 		default: seg <= OVERRLINE;
 	endcase

@@ -13,6 +13,7 @@ module csoc_test #(
 	parameter BAUDRATE = `B9600
 )(
 	input  wire clk, // -- System clock
+	input  wire rst, // -- Reset active high (@BTN0)
 
 	// UART
 	input  wire rx,  // -- Serial input
@@ -35,27 +36,28 @@ module csoc_test #(
 	output [7:0] csoc_data_o
 );
 
-wire rcv;        // -- Received character signal
-wire [7:0] data; // -- Received data
-reg rstn = 0;    // -- Reset signal
-wire ready;      // -- Transmitter ready signal
+wire rstn;          // -- Active low reset
 
-
-always @(posedge clk) begin
-	rstn <= 1;
-end
-
-uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
-	.clk(clk),
-	.rstn(rstn),
-	.rx(rx),
-	.rcv(rcv),
-	.data(data)
-);
+wire rx_rcv;        // -- Received character signal
+wire [7:0] rx_data; // -- Received data
 
 wire [7:0] tx_data; // -- Received data
 wire tx_start;      // -- 
 wire tx_ready;      // -- Transmitter ready signal
+
+assign rstn = ~rst;
+
+// always @(posedge clk) begin
+	// rstn <= 1;
+// end
+
+uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
+	.clk(clk),
+	.rstn(rstn),
+	.rcv(rx_rcv),
+	.data(rx_data),
+	.rx(rx)
+);
 
 uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 	.clk(clk),
@@ -74,8 +76,8 @@ cmd_parser cp0 (
 	.tx_data_o(tx_data),
 	.tx_ready_i(tx_ready),
 	// 
-	.rx_data(data),
-	.new_rx_data(rcv),
+	.rx_data(rx_data),
+	.new_rx_data(rx_rcv),
 	// 
 	.leds(leds),
 	.sseg(sseg),

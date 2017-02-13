@@ -4,7 +4,7 @@
 `define B57600 868
 `define B38400 1302
 `define B19200 2604
-`define B9600 5208
+`define B9600 5209
 `define B4800 10417
 `define B2400 20833
 `define B1200 41667

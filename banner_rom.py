@@ -10,7 +10,7 @@ def sort_uniq(sequence):
         operator.itemgetter(0),
         itertools.groupby(sorted(sequence)))
 
-date_str = datetime.datetime.now().strftime("%y-%m-%d")
+date_str = datetime.datetime.now().strftime("%Y-%m-%d")
 time_str = datetime.datetime.now().strftime("%H_%M")
 
 banner = "CSoC" + " " + date_str + " " + time_str + " " + "GAPH" + " " + "LHEC" + " "

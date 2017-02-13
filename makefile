@@ -68,7 +68,7 @@ fpga_init:
 
 upload:
 	/usr/bin/time -f "%E real, %U user, %S sys" \
-		djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
+	djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
 
 
 dev=/dev/ttyUSB0
@@ -76,7 +76,8 @@ dev=/dev/ttyUSB0
 baud=9600
 # to exit screen (Ctrl-A \)
 screen:
-	screen $(dev) $(baud)
+	@ #screen $(dev) $(baud)
+	cat $(dev)
 
 #====
 

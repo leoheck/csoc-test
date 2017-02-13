@@ -2,6 +2,8 @@
 # NEXYS2 50 MHz cristal oscillator
 NET "clk" LOC = "B8";
 
+NET "rst" LOC = "B18"; # BTN0
+
 # CSOC INTERFACE                       # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
 # NET "csoc_data_o<6>"  LOC = "L15";   # part_PIs[0002] - JA-1    - P3-1
 # NET "csoc_data_o<5>"  LOC = "K12";   # part_PIs[0003] - JA-2    - P3-2

@@ -1,0 +1,96 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Mon Feb 13 23:53:52 2017
+[*]
+[dumpfile] "/home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/uart.vcd"
+[dumpfile_mtime] "Mon Feb 13 23:53:00 2017"
+[dumpfile_size] 245562168
+[savefile] "/home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/waveform.gtkw"
+[timestart] 0
+[size] 2048 1128
+[pos] -1 -1
+*-33.531326 -1 21390000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb.
+[treeopen] tb.csoc.
+[sst_width] 200
+[signals_width] 209
+[sst_expanded] 1
+[sst_vpaned_height] 353
+@28
+tb.clk
+tb.csoc.rst
+(1)tb.csoc.master_rst_n[1:0]
+@200
+-
+@24
+tb.csoc.cp0.state[1:0]
+tb.csoc.cp0.next_state[1:0]
+@200
+-
+@24
+tb.csoc.cp0.my_state[7:0]
+tb.csoc.cp0.my_next_state[7:0]
+@200
+-
+@28
+tb.rx
+tb.tx
+tb.csoc.tx_ready
+tb.csoc.cp0.tx_start_o
+@22
+>-8000000
+tb.csoc.tx_data[7:0]
+@820
+>0
+tb.csoc.cp0.tx_data_o[7:0]
+@200
+-
+@28
+tb.csoc.cp0.cenb
+@24
+tb.csoc.cp0.pulse_count[11:0]
+@200
+-
+@28
+tb.csoc.csoc_clk
+tb.csoc.csoc_rstn
+tb.csoc.csoc_test_se
+tb.csoc.csoc_test_tm
+tb.csoc.csoc_uart_read
+tb.csoc.csoc_uart_write
+@22
+tb.csoc.csoc_data_i[7:0]
+@c00022
+tb.csoc.csoc_data_o[7:0]
+@28
+(0)tb.csoc.csoc_data_o[7:0]
+(1)tb.csoc.csoc_data_o[7:0]
+(2)tb.csoc.csoc_data_o[7:0]
+(3)tb.csoc.csoc_data_o[7:0]
+(4)tb.csoc.csoc_data_o[7:0]
+(5)tb.csoc.csoc_data_o[7:0]
+(6)tb.csoc.csoc_data_o[7:0]
+(7)tb.csoc.csoc_data_o[7:0]
+@1401200
+-group_end
+@200
+-
+@c00022
+tb.csoc.sseg[7:0]
+@28
+(0)tb.csoc.sseg[7:0]
+(1)tb.csoc.sseg[7:0]
+(2)tb.csoc.sseg[7:0]
+(3)tb.csoc.sseg[7:0]
+(4)tb.csoc.sseg[7:0]
+(5)tb.csoc.sseg[7:0]
+(6)tb.csoc.sseg[7:0]
+(7)tb.csoc.sseg[7:0]
+@1401200
+-group_end
+@a2
+tb.csoc.an[3:0]
+@22
+tb.leds[7:0]
+[pattern_trace] 1
+[pattern_trace] 0

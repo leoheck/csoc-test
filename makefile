@@ -74,7 +74,7 @@ fpga_init:
 upload:
 	/usr/bin/time -f "%E real, %U user, %S sys" \
 	djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
-	@ echo "\n\n ~ DONT FORGET TO RESET THE BOARD ~ \n\n"
+	@ echo -e "\n\n ~ DONT FORGET TO RESET THE BOARD ~ \n\n"
 
 dev=/dev/ttyUSB0
 # baud=115200
@@ -119,3 +119,23 @@ clean:
 	rm -rf xst
 	rm -f *.xst
 	rm -f *.bit
+	rm -f $(top)
+	rm -f *.vcd
+
+
+
+sim:
+	iverilog -o $(top) \
+		baudgen_rx.v \
+		baudgen_tx.v \
+		uart_rx.v \
+		uart_tx.v \
+		sevenseg.v \
+		uart_parser.v \
+		csoc_test.v \
+		tb.v
+	vvp $(top)
+
+wave:
+	gtkwave uart.vcd -a waveform.gtkw
+

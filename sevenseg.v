@@ -1,7 +1,8 @@
 
 module sevenseg
 (
-	input             clk,
+	input       clk,
+	input 		rstn,
 	input       [7:0] display_0,
 	input       [7:0] display_1,
 	input       [7:0] display_2,
@@ -68,9 +69,9 @@ always @(cnt[16:15] or display_0 or display_1 or display_2 or display_3) begin
 	case (digit)
 		8'h20: seg <= SPACE;
 		8'h2d: seg <= HYPHEN;
-		// 
-		8'h30: seg <= NUM_0; 
-		8'h31: seg <= NUM_1; 
+		//
+		8'h30: seg <= NUM_0;
+		8'h31: seg <= NUM_1;
 		8'h32: seg <= NUM_2;
 		8'h33: seg <= NUM_3;
 		8'h34: seg <= NUM_4;
@@ -79,7 +80,7 @@ always @(cnt[16:15] or display_0 or display_1 or display_2 or display_3) begin
 		8'h37: seg <= NUM_7;
 		8'h38: seg <= NUM_8;
 		8'h39: seg <= NUM_9;
-		// 
+		//
 		8'h41: seg <= CHAR_A;
 		8'h43: seg <= CHAR_C;
 		8'h45: seg <= CHAR_E;
@@ -98,7 +99,11 @@ always @(cnt[16:15] or display_0 or display_1 or display_2 or display_3) begin
 end
 
 always @(posedge clk) begin
-	cnt <= cnt + 1;
+	if (!rstn) begin
+		cnt <= 0;
+	end
+	else
+		cnt <= cnt + 1;
 end
 
 endmodule

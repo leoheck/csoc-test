@@ -40,12 +40,13 @@ wire rx_rcv;        // -- Received character signal
 wire [7:0] rx_data; // -- Received data
 
 wire [7:0] tx_data; // -- Received data
-wire tx_start;      // -- 
+wire tx_start;      // --
 wire tx_ready;      // -- Transmitter ready signal
 
 
-reg [2:0] master_rst_n;  // -- Master, active low, asynchonous reset, synchronous release
+reg [1:0] master_rst_n;  // -- Master, active low, asynchonous reset, synchronous release
 
+// Async reset synchronization
 always @(posedge clk or posedge rst) begin
 	if (rst) begin
 		master_rst_n <= 0;
@@ -77,18 +78,18 @@ uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 cmd_parser cp0 (
 	.clk(clk),
 	.rstn(master_rst_n[0]),
-	// 
+	//
 	.tx_start_o(tx_start),
 	.tx_data_o(tx_data),
 	.tx_ready_i(tx_ready),
-	// 
+	//
 	.rx_data(rx_data),
 	.new_rx_data(rx_rcv),
-	// 
+	//
 	.leds(leds),
 	.sseg(sseg),
 	.an(an),
-	// 
+	//
 	.csoc_clk(csoc_clk),
 	.csoc_rstn(csoc_rstn),
 	.csoc_test_se(csoc_test_se),

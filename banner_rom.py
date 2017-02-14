@@ -24,10 +24,12 @@ banner = "CSoC" + " " + date_str + " " + time_str + " " + "GAPH" + " " + "LHEC" 
 for i in range(len(list(banner))):
 	# print hex(banner[i])
 	# print "8'h{}", hex(banner[i])
-	print("8'h{0:02x}".format(ord(banner[i])))
+	# print("8'h{0:02x}".format(ord(banner[i])))
+	print("{0:02x}".format(ord(banner[i])))
 
 # print
 # print "Used characters"
 # used_chars = list(sort_uniq(list(banner)))
 # for i in range(len(used_chars)):
 	# print("8'h{0:02x} // '{0:c}'".format(ord(used_chars[i]), used_chars[i]))
+

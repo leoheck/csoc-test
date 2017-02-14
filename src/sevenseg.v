@@ -1,13 +1,13 @@
 
 module sevenseg
 (
-	input       clk,
-	input 		rstn,
-	input       [7:0] display_0,
-	input       [7:0] display_1,
-	input       [7:0] display_2,
-	input       [7:0] display_3,
-	input       [1:0] decplace,
+	input wire            clk,
+	input wire        rstn,
+	input wire  [7:0] display_0,
+	input wire  [7:0] display_1,
+	input wire  [7:0] display_2,
+	input wire  [7:0] display_3,
+	input wire  [1:0] decplace,
 	output reg  [7:0] seg,
 	output reg  [3:0] an
 );

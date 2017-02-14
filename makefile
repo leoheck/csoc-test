@@ -2,13 +2,11 @@
 # simulation with isim
 # https://www.xilinx.com/support/documentation/sw_manuals/xilinx13_1/ism_r_entering_simulation_tcl_commands.htm
 
-
-
 top = csoc_test
 target = xc3s1200e-fg320-4
 ucf = nexsy2.ucf
 
-src = $(shell find  *.v)
+src = $(shell find ./src -name '*.v')
 
 compile: $(top).xst $(top).bit
 all: compile upload screen
@@ -27,7 +25,7 @@ bitgen: $(top).bit
 
 $(top).xst: $(src)
 	@ echo "Creating $(top).xst"
-	./banner_rom.py > banner.txt 
+	./banner_rom.py > banner.txt
 	@ echo " \
 		run \
 		-ifn $(top).prj \
@@ -43,7 +41,7 @@ $(top).xst: $(src)
 $(top).prj: $(src)
 	@ echo "Creating $(top).prj"
 	@ rm -f $(top).prj
-	@ for i in $(shell echo $^); do \
+	@ for i in $(src); do \
 		echo "verilog work $$i" >> $(top).prj; \
 	done
 
@@ -58,6 +56,24 @@ $(top).ncd: $(top).ngd
 
 $(top)-routed.ncd: $(top).ncd
 	@ color.sh $(par) -ol high -w $(top).ncd $(top)-routed.ncd
+
+# NEW TOOL from:
+# http://outputlogic.com/xcell_using_xilinx_tools/74_xperts_04.pdf
+# https://www.xilinx.com/itp/xilinx10/isehelp/pta_r_standalone_tool_emulation.htm
+new:
+	# trce -intstyle ise -v 3 -s 4 -n 3 -fastpaths -xml $(top).twx $(top).ncd -o $(top).twr $(top).pcf
+	trce -intstyle ise -v 3 -s 4 -xml $(top) $(top).ncd -o $(top).twr $(top).pcf -ucf $(ucf)
+	# timingan -ucf $(ucf) -ngd $(top).ngd $(top).ncd $(top).pcf $(top).twx
+	# timingan $(top).twx
+
+# Xilinx sim example
+# http://insights.sigasi.com/tech/how-run-xilinx-isimfuse-command-line-linux.html
+# https://www.xilinx.com/support/documentation/sw_manuals/xilinx13_1/ism_r_entering_simulation_tcl_commands.htm
+sim:
+	fuse -intstyle ise -incremental -o $(top) -prj $(top).prj tb
+	# ./$(top) -tclbatch <tcl_file_name> -sdfmax <<anno_point>=sdf_file>.sdf>
+	./$(top) -gui
+
 
 $(top).bit: $(top)-routed.ncd
 	@ color.sh $(bitgen) -w $(top)-routed.ncd $(top).bit
@@ -121,10 +137,16 @@ clean:
 	rm -f *.bit
 	rm -f $(top)
 	rm -f *.vcd
+	rm -rf isim
+	rm -f fuseRelaunch.cmd
+	rm -f fuse.xmsgs
+	rm -f isim.wdb
+	rm -f csoc_test.twx
+	rm -f csoc_test.twr
+	rm -f usage_statistics_webtalk.html
 
 
-
-sim:
+free_sim:
 	iverilog -o $(top) \
 		baudgen_rx.v \
 		baudgen_tx.v \

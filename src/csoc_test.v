@@ -32,8 +32,8 @@ module csoc_test #(
 
 	input  wire  csoc_uart_write,
 	output wire  csoc_uart_read,
-	input  [7:0] csoc_data_i,
-	output [7:0] csoc_data_o
+	input  wire [7:0] csoc_data_i,
+	output wire [7:0] csoc_data_o
 );
 
 wire rx_rcv;        // -- Received character signal

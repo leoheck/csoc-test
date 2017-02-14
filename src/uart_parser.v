@@ -1,19 +1,19 @@
 
 module cmd_parser
 (
-	input clk,
-	input rstn,
+	input wire clk,
+	input wire rstn,
 
 	output reg        tx_start_o,     // signs that transmitter is busy
 	output reg  [7:0] tx_data_o,      // data byte to transmit
 	input  wire       tx_ready_i,
 
-	input       [7:0] rx_data,      // data byte received
-	input             new_rx_data,  // signs that a new byte was received
+	input wire      [7:0] rx_data,      // data byte received
+	input wire            new_rx_data,  // signs that a new byte was received
 
 	output reg  [7:0] leds,         // -- Board leds
-	output      [7:0] sseg,         // -- Board 7Segment Display
-	output      [3:0] an,           // -- 7Segment Display enable
+	output wire [7:0] sseg,         // -- Board 7Segment Display
+	output wire [3:0] an,           // -- 7Segment Display enable
 
 	// CSoC
 	output reg        csoc_clk,
@@ -23,7 +23,7 @@ module cmd_parser
 	input  wire       csoc_uart_write,
 	output reg        csoc_uart_read,
 	input  wire [7:0] csoc_data_i,
-	output reg  [7:0] csoc_data_o
+	output wire  [7:0] csoc_data_o
 );
 
 
@@ -321,7 +321,7 @@ always @(*) begin
 	csoc_test_se <= 1;
 	csoc_uart_read <= 0;
 	csoc_rstn <= 0;
-	csoc_data_o <= 0;
+	// csoc_data_o <= 0;
 
 	case (my_state)
 

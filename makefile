@@ -3,13 +3,14 @@
 # https://www.xilinx.com/support/documentation/sw_manuals/xilinx13_1/ism_r_entering_simulation_tcl_commands.htm
 
 top = csoc_test
+top_tb = tb
 target = xc3s1200e-fg320-4
 ucf = nexsy2.ucf
 
 src = $(shell find ./src -name '*.v')
 
 compile: $(top).xst $(top).bit
-all: compile upload screen
+all: compile upload serial
 
 xst      = xst      -intstyle silent
 ngdbuild = ngdbuild -intstyle silent
@@ -26,6 +27,7 @@ bitgen: $(top).bit
 $(top).xst: $(src)
 	@ echo "Creating $(top).xst"
 	./banner_rom.py > banner.txt
+	# ./memory_gen.py "data" > memory_gen.txt
 	@ echo " \
 		run \
 		-ifn $(top).prj \
@@ -69,8 +71,8 @@ new:
 # Xilinx sim example
 # http://insights.sigasi.com/tech/how-run-xilinx-isimfuse-command-line-linux.html
 # https://www.xilinx.com/support/documentation/sw_manuals/xilinx13_1/ism_r_entering_simulation_tcl_commands.htm
-sim:
-	fuse -intstyle ise -incremental -o $(top) -prj $(top).prj tb
+isim: $(top).prj
+	fuse -intstyle ise -incremental -o $(top) -prj $(top).prj $(top_tb)
 	# ./$(top) -tclbatch <tcl_file_name> -sdfmax <<anno_point>=sdf_file>.sdf>
 	./$(top) -gui
 
@@ -92,13 +94,16 @@ upload:
 	djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
 	@ echo -e "\n\n ~ DONT FORGET TO RESET THE BOARD ~ \n\n"
 
+
+# https://wiki.openwrt.org/doc/recipes/serialbaudratespeed
 dev=/dev/ttyUSB0
 # baud=115200
 baud=9600
-# to exit screen (Ctrl-A \)
-screen:
-	@ #screen $(dev) $(baud)
-	cat $(dev)
+# to exit screen (Ctrl-A \): screen $(dev) $(baud)
+serial:
+	stty sane
+	stty -F $(dev) $(baud) clocal cread cs8 -cstopb -parenb
+	cat < $(dev)
 
 #====
 
@@ -146,16 +151,19 @@ clean:
 	rm -f usage_statistics_webtalk.html
 
 
-free_sim:
+
+# FOSS tools
+
+sim:
 	iverilog -o $(top) \
-		baudgen_rx.v \
-		baudgen_tx.v \
-		uart_rx.v \
-		uart_tx.v \
-		sevenseg.v \
-		uart_parser.v \
-		csoc_test.v \
-		tb.v
+		src/baudgen_rx.v \
+		src/baudgen_tx.v \
+		src/uart_rx.v \
+		src/uart_tx.v \
+		src/sevenseg.v \
+		src/uart_parser.v \
+		src/csoc_test.v \
+		src/tb.v
 	vvp $(top)
 
 wave:

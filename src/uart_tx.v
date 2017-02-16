@@ -13,9 +13,9 @@
 //-- https://github.com/jamesbowman/swapforth
 //--
 //----------------------------------------------------------------------------
-`default_nettype none
 
-`include "baudgen.vh"
+`default_nettype none
+`include "src/baudgen.v"
 
 //--- Serial transmitter unit module
 //--- TX output is not registered

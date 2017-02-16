@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------------
 
 `default_nettype none
-`include "baudgen.vh"
+`include "src/baudgen.v"
 
 module csoc_test #(
 	parameter BAUDRATE = `B9600

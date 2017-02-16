@@ -1,10 +1,10 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Mon Feb 13 23:53:52 2017
+[*] Thu Feb 16 12:09:14 2017
 [*]
 [dumpfile] "/home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/uart.vcd"
-[dumpfile_mtime] "Mon Feb 13 23:53:00 2017"
-[dumpfile_size] 245562168
+[dumpfile_mtime] "Thu Feb 16 12:08:23 2017"
+[dumpfile_size] 260035971
 [savefile] "/home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/waveform.gtkw"
 [timestart] 0
 [size] 2048 1128
@@ -38,10 +38,8 @@ tb.tx
 tb.csoc.tx_ready
 tb.csoc.cp0.tx_start_o
 @22
->-8000000
 tb.csoc.tx_data[7:0]
 @820
->0
 tb.csoc.cp0.tx_data_o[7:0]
 @200
 -

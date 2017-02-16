@@ -26,9 +26,10 @@ module cmd_parser
 	output wire  [7:0] csoc_data_o
 );
 
-
-
-
+localparam INITIAL_MSG_SIZE = 30;
+reg [7:0] initial_msg [0:INITIAL_MSG_SIZE-1];
+reg [5:0] msg_ptr;
+reg [5:0] msg_ptr_nxt;
 
 reg [7:0] csoc_data_i_s;
 reg csoc_data_write_s;
@@ -39,12 +40,13 @@ reg        counting;
 reg [27:0] sevenseg;
 integer i;
 
-parameter BANNER_SIZE = 32;
+localparam BANNER_SIZE = 32;
 reg [7:0] banner [0:BANNER_SIZE-1];
 reg [7:0] banner_ptr;
 
 // Banner ROM initialization
 initial begin
+	$readmemh("initial_message.txt", initial_msg);
 	$readmemh("banner.txt", banner);
 end
 
@@ -136,32 +138,32 @@ always @(posedge clk) begin
 end
 
 always @(*) begin
-	next_state <= state;
-	tx_start_o <= 0;
+	next_state = state;
+	tx_start_o = 0;
 
 	case (state)
 		//-- Initial state. Start the trasmission
 		INI: begin
 			if (cenb) begin
-				tx_start_o <= 1;
-				next_state <= TXCAR;
+				tx_start_o = 1;
+				next_state = TXCAR;
 			end
 		end
 
 		//-- Wait until one car is transmitted
 		TXCAR: begin
-			tx_start_o <= 1;
+			tx_start_o = 1;
 			if (tx_ready_i) begin
-				// tx_start_o <= 0;
-				next_state <= NEXTCAR;
+				// tx_start_o = 0;
+				next_state = NEXTCAR;
 			end
 		end
 
 		//-- Increment the character counter
 		//-- Finish when it is the last character
 		NEXTCAR: begin
-			tx_start_o <= 1;
-			next_state <= INI;
+			tx_start_o = 1;
+			next_state = INI;
 		end
 
 	endcase
@@ -201,90 +203,110 @@ always @(posedge clk) begin
 		pulse_count <= 0;
 		tx_data <= "x";
 		column <= 0;
+		msg_ptr <= 0;
 	end
 	else begin
 		my_state <= my_next_state;
 		pulse_count <= pulse_count_nxt;
-		tx_data <= tx_data_nxt;
-		tx_data_o = tx_data;
 		column <= column_nxt;
+		msg_ptr <= msg_ptr_nxt;
+
+		tx_data_o <= tx_data;
+
+		case(my_state)
+			INIT_STATE: begin
+				tx_data <= initial_msg[msg_ptr_nxt];
+			end
+			default:
+				tx_data <= tx_data_nxt;
+		endcase
 	end
 end
 
 always @(*) begin
-	pulse_count_nxt <= pulse_count;
-	my_next_state <= my_state;
-	tx_data_nxt <= tx_data;
-	column_nxt <= column;
+	pulse_count_nxt = pulse_count;
+	my_next_state = my_state;
+	tx_data_nxt = tx_data;
+	column_nxt = column;
+	msg_ptr_nxt = msg_ptr;
 	case (my_state)
 
+		// transmit initial message
 		INIT_STATE: begin
-			pulse_count_nxt <= 1;
-			my_next_state <= GET_INTERNAL_STATE;
+			pulse_count_nxt = 1;
+			if (tx_ready_i) begin
+				msg_ptr_nxt = msg_ptr + 1;
+			end
+
+			// tx_data_nxt = initial_msg[msg_ptr];
+
+			if (msg_ptr == INITIAL_MSG_SIZE) begin
+				my_next_state = GET_INTERNAL_STATE;
+			end
 		end
 
 		GET_INTERNAL_STATE: begin
 			if (tx_ready_i) begin
-				pulse_count_nxt <= pulse_count + 1;
-				column_nxt <= column + 1;
+				pulse_count_nxt = pulse_count + 1;
+				column_nxt = column + 1;
 			end
 
 			if (column == MAX_COL) begin
-				column_nxt <= 0;
-				tx_data_nxt <= "\n";
+				column_nxt = 0;
+				tx_data_nxt = "\n";
 			end
 			else begin
 				case (csoc_data_i[7])
-					1'b0: tx_data_nxt <= "L";
-					1'b1: tx_data_nxt <= "H";
+					1'b0: tx_data_nxt = "L";
+					1'b1: tx_data_nxt = "H";
 				endcase
 			end
 
 			if (pulse_count == NUM_OF_REGS) begin
-				tx_data_nxt <= "\n";
-				pulse_count_nxt <= 0;
-				column_nxt <= 0;
-				my_next_state <= CSOC_RUN;
+				tx_data_nxt = "\n";
+				pulse_count_nxt = 0;
+				column_nxt = 0;
+				my_next_state = CSOC_RUN;
 			end
 		end
 
 		CSOC_RUN: begin
 
-			pulse_count_nxt <= pulse_count + 1;
+			pulse_count_nxt = pulse_count + 1;
 
 			if (pulse_count == RUNNING_TICKS) begin
-				pulse_count_nxt <= 0;
-				my_next_state <= GET_INTERNAL_STATE_2;
+				pulse_count_nxt = 0;
+				my_next_state = GET_INTERNAL_STATE_2;
 			end
 		end
 
 		GET_INTERNAL_STATE_2: begin
 			if (tx_ready_i) begin
-				pulse_count_nxt <= pulse_count + 1;
-				column_nxt <= column + 1;
+				pulse_count_nxt = pulse_count + 1;
+				column_nxt = column + 1;
 			end
 
 			if (column == MAX_COL) begin
-				column_nxt <= 0;
+				column_nxt = 0;
 			end
 			else begin
 				case (csoc_data_i[7])
-					1'b0: tx_data_nxt <= "L";
-					1'b1: tx_data_nxt <= "H";
+					1'b0: tx_data_nxt = "L";
+					1'b1: tx_data_nxt = "H";
 				endcase
 			end
 
 			if (pulse_count == NUM_OF_REGS) begin
-				tx_data_nxt <= "\n";
-				pulse_count_nxt <= 0;
-				column_nxt <= 0;
-				my_next_state <= PROCEDURE_DONE;
+				tx_data_nxt = "\n";
+				pulse_count_nxt = 0;
+				column_nxt = 0;
+				my_next_state = PROCEDURE_DONE;
 			end
 		end
 
 		PROCEDURE_DONE: begin
-			pulse_count_nxt <= 0;
-			my_next_state <= PROCEDURE_DONE;
+			pulse_count_nxt = 0;
+			my_next_state = PROCEDURE_DONE;
 		end
 	endcase
 end
@@ -316,37 +338,41 @@ end
 
 always @(*) begin
 
-	cenb <= 0;
-	csoc_test_tm <= 1;
-	csoc_test_se <= 1;
-	csoc_uart_read <= 0;
-	csoc_rstn <= 0;
-	// csoc_data_o <= 0;
+	cenb = 0;
+	csoc_test_tm = 1;
+	csoc_test_se = 1;
+	csoc_uart_read = 0;
+	csoc_rstn = 0;
+	// csoc_data_o = 0;
 
 	case (my_state)
 
+		INIT_STATE: begin
+			cenb = 1;
+		end
+
 		GET_INTERNAL_STATE: begin
-			cenb <= 1;
+			cenb = 1;
 			if (pulse_count == NUM_OF_REGS) begin
-				cenb <= 0;
+				cenb = 0;
 			end
 		end
 
 		CSOC_RUN: begin
 			if (pulse_count == RUNNING_TICKS) begin
-				cenb <= 1;
+				cenb = 1;
 			end
 		end
 
 		GET_INTERNAL_STATE_2: begin
-			cenb <= 1;
+			cenb = 1;
 			if (pulse_count == NUM_OF_REGS) begin
-				cenb <= 0;
+				cenb = 0;
 			end
 		end
 
 		PROCEDURE_DONE: begin
-			// my_next_state <= PROCEDURE_DONE;
+			// my_next_state = PROCEDURE_DONE;
 		end
 
 	endcase

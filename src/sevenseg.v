@@ -98,7 +98,7 @@ always @(cnt[16:15] or display_0 or display_1 or display_2 or display_3) begin
 	endcase
 end
 
-always @(posedge clk) begin
+always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
 		cnt <= 0;
 	end

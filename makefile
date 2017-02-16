@@ -102,8 +102,12 @@ baud=9600
 # to exit screen (Ctrl-A \): screen $(dev) $(baud)
 serial:
 	stty sane
-	stty -F $(dev) $(baud) clocal cread cs8 -cstopb -parenb
+	# stty -F $(dev) $(baud) clocal cread cs8 -cstopb -parenb
+	stty -F $(dev) $(baud)
 	cat < $(dev)
+
+screen:
+	screen $(dev) $(baud)
 
 #====
 
@@ -164,7 +168,11 @@ sim:
 		src/uart_parser.v \
 		src/csoc_test.v \
 		src/tb.v
+
+run:
 	vvp $(top)
+
+simrun: sim run
 
 wave:
 	gtkwave uart.vcd -a waveform.gtkw

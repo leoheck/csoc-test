@@ -1,54 +1,68 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Thu Feb 16 12:09:14 2017
+[*] Thu Feb 16 20:11:45 2017
 [*]
 [dumpfile] "/home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/uart.vcd"
-[dumpfile_mtime] "Thu Feb 16 12:08:23 2017"
-[dumpfile_size] 260035971
+[dumpfile_mtime] "Thu Feb 16 20:05:09 2017"
+[dumpfile_size] 267263795
 [savefile] "/home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/waveform.gtkw"
 [timestart] 0
-[size] 2048 1128
+[size] 1600 876
 [pos] -1 -1
-*-33.531326 -1 21390000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-33.997700 58399000000 21390000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.csoc.
+[treeopen] tb.csoc.cp0.
 [sst_width] 200
-[signals_width] 209
+[signals_width] 206
 [sst_expanded] 1
 [sst_vpaned_height] 353
 @28
-tb.clk
 tb.csoc.rst
 (1)tb.csoc.master_rst_n[1:0]
+tb.csoc.cp0.rstn
+tb.csoc.cp0.clk
 @200
 -
 @24
-tb.csoc.cp0.state[1:0]
-tb.csoc.cp0.next_state[1:0]
+tb.csoc.cp0.tx_state[1:0]
+tb.csoc.cp0.tx_state_nxt[1:0]
 @200
 -
-@24
-tb.csoc.cp0.my_state[7:0]
-tb.csoc.cp0.my_next_state[7:0]
+@2028
+^1 /tmp/../home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/parser_states.txt
+tb.csoc.cp0.state[2:0]
 @200
 -
 @28
-tb.rx
-tb.tx
-tb.csoc.tx_ready
+tb.csoc.tx
+tb.csoc.cp0.tx_en
+tb.csoc.cp0.tx_ready_i
 tb.csoc.cp0.tx_start_o
-@22
+tb.csoc.cp0.tx_start
+@c00022
 tb.csoc.tx_data[7:0]
+@28
+(0)tb.csoc.tx_data[7:0]
+(1)tb.csoc.tx_data[7:0]
+(2)tb.csoc.tx_data[7:0]
+(3)tb.csoc.tx_data[7:0]
+(4)tb.csoc.tx_data[7:0]
+(5)tb.csoc.tx_data[7:0]
+(6)tb.csoc.tx_data[7:0]
+(7)tb.csoc.tx_data[7:0]
+@1401200
+-group_end
 @820
 tb.csoc.cp0.tx_data_o[7:0]
 @200
 -
-@28
-tb.csoc.cp0.cenb
 @24
 tb.csoc.cp0.pulse_count[11:0]
 @200
 -
+@c00200
+-CSOC
 @28
 tb.csoc.csoc_clk
 tb.csoc.csoc_rstn
@@ -71,8 +85,11 @@ tb.csoc.csoc_data_o[7:0]
 (7)tb.csoc.csoc_data_o[7:0]
 @1401200
 -group_end
+-CSOC
 @200
 -
+@c00200
+-FPGA
 @c00022
 tb.csoc.sseg[7:0]
 @28
@@ -89,6 +106,8 @@ tb.csoc.sseg[7:0]
 @a2
 tb.csoc.an[3:0]
 @22
-tb.leds[7:0]
+tb.csoc.cp0.leds[7:0]
+@1401200
+-FPGA
 [pattern_trace] 1
 [pattern_trace] 0

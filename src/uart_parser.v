@@ -4,9 +4,9 @@ module cmd_parser
 	input wire clk,
 	input wire rstn,
 
-	output reg        tx_start_o,     // signs that transmitter is busy
-	output reg  [7:0] tx_data_o,      // data byte to transmit
-	input  wire       tx_ready_i,
+	output wire        tx_start_o,     // signs that transmitter is busy
+	output wire  [7:0] tx_data_o,      // data byte to transmit
+	input  wire        tx_ready_i,
 
 	input wire      [7:0] rx_data,      // data byte received
 	input wire            new_rx_data,  // signs that a new byte was received
@@ -26,27 +26,18 @@ module cmd_parser
 	output wire  [7:0] csoc_data_o
 );
 
-localparam INITIAL_MSG_SIZE = 30;
-reg [7:0] initial_msg [0:INITIAL_MSG_SIZE-1];
-reg [5:0] msg_ptr;
-reg [5:0] msg_ptr_nxt;
+// #=====================================================================================================
+// #=====================================================================================================
+// #=====================================================================================================
+// #=====================================================================================================
 
-reg [7:0] csoc_data_i_s;
-reg csoc_data_write_s;
-
-
-wire dp;
-reg        counting;
-reg [27:0] sevenseg;
-integer i;
-
+localparam BANNER_SPEED = 12000000; // 50MHz / BANNER_SPEED = (time in seconds for refresh)
 localparam BANNER_SIZE = 32;
 reg [7:0] banner [0:BANNER_SIZE-1];
 reg [7:0] banner_ptr;
+reg [27:0] sevenseg;
 
-// Banner ROM initialization
 initial begin
-	$readmemh("initial_message.txt", initial_msg);
 	$readmemh("banner.txt", banner);
 end
 
@@ -62,8 +53,7 @@ sevenseg ss0 (
 	.an(an)
 );
 
-parameter TIMEOUT = 12000000;
-always @(posedge clk) begin
+always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
 		sevenseg <= 1;
 		banner_ptr <= 0;
@@ -72,7 +62,7 @@ always @(posedge clk) begin
 	else begin
 		leds <= 0;
 		sevenseg <= sevenseg + 1;
-		if (sevenseg == TIMEOUT) begin
+		if (sevenseg == BANNER_SPEED) begin
 			sevenseg <= 1;
 			banner_ptr <= banner_ptr + 1;
 			if (banner_ptr == BANNER_SIZE) begin
@@ -83,140 +73,119 @@ always @(posedge clk) begin
 end
 
 
+// #=====================================================================================================
+// #=====================================================================================================
+// #=====================================================================================================
+// #=====================================================================================================
 
+// UART TRANSMITTER
 
-//-- Characters counter
-//-- It only counts when the cena control signal is enabled
-// reg [2:0] char_count;
-// reg cena; //-- Counter enable
-// reg [7:0] data;
+localparam TX_INIT = 0;
+localparam TX_IDLE = 1;
+localparam TX_SEND = 2;
 
-// always @(posedge clk) begin
-// 	if (!rstn) begin
-// 		char_count <= 0;
-// 	end
-// 	else if (cena) begin
-// 		char_count <= char_count + 1;
-// 	end
-// end
+reg tx_en;
+reg [1:0] tx_state, tx_state_nxt;
+reg tx_start, tx_start_nxt;
+reg tx_done, tx_done_nxt;
 
-//-- Multiplexer with the 8-character string to transmit
-// always @(*) begin
-// 	case (char_count)
-// 		3'd0: tx_data_o <= "\n";
-// 		3'd1: tx_data_o <= "1";
-// 		3'd2: tx_data_o <= "2";
-// 		3'd3: tx_data_o <= "3";
-// 		3'd4: tx_data_o <= "4";
-// 		3'd5: tx_data_o <= "5";
-// 		3'd6: tx_data_o <= "6";
-// 		3'd7: tx_data_o <= "7";
-// 		default: tx_data_o <= "_";
-// 	endcase
-// end
+assign tx_start_o = tx_start;
 
-
-//================================================================================
-
-localparam INI = 0;
-localparam TXCAR = 1;
-localparam NEXTCAR = 2;
-localparam STOP = 3;
-
-//-- fsm state
-reg [1:0] state;
-reg [1:0] next_state;
-
-reg cenb;
-
-always @(posedge clk) begin
+always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
-		state <= INI;
+		tx_state <= TX_INIT;
+		tx_start <= 0;
+		tx_done <= 1;
 	end
-	else
-		state <= next_state;
+	else begin
+		tx_state <= tx_state_nxt;
+		tx_start <= tx_start_nxt;
+		tx_done <= tx_done_nxt;
+	end
 end
 
 always @(*) begin
-	next_state = state;
-	tx_start_o = 0;
-
-	case (state)
-		//-- Initial state. Start the trasmission
-		INI: begin
-			if (cenb) begin
-				tx_start_o = 1;
-				next_state = TXCAR;
+	tx_state_nxt = tx_state;
+	tx_start_nxt = tx_start;
+	tx_done_nxt = tx_done;
+	case (tx_state)
+		TX_INIT: begin
+			tx_done_nxt = 1;
+			tx_start_nxt = 0;
+			tx_state_nxt = TX_IDLE;
+		end
+		TX_IDLE: begin
+			if (tx_en) begin
+				tx_start_nxt = 1;
+				tx_state_nxt = TX_SEND;
+				tx_done_nxt = 0;
 			end
 		end
-
-		//-- Wait until one car is transmitted
-		TXCAR: begin
-			tx_start_o = 1;
+		TX_SEND: begin
+			tx_done_nxt = 0;
 			if (tx_ready_i) begin
-				// tx_start_o = 0;
-				next_state = NEXTCAR;
+				tx_start_nxt = 0;
+				tx_state_nxt = TX_INIT;
+				tx_done_nxt = 1;
 			end
 		end
-
-		//-- Increment the character counter
-		//-- Finish when it is the last character
-		NEXTCAR: begin
-			tx_start_o = 1;
-			next_state = INI;
-		end
-
 	endcase
 end
 
 
+// #=====================================================================================================
+// #=====================================================================================================
+// #=====================================================================================================
+// #=====================================================================================================
 
+localparam INITIAL_MSG_SIZE = 29;
+reg [7:0] initial_msg [0:INITIAL_MSG_SIZE-1];
+reg [5:0] msg_ptr, msg_ptr_nxt;
 
-//================================================================================
-//================================================================================
+reg [7:0] csoc_data_i_s;
+reg csoc_data_write_s;
 
-reg [7:0] my_state;
-reg [7:0] my_next_state;
+initial begin
+	$readmemh("initial_message.txt", initial_msg);
+end
 
-reg [6:0] column;
-reg [6:0] column_nxt;
-
-reg [7:0] tx_data;
-reg [7:0] tx_data_nxt;
-
-reg [11:0] pulse_count;
-reg [11:0] pulse_count_nxt;
+localparam
+	INIT_STATE = 0,
+	INITIAL_MESSAGE = 1,
+	GET_INTERNAL_STATE = 2,
+	CSOC_RUN = 3,
+	PROCEDURE_DONE = 4;
 
 localparam MAX_COL = 8;
 localparam NUM_OF_REGS = 20;  // 1919 regs in the scan schain
 localparam RUNNING_TICKS = 6; // deixar o soc executando ate preencher alguns registradores...
 
-localparam INIT_STATE = 0;
-localparam GET_INTERNAL_STATE = 1;
-localparam CSOC_RUN = 2;
-localparam GET_INTERNAL_STATE_2 = 3;
-localparam PROCEDURE_DONE = 4;
+reg [2:0] state, state_nxt;
+reg [7:0] tx_data, tx_data_nxt;
+reg [11:0] pulse_count, pulse_count_nxt;
+reg [6:0] col_break, col_break_nxt;
 
-always @(posedge clk) begin
+assign tx_data_o = tx_data;
+
+always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
-		my_state <= INIT_STATE;
+		state <= INIT_STATE;
+		tx_data <= 8'bz;
+		// tx_data <= 8'b0;
 		pulse_count <= 0;
-		tx_data <= "x";
-		column <= 0;
+		col_break <= 0;
 		msg_ptr <= 0;
 	end
 	else begin
-		my_state <= my_next_state;
+		state <= state_nxt;
 		pulse_count <= pulse_count_nxt;
-		column <= column_nxt;
+		col_break <= col_break_nxt;
 		msg_ptr <= msg_ptr_nxt;
-
-		tx_data_o <= tx_data;
-
-		case(my_state)
-			INIT_STATE: begin
-				tx_data <= initial_msg[msg_ptr_nxt];
-			end
+		case (state)
+			INIT_STATE:
+				tx_data <= initial_msg[msg_ptr];
+			INITIAL_MESSAGE:
+				tx_data <= initial_msg[msg_ptr];
 			default:
 				tx_data <= tx_data_nxt;
 		endcase
@@ -224,35 +193,45 @@ always @(posedge clk) begin
 end
 
 always @(*) begin
+	state_nxt = state;
+	tx_data_nxt = 8'bz;
 	pulse_count_nxt = pulse_count;
-	my_next_state = my_state;
-	tx_data_nxt = tx_data;
-	column_nxt = column;
+	col_break_nxt = col_break;
 	msg_ptr_nxt = msg_ptr;
-	case (my_state)
+	//
+	tx_en = 0;
+	case (state)
 
-		// transmit initial message
 		INIT_STATE: begin
-			pulse_count_nxt = 1;
-			if (tx_ready_i) begin
+			tx_en = 1;
+			state_nxt = INITIAL_MESSAGE;
+			pulse_count_nxt = 0;
+			col_break_nxt = 0;
+			msg_ptr_nxt = 0;
+		end
+
+		INITIAL_MESSAGE: begin
+			tx_en = 1;
+			if (tx_done) begin
+				tx_en = 0;
 				msg_ptr_nxt = msg_ptr + 1;
 			end
 
-			// tx_data_nxt = initial_msg[msg_ptr];
-
-			if (msg_ptr == INITIAL_MSG_SIZE) begin
-				my_next_state = GET_INTERNAL_STATE;
-			end
+			// if (msg_ptr == INITIAL_MSG_SIZE-1) begin
+			// 	state_nxt = GET_INTERNAL_STATE;
+			// end
 		end
 
 		GET_INTERNAL_STATE: begin
+			tx_en = 1;
+			// if (csoc_clk) begin
 			if (tx_ready_i) begin
 				pulse_count_nxt = pulse_count + 1;
-				column_nxt = column + 1;
+				col_break_nxt = col_break + 1;
 			end
 
-			if (column == MAX_COL) begin
-				column_nxt = 0;
+			if (col_break == MAX_COL) begin
+				col_break_nxt = 0;
 				tx_data_nxt = "\n";
 			end
 			else begin
@@ -263,63 +242,37 @@ always @(*) begin
 			end
 
 			if (pulse_count == NUM_OF_REGS) begin
-				tx_data_nxt = "\n";
 				pulse_count_nxt = 0;
-				column_nxt = 0;
-				my_next_state = CSOC_RUN;
+				col_break_nxt = 0;
+				state_nxt = CSOC_RUN;
 			end
 		end
 
 		CSOC_RUN: begin
-
 			pulse_count_nxt = pulse_count + 1;
-
 			if (pulse_count == RUNNING_TICKS) begin
 				pulse_count_nxt = 0;
-				my_next_state = GET_INTERNAL_STATE_2;
+				state_nxt = PROCEDURE_DONE;
 			end
 		end
 
-		GET_INTERNAL_STATE_2: begin
-			if (tx_ready_i) begin
-				pulse_count_nxt = pulse_count + 1;
-				column_nxt = column + 1;
-			end
-
-			if (column == MAX_COL) begin
-				column_nxt = 0;
-			end
-			else begin
-				case (csoc_data_i[7])
-					1'b0: tx_data_nxt = "L";
-					1'b1: tx_data_nxt = "H";
-				endcase
-			end
-
-			if (pulse_count == NUM_OF_REGS) begin
-				tx_data_nxt = "\n";
-				pulse_count_nxt = 0;
-				column_nxt = 0;
-				my_next_state = PROCEDURE_DONE;
-			end
-		end
-
-		PROCEDURE_DONE: begin
-			pulse_count_nxt = 0;
-			my_next_state = PROCEDURE_DONE;
-		end
 	endcase
 end
 
-always @(posedge clk) begin
+
+// #============================================
+
+// CSOC CLOCK GEN
+
+always @(posedge clk or negedge rstn) begin
 	if (!rstn)
 		csoc_clk <= 0;
 	else
 
-		case (my_state)
+		case (state)
 			GET_INTERNAL_STATE:
 				// csoc_clk = ~csoc_clk;
-				if (tx_ready_i & cenb & !csoc_clk)
+				if (tx_ready_i & tx_en & !csoc_clk)
 					csoc_clk <= 1;
 				else
 					csoc_clk <= 0;
@@ -328,7 +281,7 @@ always @(posedge clk) begin
 				csoc_clk <= ~csoc_clk;
 
 			GET_INTERNAL_STATE:
-				if (tx_ready_i & cenb & !csoc_clk)
+				if (tx_ready_i & tx_en & !csoc_clk)
 					csoc_clk <= 1;
 				else
 					csoc_clk <= 0;
@@ -336,146 +289,31 @@ always @(posedge clk) begin
 
 end
 
-always @(*) begin
-
-	cenb = 0;
-	csoc_test_tm = 1;
-	csoc_test_se = 1;
-	csoc_uart_read = 0;
-	csoc_rstn = 0;
-	// csoc_data_o = 0;
-
-	case (my_state)
-
-		INIT_STATE: begin
-			cenb = 1;
-		end
-
-		GET_INTERNAL_STATE: begin
-			cenb = 1;
-			if (pulse_count == NUM_OF_REGS) begin
-				cenb = 0;
-			end
-		end
-
-		CSOC_RUN: begin
-			if (pulse_count == RUNNING_TICKS) begin
-				cenb = 1;
-			end
-		end
-
-		GET_INTERNAL_STATE_2: begin
-			cenb = 1;
-			if (pulse_count == NUM_OF_REGS) begin
-				cenb = 0;
-			end
-		end
-
-		PROCEDURE_DONE: begin
-			// my_next_state = PROCEDURE_DONE;
-		end
-
-	endcase
-end
-
-
-
-
-
-
-// always @(posedge clk) begin
-// 	if (!rstn)
-// 		csoc_clk <= 0;
-// 	else
-// 		if (tx_ready_i && !csoc_clk)
-// 			csoc_clk <= 1;
-// 		else
-// 			csoc_clk <= 0;
-// end
-
-// always @(posedge clk) begin
-// 	if (!rstn) begin
-// 		tx_data_o <= " ";
-// 		pulse_count <= 0;
-// 		column <= 0;
-// 	end
-// 	else begin
-// 		case (my_state)
-// 			INIT_STATE: begin
-// 				column <= 0;
-// 				pulse_count <= 0;
-// 			end
-// 			GET_INTERNAL_STATE: begin
-// 				if (csoc_clk) begin
-// 					pulse_count <= pulse_count + 1;
-
-// 					if (column == MAX_COL)
-// 						tx_data_o <= "\n";
-// 					else
-// 						case (csoc_data_i[7])
-// 							1'b0: tx_data_o <= "L";
-// 							1'b1: tx_data_o <= "H";
-// 						endcase
-
-// 					column <= column + 1;
-// 				end
-
-// 			end
-
-// 			CSOC_RUN: begin
-// 				pulse_count <= pulse_count + 1;
-// 			end
-
-// 			default:
-// 				pulse_count <= 0;
-// 		endcase
-
-// 	end
-// end
-
 // always @(*) begin
-
-// 	my_next_state <= my_state;
-
-// 	cenb <= 0;
-// 	csoc_test_tm <= 1;
-// 	csoc_test_se <= 1;
-
-// 	csoc_uart_read <= 0;
-// 	csoc_rstn <= 0;
-// 	csoc_data_o <= 0;
-
-// 	case (my_state)
-
-// 		INIT_STATE: begin
-// 			my_next_state <= GET_INTERNAL_STATE;
-// 		end
-
-// 		GET_INTERNAL_STATE: begin
-// 			cenb <= 1;
-// 			if (pulse_count == NUM_OF_REGS) begin
-// 				cenb <= 0;
-// 				pulse_count <= 0;
-// 				my_next_state <= CSOC_RUN;
-// 			end
-// 		end
-
-// 		CSOC_RUN: begin
-// 			csoc_test_tm <= 0;
-// 			csoc_test_se <= 0;
-// 			if (pulse_count == RUNNING_TICKS) begin
-// 				pulse_count <= 0;
-// 				my_next_state <= PROCEDURE_DONE;
-// 			end
-// 		end
-
-// 		PROCEDURE_DONE: begin
-// 			my_next_state <= PROCEDURE_DONE;
-// 		end
-
-// 	endcase
+// 	// tx_en = 0;
+// 	csoc_test_tm = 1;
+// 	csoc_test_se = 1;
+// 	csoc_uart_read = 0;
+// 	csoc_rstn = 0;
+// 	// case (state)
+// 	// 	INIT_STATE: begin
+// 	// 		tx_en = 0;
+// 	// 	end
+// 	// 	INITIAL_MESSAGE: begin
+// 	// 		tx_en = 1;
+// 	// 	end
+// 	// 	GET_INTERNAL_STATE: begin
+// 	// 		tx_en = 1;
+// 	// 		if (pulse_count == NUM_OF_REGS) begin
+// 	// 			tx_en = 0;
+// 	// 		end
+// 	// 	end
+// 	// 	CSOC_RUN: begin
+// 	// 		if (pulse_count == RUNNING_TICKS) begin
+// 	// 			tx_en = 1;
+// 	// 		end
+// 	// 	end
+// 	// endcase
 // end
-
-
 
 endmodule

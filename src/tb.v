@@ -1,5 +1,5 @@
 
-`timescale 1us/1ns
+`timescale 1ns/100ps
 
 module tb ();
 
@@ -50,7 +50,8 @@ initial begin
 
 	$display("UART Running...");
 	$dumpfile("uart.vcd");
-	$dumpvars(0);
+	// $dumpvars(0);
+	$dumpvars(0, csoc);
 
 	clk = 0;
 	rst = 1;
@@ -64,7 +65,7 @@ initial begin
 	// $display("\t\ttime,\tclk,\trst,\tenable,\tcount");
 	// $monitor("%d,\t%b,\t%b,\t%b,\t%d",$time, clk,rst,enable,count);
 
-	#100000000  $finish;
+	#100000  $finish;
 end
 
 endmodule

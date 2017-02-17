@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Thu Feb 16 20:11:45 2017
+[*] Fri Feb 17 13:17:20 2017
 [*]
 [dumpfile] "/home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/uart.vcd"
-[dumpfile_mtime] "Thu Feb 16 20:05:09 2017"
-[dumpfile_size] 267263795
+[dumpfile_mtime] "Fri Feb 17 13:17:13 2017"
+[dumpfile_size] 30375942
 [savefile] "/home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/waveform.gtkw"
 [timestart] 0
 [size] 1600 876
 [pos] -1 -1
-*-33.997700 58399000000 21390000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-19.032938 340000 21390000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.csoc.
 [treeopen] tb.csoc.cp0.
@@ -18,28 +18,35 @@
 [sst_expanded] 1
 [sst_vpaned_height] 353
 @28
-tb.csoc.rst
-(1)tb.csoc.master_rst_n[1:0]
 tb.csoc.cp0.rstn
 tb.csoc.cp0.clk
 @200
 -
+@2028
+^1 /tmp/../home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/tx_states.txt
+tb.csoc.cp0.tx_state[2:0]
 @24
-tb.csoc.cp0.tx_state[1:0]
-tb.csoc.cp0.tx_state_nxt[1:0]
+tb.csoc.cp0.tx_state_nxt[2:0]
 @200
 -
 @2028
-^1 /tmp/../home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/parser_states.txt
+^2 /tmp/../home/lheck/Desktop/nexys2-samples/samples/verilog/csoc_test/parser_states.txt
 tb.csoc.cp0.state[2:0]
+@24
+tb.csoc.cp0.state_nxt[2:0]
 @200
 -
 @28
 tb.csoc.tx
-tb.csoc.cp0.tx_en
 tb.csoc.cp0.tx_ready_i
-tb.csoc.cp0.tx_start_o
+@200
+-
+@28
 tb.csoc.cp0.tx_start
+tb.csoc.cp0.dta_sent
+tb.csoc.cp0.has_new_data
+@200
+-
 @c00022
 tb.csoc.tx_data[7:0]
 @28

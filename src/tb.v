@@ -65,7 +65,7 @@ initial begin
 	// $display("\t\ttime,\tclk,\trst,\tenable,\tcount");
 	// $monitor("%d,\t%b,\t%b,\t%b,\t%d",$time, clk,rst,enable,count);
 
-	#100000  $finish;
+	#100000000  $finish;
 end
 
 endmodule

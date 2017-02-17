@@ -1,7 +1,7 @@
-## this is a comment
+## MAIN STATES
 000 ?red?INIT
 001 ?blue?MSG
 010 ?green?INT
-011 ?yellow?RUN
-100 ?gray?DONE
+011 ?red?RUN
+100 ?black?DONE
 

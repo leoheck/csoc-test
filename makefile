@@ -1,4 +1,6 @@
 
+# tmp: simrun
+
 # simulation with isim
 # https://www.xilinx.com/support/documentation/sw_manuals/xilinx13_1/ism_r_entering_simulation_tcl_commands.htm
 

@@ -73,6 +73,10 @@ always @(posedge clk or negedge rstn) begin
 end
 
 
+
+
+
+
 // #=====================================================================================================
 // #=====================================================================================================
 // #=====================================================================================================
@@ -80,14 +84,16 @@ end
 
 // UART TRANSMITTER
 
-localparam TX_INIT = 0;
-localparam TX_IDLE = 1;
-localparam TX_SEND = 2;
+localparam
+	TX_INIT = 0,
+	TX_IDLE = 1,
+	TX_START = 2,
+	TX_SEND = 3;
 
-reg tx_en;
-reg [1:0] tx_state, tx_state_nxt;
+reg [2:0] tx_state, tx_state_nxt;
+reg has_new_data, has_new_data_nxt;
+reg dta_sent, dta_sent_nxt;
 reg tx_start, tx_start_nxt;
-reg tx_done, tx_done_nxt;
 
 assign tx_start_o = tx_start;
 
@@ -95,38 +101,42 @@ always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
 		tx_state <= TX_INIT;
 		tx_start <= 0;
-		tx_done <= 1;
 	end
 	else begin
 		tx_state <= tx_state_nxt;
 		tx_start <= tx_start_nxt;
-		tx_done <= tx_done_nxt;
 	end
 end
 
 always @(*) begin
 	tx_state_nxt = tx_state;
 	tx_start_nxt = tx_start;
-	tx_done_nxt = tx_done;
 	case (tx_state)
 		TX_INIT: begin
-			tx_done_nxt = 1;
 			tx_start_nxt = 0;
 			tx_state_nxt = TX_IDLE;
 		end
 		TX_IDLE: begin
-			if (tx_en) begin
+			tx_start_nxt = 0;
+			if (tx_ready_i && has_new_data) begin
 				tx_start_nxt = 1;
-				tx_state_nxt = TX_SEND;
-				tx_done_nxt = 0;
+				tx_state_nxt = TX_START;
 			end
 		end
+		TX_START: begin
+			tx_start_nxt = 1;
+			tx_state_nxt = TX_SEND;
+		end
 		TX_SEND: begin
-			tx_done_nxt = 0;
-			if (tx_ready_i) begin
+			tx_start_nxt = 1;
+			if (dta_sent) begin
 				tx_start_nxt = 0;
-				tx_state_nxt = TX_INIT;
-				tx_done_nxt = 1;
+				if (has_new_data)
+					tx_state_nxt = TX_START;
+				else begin
+					tx_start_nxt = 0;
+					tx_state_nxt = TX_IDLE;
+				end
 			end
 		end
 	endcase
@@ -171,19 +181,23 @@ always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
 		state <= INIT_STATE;
 		tx_data <= 8'bz;
-		// tx_data <= 8'b0;
 		pulse_count <= 0;
 		col_break <= 0;
 		msg_ptr <= 0;
+		has_new_data <= 1;
+		dta_sent <= 0;
 	end
 	else begin
 		state <= state_nxt;
 		pulse_count <= pulse_count_nxt;
 		col_break <= col_break_nxt;
 		msg_ptr <= msg_ptr_nxt;
+		has_new_data <= has_new_data_nxt;
+		dta_sent <= dta_sent_nxt;
 		case (state)
-			INIT_STATE:
+			INIT_STATE: begin
 				tx_data <= initial_msg[msg_ptr];
+			end
 			INITIAL_MESSAGE:
 				tx_data <= initial_msg[msg_ptr];
 			default:
@@ -198,32 +212,39 @@ always @(*) begin
 	pulse_count_nxt = pulse_count;
 	col_break_nxt = col_break;
 	msg_ptr_nxt = msg_ptr;
-	//
-	tx_en = 0;
+	has_new_data_nxt = has_new_data;
+	dta_sent_nxt = dta_sent;
 	case (state)
 
 		INIT_STATE: begin
-			tx_en = 1;
 			state_nxt = INITIAL_MESSAGE;
-			pulse_count_nxt = 0;
-			col_break_nxt = 0;
-			msg_ptr_nxt = 0;
+			has_new_data_nxt = 1;
 		end
 
 		INITIAL_MESSAGE: begin
-			tx_en = 1;
-			if (tx_done) begin
-				tx_en = 0;
+			dta_sent_nxt = 0;
+			has_new_data_nxt = 0;
+			if (tx_state == TX_SEND && tx_ready_i) begin
+				has_new_data_nxt = 1;
+				dta_sent_nxt = 1;
 				msg_ptr_nxt = msg_ptr + 1;
 			end
 
-			// if (msg_ptr == INITIAL_MSG_SIZE-1) begin
-			// 	state_nxt = GET_INTERNAL_STATE;
-			// end
+			if (msg_ptr == INITIAL_MSG_SIZE-1) begin
+				has_new_data_nxt = 0;
+				// state_nxt = GET_INTERNAL_STATE;
+				state_nxt = PROCEDURE_DONE;
+			end
 		end
 
+
+
+
+		//
+		// POR ENQUANTO ACABA POR AQUI
+		//
+
 		GET_INTERNAL_STATE: begin
-			tx_en = 1;
 			// if (csoc_clk) begin
 			if (tx_ready_i) begin
 				pulse_count_nxt = pulse_count + 1;
@@ -272,7 +293,7 @@ always @(posedge clk or negedge rstn) begin
 		case (state)
 			GET_INTERNAL_STATE:
 				// csoc_clk = ~csoc_clk;
-				if (tx_ready_i & tx_en & !csoc_clk)
+				if (tx_ready_i & has_new_data & !csoc_clk)
 					csoc_clk <= 1;
 				else
 					csoc_clk <= 0;
@@ -281,39 +302,12 @@ always @(posedge clk or negedge rstn) begin
 				csoc_clk <= ~csoc_clk;
 
 			GET_INTERNAL_STATE:
-				if (tx_ready_i & tx_en & !csoc_clk)
+				if (tx_ready_i & has_new_data & !csoc_clk)
 					csoc_clk <= 1;
 				else
 					csoc_clk <= 0;
 		endcase
 
 end
-
-// always @(*) begin
-// 	// tx_en = 0;
-// 	csoc_test_tm = 1;
-// 	csoc_test_se = 1;
-// 	csoc_uart_read = 0;
-// 	csoc_rstn = 0;
-// 	// case (state)
-// 	// 	INIT_STATE: begin
-// 	// 		tx_en = 0;
-// 	// 	end
-// 	// 	INITIAL_MESSAGE: begin
-// 	// 		tx_en = 1;
-// 	// 	end
-// 	// 	GET_INTERNAL_STATE: begin
-// 	// 		tx_en = 1;
-// 	// 		if (pulse_count == NUM_OF_REGS) begin
-// 	// 			tx_en = 0;
-// 	// 		end
-// 	// 	end
-// 	// 	CSOC_RUN: begin
-// 	// 		if (pulse_count == RUNNING_TICKS) begin
-// 	// 			tx_en = 1;
-// 	// 		end
-// 	// 	end
-// 	// endcase
-// end
 
 endmodule

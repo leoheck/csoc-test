@@ -48,9 +48,8 @@ csoc_test csoc (
 
 initial begin
 
-	$display("UART Running...");
+	$display("CSoC Test Running...");
 	$dumpfile("uart.vcd");
-	// $dumpvars(0);
 	$dumpvars(0, csoc);
 
 	clk = 0;
@@ -65,7 +64,7 @@ initial begin
 	// $display("\t\ttime,\tclk,\trst,\tenable,\tcount");
 	// $monitor("%d,\t%b,\t%b,\t%b,\t%d",$time, clk,rst,enable,count);
 
-	#100000000  $finish;
+	#250000000  $finish;
 end
 
 endmodule

@@ -90,12 +90,12 @@ cmd_parser cp0 (
 	.sseg(sseg),
 	.an(an),
 	//
-	.csoc_clk(csoc_clk),
-	.csoc_rstn(csoc_rstn),
-	.csoc_test_se(csoc_test_se),
-	.csoc_test_tm(csoc_test_tm),
-	.csoc_uart_write(csoc_uart_write),
-	.csoc_uart_read(csoc_uart_read),
+	.csoc_clk_o(csoc_clk),
+	.csoc_rstn_o(csoc_rstn),
+	.csoc_test_se_o(csoc_test_se),
+	.csoc_test_tm_o(csoc_test_tm),
+	.csoc_uart_write_i(csoc_uart_write),
+	.csoc_uart_read_o(csoc_uart_read),
 	.csoc_data_i(csoc_data_i),
 	.csoc_data_o(csoc_data_o)
 );

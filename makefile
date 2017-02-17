@@ -1,5 +1,8 @@
 
-# tmp: simrun
+#sublime_text: sim
+
+## CONFIGURE O AMBIENTE COM:
+## source setup-env.sh
 
 # simulation with isim
 # https://www.xilinx.com/support/documentation/sw_manuals/xilinx13_1/ism_r_entering_simulation_tcl_commands.htm
@@ -7,7 +10,7 @@
 top = csoc_test
 top_tb = tb
 target = xc3s1200e-fg320-4
-ucf = nexsy2.ucf
+ucf = nexsy2-1200.ucf
 
 src = $(shell find ./src -name '*.v')
 
@@ -26,10 +29,13 @@ map: $(top).ncd
 par: $(top)-routed.ncd
 bitgen: $(top).bit
 
-$(top).xst: $(src)
+required:
+	@ echo "Creating memories"
+	./scripts/banner_rom.py > banner.txt
+	./scripts/memory_gen.py > initial_message.txt
+
+$(top).xst: $(src) required
 	@ echo "Creating $(top).xst"
-	./banner_rom.py > banner.txt
-	# ./memory_gen.py "data" > memory_gen.txt
 	@ echo " \
 		run \
 		-ifn $(top).prj \
@@ -50,16 +56,16 @@ $(top).prj: $(src)
 	done
 
 $(top).ngc: $(top).prj
-	@ color.sh $(xst) -ifn $(top).xst
+	@ ./scripts/color.sh $(xst) -ifn $(top).xst
 
 $(top).ngd: $(top).ngc $(ucf)
-	@ color.sh $(ngdbuild) -uc $(ucf) $(top).ngc
+	@ ./scripts/color.sh $(ngdbuild) -uc $(ucf) $(top).ngc
 
 $(top).ncd: $(top).ngd
-	@ color.sh $(map) $(top).ngd 2>&1
+	@ ./scripts/color.sh $(map) $(top).ngd 2>&1
 
 $(top)-routed.ncd: $(top).ncd
-	@ color.sh $(par) -ol high -w $(top).ncd $(top)-routed.ncd
+	@ ./scripts/color.sh $(par) -ol high -w $(top).ncd $(top)-routed.ncd
 
 # NEW TOOL from:
 # http://outputlogic.com/xcell_using_xilinx_tools/74_xperts_04.pdf
@@ -80,7 +86,7 @@ isim: $(top).prj
 
 
 $(top).bit: $(top)-routed.ncd
-	@ color.sh $(bitgen) -w $(top)-routed.ncd $(top).bit
+	@ ./scripts/color.sh $(bitgen) -w $(top)-routed.ncd $(top).bit
 	@ du -sh $(top).bit
 
 #====
@@ -114,53 +120,56 @@ screen:
 #====
 
 clean:
-	rm -f *.xrpt
-	rm -f *-routed*
-	rm -f *-routed_pad.tx
-	rm -f *.bgn
-	rm -f *.bld
-	rm -f *.drc
-	rm -f *.log
-	rm -f *.lso
-	rm -f *.map
-	rm -f *.mrp
-	rm -f *.ncd
-	rm -f *.ngc
-	rm -f *.ngd
-	rm -f *.ngm
-	rm -f *.pcf
-	rm -f *.prj
-	rm -f *.srp
-	rm -f *.svf
-	rm -f *.xrpt
-	rm -f *.xwbt
-	rm -f *_signalbrowser.*
-	rm -f *_summary.xml
-	rm -f *_usage*
-	rm -f netlist.lst
-	rm -f param.opt
-	rm -f smartpreview.twr
-	rm -f timing.twr
-	rm -rf xlnx_auto_*_xdb
-	rm -rf _xmsgs
-	rm -rf xst
-	rm -f *.xst
-	rm -f *.bit
-	rm -f $(top)
-	rm -f *.vcd
-	rm -rf isim
-	rm -f fuseRelaunch.cmd
-	rm -f fuse.xmsgs
-	rm -f isim.wdb
-	rm -f csoc_test.twx
-	rm -f csoc_test.twr
-	rm -f usage_statistics_webtalk.html
+	@ rm -f *.xrpt
+	@ rm -f *-routed*
+	@ rm -f *-routed_pad.tx
+	@ rm -f *.bgn
+	@ rm -f *.bld
+	@ rm -f *.drc
+	@ rm -f *.log
+	@ rm -f *.lso
+	@ rm -f *.map
+	@ rm -f *.mrp
+	@ rm -f *.ncd
+	@ rm -f *.ngc
+	@ rm -f *.ngd
+	@ rm -f *.ngm
+	@ rm -f *.pcf
+	@ rm -f *.prj
+	@ rm -f *.srp
+	@ rm -f *.svf
+	@ rm -f *.xrpt
+	@ rm -f *.xwbt
+	@ rm -f *_signalbrowser.*
+	@ rm -f *_summary.xml
+	@ rm -f *_usage*
+	@ rm -f netlist.lst
+	@ rm -f param.opt
+	@ rm -f smartpreview.twr
+	@ rm -f timing.twr
+	@ rm -rf xlnx_auto_*_xdb
+	@ rm -rf _xmsgs
+	@ rm -rf xst
+	@ rm -f *.xst
+	@ rm -f *.bit
+	@ rm -f $(top)
+	@ rm -f *.vcd
+	@ rm -rf isim
+	@ rm -f fuseRelaunch.cmd
+	@ rm -f fuse.xmsgs
+	@ rm -f isim.wdb
+	@ rm -f csoc_test.twx
+	@ rm -f csoc_test.twr
+	@ rm -f usage_statistics_webtalk.html
+	@ rm -f banner.txt
+	@ rm -f initial_message.txt
 
 
 
+#=================================================================
 # FOSS tools
 
-sim:
+iverilog: required
 	iverilog -o $(top) \
 		src/baudgen_rx.v \
 		src/baudgen_tx.v \
@@ -172,10 +181,19 @@ sim:
 		src/tb.v
 
 run:
+	@#killall -q --wait vvp
 	vvp $(top)
 
-simrun: sim run
+
+# Warning! File size is 370 MB.  This might fail in recoding.
+# Consider converting it to the FST database format instead.  (See the
+# vcd2fst(1) manpage for more information.)
+# To disable this warning, set rc variable vcd_warning_filesize to zero.
+# Alternatively, use the -o, --optimize command line option to convert to FST
+# or the -g, --giga command line option to use dynamically compressed memory.
+
+
+sim: iverilog run
 
 wave:
-	gtkwave uart.vcd -a waveform.gtkw
-
+	gtkwave --optimize  uart.vcd -a gtkwave/waveform.gtkw

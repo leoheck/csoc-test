@@ -29,10 +29,14 @@ map: $(top).ncd
 par: $(top)-routed.ncd
 bitgen: $(top).bit
 
+TIME_TO_DISPLAY = $(shell date +"%Y-%m-%d %H_%m")
+
 required:
 	@ echo "Creating memories"
 	./scripts/banner_rom.py > banner.txt
 	./scripts/memory_gen.py > initial_message.txt
+	@#./scripts/memory_gen.py "CSoC $(TIME_TO_DISPLAY) GAPH LHEC " > banner.txt
+	@#./scripts/memory_gen.py "Help! I'm trapped in an FPGA\n" > initial_message.txt
 
 $(top).xst: $(src) required
 	@ echo "Creating $(top).xst"
@@ -100,7 +104,7 @@ fpga_init:
 upload:
 	/usr/bin/time -f "%E real, %U user, %S sys" \
 	djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
-	@ echo -e "\n\n ~ DONT FORGET TO RESET THE BOARD ~ \n\n"
+	@ echo -e "\n\n ~ DONT FORGET TO RESET THE BOARD (Version: $(TIME_TO_DISPLAY)) ~ \n\n"
 
 
 # https://wiki.openwrt.org/doc/recipes/serialbaudratespeed

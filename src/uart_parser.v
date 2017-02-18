@@ -241,7 +241,7 @@ always @(*) begin
 
 			if (msg_ptr == INITIAL_MSG_SIZE-1) begin
 				has_new_data_nxt = 0;
-				tx_start_nxt = 0;
+				// tx_start_nxt = 0;
 				state_nxt = GET_INTERNAL_STATE;
 			end
 		end
@@ -271,7 +271,7 @@ always @(*) begin
 			end
 
 			if (pulse_count == NUM_OF_REGS) begin
-				tx_start_nxt = 0;
+				// tx_start_nxt = 0;
 				pulse_count_nxt = 0;
 				col_break_nxt = 0;
 				if (run_done)
@@ -284,12 +284,12 @@ always @(*) begin
 		// EXECUTA O SCSOC POR N CICLOS
 
 		CSOC_RUN: begin
-			tx_start_nxt = 0;
+			// tx_start_nxt = 0;
 			csoc_clk_nxt = ~csoc_clk;
 			if (csoc_clk)
 				pulse_count_nxt = pulse_count + 1;
 			if (pulse_count == RUNNING_TICKS) begin
-				tx_start_nxt = 1;
+				// tx_start_nxt = 1;
 				pulse_count_nxt = 0;
 				run_done_nxt = 1;
 				state_nxt = GET_INTERNAL_STATE;
@@ -297,7 +297,7 @@ always @(*) begin
 		end
 
 		PROCEDURE_DONE: begin
-			tx_start_nxt = 0;
+			// tx_start_nxt = 0;
 		end
 
 	endcase

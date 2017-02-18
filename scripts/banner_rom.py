@@ -15,6 +15,7 @@ time_str = datetime.datetime.now().strftime("%H_%M")
 
 banner = "CSoC" + " " + date_str + " " + time_str + " " + "GAPH" + " " + "LHEC" + " "
 
+ # 'CSoC 2017-02-17 19_34 GAPH LHEC '
 # print "Banner:", "'" + banner + "'"
 # print "Characters:", len(list(banner))
 

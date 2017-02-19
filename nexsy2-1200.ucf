@@ -67,8 +67,8 @@ NET "csoc_data_i<0>"  LOC = "H16";   # part_POs[0005] - JC-4    - P1-4
 
 
 # NEXYS2 UART
-NET "rx" LOC = "U6";
 NET "tx" LOC = "P9";
+NET "rx" LOC = "U6";
 
 # NEXYS2 LEDS
 NET "leds<0>"  LOC = "J14";

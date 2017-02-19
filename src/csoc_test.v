@@ -57,15 +57,6 @@ always @(posedge clk or posedge rst) begin
 	end
 end
 
-
-uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
-	.clk(clk),
-	.rstn(master_rst_n[0]),
-	.rcv(rx_rcv),
-	.data(rx_data),
-	.rx(rx)
-);
-
 uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 	.clk(clk),
 	.rstn(master_rst_n[0]),
@@ -73,6 +64,14 @@ uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 	.data(tx_data),
 	.ready(tx_ready),
 	.tx(tx)
+);
+
+uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
+	.clk(clk),
+	.rstn(master_rst_n[0]),
+	.rcv(rx_rcv),
+	.data(rx_data),
+	.rx(rx)
 );
 
 cmd_parser cp0 (

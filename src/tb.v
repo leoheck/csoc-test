@@ -1,5 +1,6 @@
 
-`timescale 1ns/100ps
+// `timescale 1ns/100ps
+`timescale 1ns/1ns
 
 module tb ();
 
@@ -50,7 +51,8 @@ initial begin
 
 	$display("CSoC Test Running...");
 	$dumpfile("uart.vcd");
-	$dumpvars(0, csoc);
+	// $dumpvars(0, csoc);
+	$dumpvars(1, tb.csoc.cp0);
 
 	clk = 0;
 	rst = 1;
@@ -65,6 +67,13 @@ initial begin
 	// $monitor("%d,\t%b,\t%b,\t%b,\t%d",$time, clk,rst,enable,count);
 
 	#250000000  $finish;
+
+	// $dumpoff;
+	// #40000000
+	// $dumpon;
+	// #10400000;
+	// $finish;
+
 end
 
 endmodule

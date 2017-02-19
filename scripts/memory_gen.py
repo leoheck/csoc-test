@@ -13,7 +13,7 @@ def sort_uniq(sequence):
 date_str = datetime.datetime.now().strftime("%Y-%m-%d")
 time_str = datetime.datetime.now().strftime("%H_%M")
 
-banner = "Help! I'm trapped in an FPGA\n"
+banner = "CSOC Tester Initialized\n"
 
 # print "Banner:", "'" + banner + "'"
 # print "Characters:", len(list(banner))

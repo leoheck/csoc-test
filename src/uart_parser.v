@@ -23,7 +23,7 @@ module cmd_parser
 	input  wire       csoc_uart_write_i,
 	output reg        csoc_uart_read_o,
 	input  wire [7:0] csoc_data_i,
-	output wire  [7:0] csoc_data_o
+	output wire [7:0] csoc_data_o
 );
 
 // #=====================================================================================================
@@ -48,22 +48,20 @@ sevenseg ss0 (
 	.display_1(banner[banner_ptr + 1]),
 	.display_2(banner[banner_ptr + 2]),
 	.display_3(banner[banner_ptr + 3]),
-	.decplace(2'b10),
+	.decplace(2'b00),
 	.seg(sseg),
 	.an(an)
 );
 
 always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
-		sevenseg <= 1;
+		sevenseg <= 0;
 		banner_ptr <= 0;
-		leds <= 0;
 	end
 	else begin
-		leds <= 0;
 		sevenseg <= sevenseg + 1;
 		if (sevenseg == BANNER_SPEED) begin
-			sevenseg <= 1;
+			sevenseg <= 0;
 			banner_ptr <= banner_ptr + 1;
 			if (banner_ptr == BANNER_SIZE) begin
 				banner_ptr <= 0;
@@ -75,12 +73,42 @@ end
 
 
 
+// #=====================================================================================================
+
+// REDUZINDO OS WARNINGS
+// TEMPORARIO JOGA ENTRADA data_i pros leds
+reg [7:0] rx_data_reg;
+always @(posedge clk or negedge rstn) begin
+	if (!rstn) begin
+		rx_data_reg <= 0;
+		leds <= 0;
+	end
+	else begin
+		if (new_rx_data)
+			rx_data_reg <= rx_data;
+		if (csoc_uart_write_i)
+			leds <= csoc_data_i;
+		else
+			leds <= 0;
+	end
+end
 
 
 // #=====================================================================================================
 // #=====================================================================================================
 // #=====================================================================================================
 // #=====================================================================================================
+
+reg [3:0] state, state_nxt;
+
+localparam
+	INIT_STATE = 0,
+	INITIAL_MESSAGE = 1,
+	GET_INTERNAL_STATE = 2,
+	CSOC_RUN = 3,
+	PROCEDURE_DONE = 4,
+	wait1 = 5;
+
 
 // UART TRANSMITTER
 
@@ -111,34 +139,42 @@ end
 always @(*) begin
 	tx_state_nxt = tx_state;
 	tx_start_nxt = tx_start;
+
 	case (tx_state)
-		TX_INIT: begin
-			tx_start_nxt = 0;
-			tx_state_nxt = TX_IDLE;
-		end
-		TX_IDLE: begin
-			tx_start_nxt = 0;
-			if (tx_ready_i && has_new_data) begin
-				tx_start_nxt = 1;
-				tx_state_nxt = TX_START;
-			end
-		end
-		TX_START: begin
-			tx_start_nxt = 1;
-			tx_state_nxt = TX_SEND;
-		end
-		TX_SEND: begin
-			tx_start_nxt = 1;
-			if (dta_sent) begin
+
+			TX_INIT: begin
 				tx_start_nxt = 0;
-				if (has_new_data)
-					tx_state_nxt = TX_START;
-				else begin
-					tx_start_nxt = 0;
-					tx_state_nxt = TX_IDLE;
+				tx_state_nxt = TX_IDLE;
+			end
+			TX_IDLE: begin
+				tx_start_nxt = 0;
+				if (tx_ready_i && has_new_data) begin
+					tx_start_nxt = 1;
+					tx_state_nxt = wait1;
 				end
 			end
-		end
+
+			wait1: begin
+				tx_state_nxt = TX_START;
+			end
+
+			TX_START: begin
+				tx_start_nxt = 1;
+				tx_state_nxt = TX_SEND;
+			end
+			TX_SEND: begin
+				tx_start_nxt = 1;
+				if (dta_sent) begin
+					tx_start_nxt = 0;
+					if (has_new_data)
+						tx_state_nxt = TX_START;
+					else begin
+						tx_start_nxt = 0;
+						tx_state_nxt = TX_IDLE;
+					end
+				end
+			end
+
 	endcase
 end
 
@@ -148,7 +184,7 @@ end
 // #=====================================================================================================
 // #=====================================================================================================
 
-localparam INITIAL_MSG_SIZE = 29;
+localparam INITIAL_MSG_SIZE = 24;
 reg [7:0] initial_msg [0:INITIAL_MSG_SIZE-1];
 reg [7:0] msg_char;
 reg [5:0] msg_ptr, msg_ptr_nxt;
@@ -160,18 +196,11 @@ initial begin
 	$readmemh("initial_message.txt", initial_msg);
 end
 
-localparam
-	INIT_STATE = 0,
-	INITIAL_MESSAGE = 1,
-	GET_INTERNAL_STATE = 2,
-	CSOC_RUN = 3,
-	PROCEDURE_DONE = 4;
 
-localparam MAX_COL = 10; // 80 quebra as colunas na saida
-localparam NUM_OF_REGS = 19;  // 1919 regs in the scan schain
+localparam MAX_COL = 20; // 80 quebra as colunas na saida
+localparam NUM_OF_REGS = 40; // 1919 regs in the scan schain
 localparam RUNNING_TICKS = 4000; // deixar o soc executando ate preencher alguns registradores...
 
-reg [2:0] state, state_nxt;
 reg [7:0] tx_data, tx_data_nxt;
 reg [11:0] pulse_count, pulse_count_nxt;
 reg [6:0] col_break, col_break_nxt;
@@ -187,6 +216,7 @@ always @(posedge clk or negedge rstn) begin
 		tx_data <= 8'bz;
 		pulse_count <= 0;
 		col_break <= 0;
+		msg_char <= "_";
 		msg_ptr <= 0;
 		has_new_data <= 1;
 		dta_sent <= 0;
@@ -241,7 +271,7 @@ always @(*) begin
 
 			if (msg_ptr == INITIAL_MSG_SIZE-1) begin
 				has_new_data_nxt = 0;
-				// tx_start_nxt = 0;
+				tx_start_nxt = 0;
 				state_nxt = GET_INTERNAL_STATE;
 			end
 		end
@@ -255,19 +285,19 @@ always @(*) begin
 				csoc_clk_nxt = 1;
 				pulse_count_nxt = pulse_count + 1;
 				col_break_nxt = col_break + 1;
-			end
-			else
+
 				csoc_clk_nxt = 1;
 
-			if (col_break == MAX_COL) begin
-				col_break_nxt = 0;
-				tx_data_nxt = "\n";
-			end
-			else begin
-				case (csoc_data_i[7])
-					1'b0: tx_data_nxt = "L";
-					1'b1: tx_data_nxt = "H";
-				endcase
+				if (col_break == MAX_COL) begin
+					col_break_nxt = 0;
+					tx_data_nxt = "\n";
+				end
+				else begin
+					case (csoc_data_i[7])
+						1'b0: tx_data_nxt = "_";
+						1'b1: tx_data_nxt = "@";
+					endcase
+				end
 			end
 
 			if (pulse_count == NUM_OF_REGS) begin

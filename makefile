@@ -29,12 +29,12 @@ map: $(top).ncd
 par: $(top)-routed.ncd
 bitgen: $(top).bit
 
-TIME_TO_DISPLAY = $(shell date +"%Y-%m-%d %H_%m")
+TIME_TO_DISPLAY = $(shell date +"%Y-%m-%d %H_%M")
 
 required:
 	@ echo "Creating memories"
-	./scripts/banner_rom.py > banner.txt
-	./scripts/memory_gen.py > initial_message.txt
+	@ ./scripts/banner_rom.py > banner.txt
+	@ ./scripts/memory_gen.py > initial_message.txt
 	@#./scripts/memory_gen.py "CSoC $(TIME_TO_DISPLAY) GAPH LHEC " > banner.txt
 	@#./scripts/memory_gen.py "Help! I'm trapped in an FPGA\n" > initial_message.txt
 
@@ -103,7 +103,7 @@ fpga_init:
 
 upload:
 	/usr/bin/time -f "%E real, %U user, %S sys" \
-	djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
+		djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
 	@ echo -e "\n\n ~ DONT FORGET TO RESET THE BOARD (Version: $(TIME_TO_DISPLAY)) ~ \n\n"
 
 
@@ -167,7 +167,7 @@ clean:
 	@ rm -f usage_statistics_webtalk.html
 	@ rm -f banner.txt
 	@ rm -f initial_message.txt
-
+	@ rm -f uart.vcd.fst
 
 
 #=================================================================
@@ -185,8 +185,9 @@ iverilog: required
 		src/tb.v
 
 run:
-	@#killall -q --wait vvp
+	pgrep vvp && killall -q vvp
 	vvp $(top)
+	notify-send -u critical 'Simulation done! Reload gtkwave' --icon=gtkwave
 
 
 # Warning! File size is 370 MB.  This might fail in recoding.

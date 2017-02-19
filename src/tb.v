@@ -51,8 +51,8 @@ initial begin
 
 	$display("CSoC Test Running...");
 	$dumpfile("uart.vcd");
-	// $dumpvars(0, csoc);
-	$dumpvars(1, tb.csoc.cp0);
+	$dumpvars(0, csoc);
+	// $dumpvars(1, tb.csoc.cp0);
 
 	clk = 0;
 	rst = 1;

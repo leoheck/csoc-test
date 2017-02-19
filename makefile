@@ -101,11 +101,14 @@ fpga_ls:
 fpga_init:
 	djtgcfg init -d DOnbUsb
 
+GREEN   = $(shell tput setaf 2)
+BOLD   = $(shell tput bold)
+NORMAL = $(shell tput sgr0)
+
 upload:
 	/usr/bin/time -f "%E real, %U user, %S sys" \
 		djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
-	@ echo -e "\n\n ~ DONT FORGET TO RESET THE BOARD (Version: $(TIME_TO_DISPLAY)) ~ \n\n"
-
+	@ echo -e "\n\n $(GREEN)$(BOLD)~ DONT FORGET TO RESET THE BOARD (Version: $(TIME_TO_DISPLAY)) ~$(NORMAL) \n\n"
 
 # https://wiki.openwrt.org/doc/recipes/serialbaudratespeed
 dev=/dev/ttyUSB0
@@ -113,10 +116,10 @@ dev=/dev/ttyUSB0
 baud=9600
 # to exit screen (Ctrl-A \): screen $(dev) $(baud)
 serial:
-	stty sane
-	# stty -F $(dev) $(baud) clocal cread cs8 -cstopb -parenb
-	stty -F $(dev) $(baud)
-	cat < $(dev)
+	@# stty -a
+	stty sane; \
+		stty -F $(dev) $(baud) crtscts
+		cat < $(dev)
 
 screen:
 	screen $(dev) $(baud)
@@ -185,7 +188,7 @@ iverilog: required
 		src/tb.v
 
 run:
-	pgrep vvp && killall -q vvp
+	#pgrep vvp | killall -q vvp
 	vvp $(top)
 	notify-send -u critical 'Simulation done! Reload gtkwave' --icon=gtkwave
 

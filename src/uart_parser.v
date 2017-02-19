@@ -100,6 +100,7 @@ end
 // #=====================================================================================================
 
 reg [3:0] state, state_nxt;
+reg run_done, run_done_nxt;
 
 localparam
 	INIT_STATE = 0,
@@ -107,8 +108,11 @@ localparam
 	GET_INTERNAL_STATE = 2,
 	CSOC_RUN = 3,
 	PROCEDURE_DONE = 4,
-	wait1 = 5;
-
+	WAIT_1 = 5,
+	WAIT_2 = 6,
+	WAIT_3 = 7,
+	WAIT_4 = 8,
+	WAIT_5 = 9;
 
 // UART TRANSMITTER
 
@@ -116,7 +120,8 @@ localparam
 	TX_INIT = 0,
 	TX_IDLE = 1,
 	TX_START = 2,
-	TX_SEND = 3;
+	TX_SEND = 3,
+	TX_WAIT = 4;
 
 reg [2:0] tx_state, tx_state_nxt;
 reg has_new_data, has_new_data_nxt;
@@ -150,11 +155,11 @@ always @(*) begin
 				tx_start_nxt = 0;
 				if (tx_ready_i && has_new_data) begin
 					tx_start_nxt = 1;
-					tx_state_nxt = wait1;
+					tx_state_nxt = TX_WAIT;
 				end
 			end
 
-			wait1: begin
+			TX_WAIT: begin
 				tx_state_nxt = TX_START;
 			end
 
@@ -165,13 +170,17 @@ always @(*) begin
 			TX_SEND: begin
 				tx_start_nxt = 1;
 				if (dta_sent) begin
-					tx_start_nxt = 0;
-					if (has_new_data)
+					if (has_new_data) begin
+						tx_start_nxt = 1;
 						tx_state_nxt = TX_START;
+					end
 					else begin
 						tx_start_nxt = 0;
 						tx_state_nxt = TX_IDLE;
 					end
+				end
+				if (run_done) begin
+					tx_state_nxt = TX_IDLE;
 				end
 			end
 
@@ -186,7 +195,7 @@ end
 
 localparam INITIAL_MSG_SIZE = 24;
 reg [7:0] initial_msg [0:INITIAL_MSG_SIZE-1];
-reg [7:0] msg_char;
+reg [7:0] msg_char, msg_char_nxt;
 reg [5:0] msg_ptr, msg_ptr_nxt;
 
 reg [7:0] csoc_data_i_s;
@@ -205,7 +214,6 @@ reg [7:0] tx_data, tx_data_nxt;
 reg [11:0] pulse_count, pulse_count_nxt;
 reg [6:0] col_break, col_break_nxt;
 reg csoc_clk, csoc_clk_nxt;
-reg run_done, run_done_nxt;
 
 assign tx_data_o = tx_data;
 assign csoc_clk_o = csoc_clk;
@@ -252,27 +260,38 @@ always @(*) begin
 		INIT_STATE: begin
 			has_new_data_nxt = 1;
 			tx_data_nxt = msg_char;
-			state_nxt = INITIAL_MESSAGE;
+			state_nxt = WAIT_1;
 			csoc_clk_nxt = 0;
 			run_done_nxt = 0;
 		end
 
-		// Envia a mensagem de boas vindas pela serial
+		WAIT_1: state_nxt = WAIT_2;
+		WAIT_2: begin
+			state_nxt = WAIT_3;
+			has_new_data_nxt = 0;
+		end
+		WAIT_3: state_nxt = WAIT_4;
+		WAIT_4: state_nxt = WAIT_5;
+		WAIT_5: state_nxt = INITIAL_MESSAGE;
 
+		// Envia a mensagem de boas vindas pela serial
 		INITIAL_MESSAGE: begin
 			dta_sent_nxt = 0;
 			has_new_data_nxt = 0;
-			tx_data_nxt = msg_char;	 // new teste
-			if (tx_state == TX_SEND && tx_ready_i) begin
+
+			// if (tx_state == TX_SEND && tx_ready_i) begin
+			if (tx_ready_i) begin
 				has_new_data_nxt = 1;
 				dta_sent_nxt = 1;
 				msg_ptr_nxt = msg_ptr + 1;
-			end
+				tx_data_nxt = msg_char;	 // new teste
 
-			if (msg_ptr == INITIAL_MSG_SIZE-1) begin
-				has_new_data_nxt = 0;
-				tx_start_nxt = 0;
-				state_nxt = GET_INTERNAL_STATE;
+				if (msg_ptr >= INITIAL_MSG_SIZE) begin
+					msg_ptr_nxt = 0;
+					has_new_data_nxt = 0;
+					tx_data_nxt = "\n";
+					state_nxt = GET_INTERNAL_STATE;
+				end
 			end
 		end
 
@@ -280,46 +299,52 @@ always @(*) begin
 		// Atraves da escanchain
 
 		GET_INTERNAL_STATE: begin
-			// if (csoc_clk) begin
+
+			dta_sent_nxt = 0;
+			has_new_data_nxt = 0;
+
 			if (tx_ready_i) begin
-				csoc_clk_nxt = 1;
-				pulse_count_nxt = pulse_count + 1;
-				col_break_nxt = col_break + 1;
-
-				csoc_clk_nxt = 1;
-
-				if (col_break == MAX_COL) begin
+				if (col_break >= MAX_COL) begin
 					col_break_nxt = 0;
 					tx_data_nxt = "\n";
 				end
 				else begin
+					csoc_clk_nxt = 1;
+					has_new_data_nxt = 1;
+					dta_sent_nxt = 1;
+					pulse_count_nxt = pulse_count + 1;
+					col_break_nxt = col_break + 1;
 					case (csoc_data_i[7])
 						1'b0: tx_data_nxt = "_";
-						1'b1: tx_data_nxt = "@";
+						1'b1: tx_data_nxt = "#";
 					endcase
 				end
 			end
 
-			if (pulse_count == NUM_OF_REGS) begin
-				// tx_start_nxt = 0;
+			if (pulse_count >= NUM_OF_REGS) begin
+				has_new_data_nxt = 0;
 				pulse_count_nxt = 0;
 				col_break_nxt = 0;
-				if (run_done)
+				if (run_done) begin
 					state_nxt = PROCEDURE_DONE;
-				else
+				end
+				else begin
 					state_nxt = CSOC_RUN;
+				end
 			end
 		end
 
 		// EXECUTA O SCSOC POR N CICLOS
 
 		CSOC_RUN: begin
-			// tx_start_nxt = 0;
-			csoc_clk_nxt = ~csoc_clk;
-			if (csoc_clk)
+			has_new_data_nxt = 0;
+
+			if (csoc_clk) begin
 				pulse_count_nxt = pulse_count + 1;
-			if (pulse_count == RUNNING_TICKS) begin
-				// tx_start_nxt = 1;
+			end
+
+			if (pulse_count >= RUNNING_TICKS) begin
+				has_new_data_nxt = 1;
 				pulse_count_nxt = 0;
 				run_done_nxt = 1;
 				state_nxt = GET_INTERNAL_STATE;
@@ -327,7 +352,7 @@ always @(*) begin
 		end
 
 		PROCEDURE_DONE: begin
-			// tx_start_nxt = 0;
+			has_new_data_nxt = 0;
 		end
 
 	endcase
@@ -361,6 +386,20 @@ end
 // 					csoc_clk <= 0;
 // 		endcase
 
+// end
+
+
+// ===========================================
+// Clock DIV
+
+// output reg out_clk;
+// input clk ;
+// input rst;
+// always @(posedge clk or negedge rstn) begin
+// 	if (~rst)
+// 		out_clk <= 1'b0;
+// 	else
+// 		out_clk <= ~out_clk;
 // end
 
 endmodule

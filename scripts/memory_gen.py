@@ -1,35 +1,37 @@
 #!/usr/bin/env python
 
+# Script simples pra gerar o arquivo de memoria
+# String nao pode ter \n e coisas do tipo
+
+import argparse
 import time
 import datetime
 import itertools
 import operator
 
-def sort_uniq(sequence):
-    return itertools.imap(
-        operator.itemgetter(0),
-        itertools.groupby(sorted(sequence)))
+parser = argparse.ArgumentParser(description='Generate a ROM')
+parser.add_argument('-f', dest='outfile', help='Output file. If none, prints to stdout')
+parser.add_argument('data', help='String with data to put in the ROM')
+args = parser.parse_args()
 
-date_str = datetime.datetime.now().strftime("%Y-%m-%d")
-time_str = datetime.datetime.now().strftime("%H_%M")
+# Converte string para memoria
+memory = list()
+for i in list(args.data):
+	memory.append(i.encode("hex"))
 
-banner = "CSOC Tester Initialized\n"
+# Imprime na tela
+if not args.outfile:
+	print "Input data:", args.data
+	print "Data size:", len(list(args.data))
+	print "Memory:",
+	for i in range(len(memory)):
+		if i%20 == 0:
+			print
+		print memory[i]
 
-# print "Banner:", "'" + banner + "'"
-# print "Characters:", len(list(banner))
-
-# print
-# print "Memory:"
-
-for i in range(len(list(banner))):
-	# print hex(banner[i])
-	# print "8'h{}", hex(banner[i])
-	# print("8'h{0:02x}".format(ord(banner[i])))
-	print("{0:02x}".format(ord(banner[i])))
-
-# print
-# print "Used characters"
-# used_chars = list(sort_uniq(list(banner)))
-# for i in range(len(used_chars)):
-	# print("8'h{0:02x} // '{0:c}'".format(ord(used_chars[i]), used_chars[i]))
-
+# Salva em um arquivo
+else:
+	file = open(args.outfile, "w")
+	for i in range(len(memory)):
+		file.write(memory[i] + "\n")
+	file.close()

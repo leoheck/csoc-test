@@ -56,7 +56,8 @@ NET "csoc_uart_write" LOC = "T18";   # part_POs[0009] - JB-9    - P2-4
 NET "csoc_rstn"       LOC = "R15";   # part_PIs[0013] - JB-3    - P2-3
 
 # CSOC INTERFACE                     # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
-NET "csoc_data_i<7>"  LOC = "H15";   # part_POs[0006] - JC-7    - P1-5
+NET "csoc_data_i<7>"    LOC = "G18"; # Troquei isso pelo switch 0 pra testar
+# NET "csoc_data_i<7>"  LOC = "H15";   # part_POs[0006] - JC-7    - P1-5
 NET "csoc_data_i<6>"  LOC = "G15";   # part_POs[0002] - JC-1    - P1-1
 NET "csoc_data_i<5>"  LOC = "F14";   # part_POs[0007] - JC-8    - P1-6
 NET "csoc_data_i<4>"  LOC = "J16";   # part_POs[0003] - JC-2    - P1-2

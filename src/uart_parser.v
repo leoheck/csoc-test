@@ -15,6 +15,7 @@ module cmd_parser
 	output wire [7:0] sseg,         // Board 7Segment Display
 	output wire [3:0] an,           // 7 Segment Display enable
 
+	// CSOC interface
 	output wire       csoc_clk_o,
 	output reg        csoc_rstn_o,
 	output reg        csoc_test_se_o,    // Scan Enable
@@ -23,6 +24,11 @@ module cmd_parser
 	output reg        csoc_uart_read_o,
 	input  wire [7:0] csoc_data_i,
 	output wire [7:0] csoc_data_o
+
+	// Mudar a interface do CSOC pra esses nomes, como no TB do Cadence Encounter Test
+	// output [1:14] PIs; // Primary input
+	// input  [1:11] POs; // Primary outputs
+
 );
 
 

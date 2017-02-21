@@ -1,0 +1,28 @@
+//
+// File created by:  ncverilog
+// Do not modify this file
+//
++nospecify
++access+rwc
++ncstatus
++TESTFILE1=../outputs/dft-psynth/atpg/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.scan.ex1.ts1
++TESTFILE2=../outputs/dft-psynth/atpg/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.logic.ex1.ts2
++HEARTBEAT
++FAILSET
++nctimescale+1ns/1ps
++ncoverride_timescale
++ncseq_udp_delay+2ps
++libext+.v+.V+.z+.Z+.gz
++nclibdirname+../outputs/dft-psynth/atpg/Inca_libs_20_49_49
+-l
+../outputs/dft-psynth/atpg/ncverilog_FULLSCAN.log
+-v
+/soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v
+-v
+/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v
+-v
+../macros/SRAM4096x32_v2/verilog/SPR4Kx32Mux16M5.v
+-v
+../macros/CAPETA_ROM1024x32/verilog/ROM_1kx32M8_tm5.v
+../outputs/dft-psynth/atpg/capeta_soc_pads.et_netlist.v
+../outputs/dft-psynth/atpg/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.mainsim.v

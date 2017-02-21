@@ -1,0 +1,4 @@
+define ROM_1kx32M8_tm5 ./ROM_1kx32M8_tm5
+define SPR4Kx32Mux16M5 ./SPR4Kx32Mux16M5
+define tpz018nv ./tpz018nv
+define sage_x_tsmc_cl018g_rvt ./sage_x_tsmc_cl018g_rvt

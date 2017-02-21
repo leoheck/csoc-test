@@ -1,0 +1,37 @@
+//
+// File created by:  ncverilog
+// Do not modify this file
+//
++TESTFILE1=../outputs/dft-psynth/atpg/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.scan.ex1.ts1
++TESTFILE2=../outputs/dft-psynth/atpg/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.logic.ex1.ts2
++HEARTBEAT
++FAILSET
++nospecify
++access+rwc
++ncstatus
++nctimescale+1ns/1ps
++ncoverride_timescale
++ncseq_udp_delay+2ps
++libext+.v+.V+.z+.Z+.gz
++nclibdirname+../outputs/dft-psynth/atpg/Inca_libs_20_49_49
+-noshowtop
+-NOSPECIFY
+-ACCESS
++rwc
+-STATUS
+-timescale
+1ns/1ps
+-OVERRIDE_TIMESCALE
+-SEQ_UDP_DELAY
+2ps
+-MESSAGES
+-XLMODE
+../outputs/dft-psynth/atpg/Inca_libs_20_49_49/irun.lnx8664.13.20.nc
+-RUNMODE
+-CDSLIB
+../outputs/dft-psynth/atpg/Inca_libs_20_49_49/irun.lnx8664.13.20.nc/cds.lib
+-HDLVAR
+../outputs/dft-psynth/atpg/Inca_libs_20_49_49/irun.lnx8664.13.20.nc/hdl.var
+-WORK
+worklib
+-HASXLMODE

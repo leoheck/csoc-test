@@ -1,0 +1,3 @@
+SOURCE=../outputs/dft-psynth/atpg/capeta_soc_pads.v
+TECHLIB=/soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v,/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v
+RUNDIR=/home/lheck/capeta-project-trunk/tsmc-180nm/atpg/

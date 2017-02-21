@@ -1,0 +1,36 @@
+//
+// File created by:  ncverilog
+// Do not modify this file
+//
++TESTFILE1=../outputs/dft-psynth/atpg/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.scan.ex1.ts1
++TESTFILE2=../outputs/dft-psynth/atpg/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.logic.ex1.ts2
++HEARTBEAT
++FAILSET
++nospecify
++access+rwc
++ncstatus
++nctimescale+1ns/1ps
++ncoverride_timescale
++ncseq_udp_delay+2ps
++libext+.v+.V+.z+.Z+.gz
++nclibdirname+../outputs/dft-psynth/atpg/Inca_libs_20_49_49
+-STATUS
+-MESSAGES
++EMGRLOG
+../outputs/dft-psynth/atpg/ncverilog_FULLSCAN.log
+-XLSTIME
+1473285160
+-XLKEEP
+-XLMODE
+../outputs/dft-psynth/atpg/Inca_libs_20_49_49/irun.lnx8664.13.20.nc
+-RUNMODE
+-CDSLIB
+../outputs/dft-psynth/atpg/Inca_libs_20_49_49/irun.lnx8664.13.20.nc/cds.lib
+-HDLVAR
+../outputs/dft-psynth/atpg/Inca_libs_20_49_49/irun.lnx8664.13.20.nc/hdl.var
+-XLNAME
+ncverilog
+-XLVERSION
+"TOOL:	ncverilog	13.20-s018"
+-XLNAME
+../outputs/dft-psynth/atpg/Inca_libs_20_49_49/irun.lnx8664.13.20.nc/kriti_14598

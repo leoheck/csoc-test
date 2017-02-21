@@ -1,0 +1,6 @@
+define LIB_MAP ( $LIB_MAP \
+, ../../../../../../macros/CAPETA_ROM1024x32/verilog/ROM_1kx32M8_tm5.v => ROM_1kx32M8_tm5 \
+, ../../../../../../macros/SRAM4096x32_v2/verilog/SPR4Kx32Mux16M5.v => SPR4Kx32Mux16M5 \
+, ../../../../../../../../../../soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v => tpz018nv \
+, ../../../../../../../../../../soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v => sage_x_tsmc_cl018g_rvt \
+)

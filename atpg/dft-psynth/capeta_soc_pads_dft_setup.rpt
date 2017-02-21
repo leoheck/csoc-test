@@ -1,0 +1,103 @@
+
+Design Name
+===========
+    capeta_soc_pads
+
+Scan Style
+==========
+    muxed_scan
+Design has a valid DFT rule check status
+
+Global Constraints
+==================
+    Minimum number of scan chains: no_value
+    Maximum length of scan chains: no_value
+    Lock-up element type: preferred_level_sensitive
+    Mix clock edges in scan chain: true
+    Prefix for unnamed scan objects: test_
+
+Test signal objects
+===================
+    shift_enable:
+          object name: se
+          pin name: test_se_i
+          hookup_pin: io_pads_i_test_se_i_pad/C
+          hookup_polarity: non_inverted
+          active: high
+          ideal: true
+          user defined: true
+
+    test_mode:
+          object name: tm
+          pin name: test_tm_i
+          hookup_pin: io_pads_i_test_tm_i_pad/C
+          hookup_polarity: non_inverted
+          active: high
+          ideal: true
+          user defined: true
+
+    test_mode:
+          object name: reset_i
+          pin name: reset_i
+          hookup_pin: io_pads_i_reset_i_pad/C
+          hookup_polarity: non_inverted
+          active: high
+          ideal: true
+          user defined: false
+
+
+Test clock objects
+==================
+    test_clock:
+          object name: clk_i
+          test_clock_domain: clk_i
+          user defined: false
+          source: clk_i
+          root source: clk_i
+          root source polarity: non_inverting
+          hookup_pin: io_pads_i_clk_i_pad/C
+          period: 50000.0
+
+
+DFT controllable objects
+========================
+
+DFT don't scan objects
+======================
+
+DFT abstract don't scan objects
+===============================
+
+DFT scan segment constraints
+============================
+
+DFT scan chain constraints
+==========================
+    User Chain:
+          object name: chain0
+          scan-in: data_i[7]
+          scan-in hookup_pin: io_pads_i_data_i7_pad/C
+          scan-out: data_o[7]
+          scan-out hookup_pin: io_pads_i_data_o7_pad/I
+          shared out: true
+          shift_enable object name:
+          max length: no_value
+          complete: false
+
+
+DFT actual scan chains
+======================
+    Actual Chain:
+          object name: chain0
+          scan-in: data_i[7]
+          scan-in hookup_pin: io_pads_i_data_i7_pad/C
+          scan-out: data_o[7]
+          scan-out hookup_pin: io_pads_i_data_o7_pad/I
+          shared out: true
+          shift_enable: test_se_i
+          length: 1919
+          segment objects: none
+          analyzed: false
+          test_clock domain: clk_i
+          test_clock edge: rise
+

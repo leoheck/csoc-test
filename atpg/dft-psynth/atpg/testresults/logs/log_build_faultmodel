@@ -1,0 +1,134 @@
+
+INFO (TDA-005): Command Line Invocation: 
+            build_faultmodel includedynamic=no  [end TDA_005]
+
+***********************************************************************
+Encounter(R) Test and Diagnostics 10.1.103 Jun 21, 2011 (linux26_64 ET101)
+ 
+Licensed Materials - Property of Cadence Design Systems, Inc. 
+ 
+Copyright (C) 2002-2010 Cadence Design Systems Inc. All Rights Reserved. 
+Cadence and the Cadence logo are registered trademarks. All others are 
+properties of their respective holders. 
+ 
+Copyright (C) 1994-2002 IBM Corporation. All rights reserved. 
+  IBM is a Trademark of International Business Machines Corporation. 
+Copyright (C) 2001-2003 The Trustees of Indiana University. All rights reserved. 
+Copyright (C) 1998-2001 University of Notre Dame. All rights reserved. 
+Copyright (C) 1994-1998 The Ohio State University. All rights reserved. 
+Perl Copyright 1987-2002, Larry Wall 
+
+
+***********************************************************************
+
+INFO (TDA-007): Job Information:
+            Date Started: Wednesday Sep 07 18:51:59 2016  BRT
+            Host machine is kriti, x86_64 running Linux 2.6.18-410.el5.
+            This job is process number 14349.
+[end TDA_007]
+
+INFO (TDA-009): Keywords/Values information.
+            (keywords marked with '*' have program generated values,
+             keywords marked with '+' were specified to default.)
+
+            WORKDIR=../outputs/dft-psynth/atpg
+
+            logfile=../outputs/dft-psynth/atpg/testresults/logs/log_build_faultmodel_090716185159-183154000
+            includedynamic=no
+[end TDA_009]
+INFO (TFM-099): Build Fault Model started.  [end TFM_099] 
+INFO (TFM-102): Creating faultModel file ../outputs/dft-psynth/atpg/tbdata/faultModel.  [end TFM_102] 
+
+Global Ignored Static Fault Count        284
+
+Global Ignored Dynamic Fault Count         0
+
+
+
+                            Global Statistics
+
+                 -- ATCov --   ------------- Global Faults ----------------------
+                   Global      Total     Tested   Possibly  Redundant   Untested
+
+Total Static         0.00      73456          0          0          0      73456
+Collapsed Static     0.00      50205          0          0          0      50205
+PI Static            0.00         28          0          0          0         28
+PO Static            0.00         22          0          0          0         22
+
+Total Dynamic                      0
+
+Parametric        
+
+IDDq                 0.00      73456          0                            73456
+
+
+
+INFO (TFM-103): Creating faultStatus file ../outputs/dft-psynth/atpg/tbdata/faultStatus.  [end TFM_103] 
+
+                           Testmode Statistics: FULLSCAN
+
+                   ---- ATCov ----   ---------------- Testmode Faults --------------------  ------------------ Global Faults --------------------
+                 Testmode Global      Total     Tested   Possibly  Redundant   Untested      Total     Tested   Possibly  Redundant   Untested
+
+Total Static         0.00   0.00      73323          0          0          0      73323      73456          0          0          0      73456
+Collapsed Static     0.00   0.00      50075          0          0          0      50075      50205          0          0          0      50205
+PI Static            0.00   0.00         27          0          0          0         27         28          0          0          0         28
+PO Static            0.00   0.00         22          0          0          0         22         22          0          0          0         22
+
+Total Dynamic                             0
+
+Parametric        
+
+IDDq                 0.00   0.00      73323          0                            73323      73456          0                            73456
+
+Path                 0.00   0.00          0          0                                0          0          0                                0
+
+
+INFO (TFM-704): Maximum Global Test Coverage Statistics: 
+
+                  %Active    #Faults    #Active  #Inactive
+Total Static        99.82      73456      73323        133
+Collapsed Static    99.74      50205      50075        130
+PI Static           96.43         28         27          1
+PO Static          100.00         22         22          0
+
+Total Dynamic                      0
+
+Parametric        
+
+There are 1 test mode(s) defined:
+      FULLSCAN
+
+[end TFM_704]
+INFO (TFM-109): Build Fault Model has completed with highest level severity message of INFO.  [end TFM_109] 
+
+INFO (TDA-001): System Resource Statistics.  Maximum Storage used during the run
+           and Cumulative Time in hours:minutes:seconds:
+
+               Working Storage =           29,040,704  bytes
+                  Mapped Files =            1,253,376  bytes
+           (Paging) Swap Space =           34,603,008  bytes
+
+                      CPU Time =    0:00:00.76
+                  Elapsed Time =    0:00:01.15                    [end TDA_001]
+
+     Date Ended:  Wednesday Sep 07 18:52:00 2016  BRT
+
+
+
+
+*******************************************************************************
+*                      Message Summary                                        *
+*******************************************************************************
+ Count  Number             First Instance of Message Text
+------- ------             ------------------------------
+
+  INFO Messages...
+      1 INFO (TFM-099): Build Fault Model started.   
+      1 INFO (TFM-102): Creating faultModel file ../outputs/dft-psynth/atpg/tbdata/faultModel.   
+      1 INFO (TFM-103): Creating faultStatus file ../outputs/dft-psynth/atpg/tbdata/faultStatus.   
+      1 INFO (TFM-109): Build Fault Model has completed with highest level severity message of INFO.   
+      1 INFO (TFM-704): Maximum Global Test Coverage Statistics: 
+
+
+*******************************************************************************

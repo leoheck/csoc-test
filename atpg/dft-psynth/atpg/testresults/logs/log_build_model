@@ -1,0 +1,179 @@
+
+INFO (TDA-005): Command Line Invocation: 
+            build_model cell=capeta_soc_pads blackbox=yes blackboxoutputs=z industrycompatible=yes teiperiod=__rcETdft_ designsource=../outputs/dft-psynth/atpg/capeta_soc_pads.v techlib=/soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v,/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v defaulttie=0 blackboxoutputs=0  [end TDA_005]
+
+***********************************************************************
+Encounter(R) Test and Diagnostics 10.1.103 Jun 21, 2011 (linux26_64 ET101)
+ 
+Licensed Materials - Property of Cadence Design Systems, Inc. 
+ 
+Copyright (C) 2002-2010 Cadence Design Systems Inc. All Rights Reserved. 
+Cadence and the Cadence logo are registered trademarks. All others are 
+properties of their respective holders. 
+ 
+Copyright (C) 1994-2002 IBM Corporation. All rights reserved. 
+  IBM is a Trademark of International Business Machines Corporation. 
+Copyright (C) 2001-2003 The Trustees of Indiana University. All rights reserved. 
+Copyright (C) 1998-2001 University of Notre Dame. All rights reserved. 
+Copyright (C) 1994-1998 The Ohio State University. All rights reserved. 
+Perl Copyright 1987-2002, Larry Wall 
+
+
+***********************************************************************
+
+INFO (TDA-007): Job Information:
+            Date Started: Wednesday Sep 07 18:51:47 2016  BRT
+            Host machine is kriti, x86_64 running Linux 2.6.18-410.el5.
+            This job is process number 14229.
+[end TDA_007]
+
+INFO (TDA-009): Keywords/Values information.
+            (keywords marked with '*' have program generated values,
+             keywords marked with '+' were specified to default.)
+
+            WORKDIR=../outputs/dft-psynth/atpg
+
+            cell=capeta_soc_pads
+            defaulttie=0
+            TECHLIB=/soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v,/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v
+            teiperiod=__rcETdft_
+            blackbox=yes
+            blackboxoutputs=0
+            industrycompatible=yes
+            logfile=../outputs/dft-psynth/atpg/testresults/logs/log_build_model_090716185147-464456000
+            DESIGNSOURCE=../outputs/dft-psynth/atpg/capeta_soc_pads.v
+[end TDA_009]
+
+Build Model Controller starting:
+
+INFO (TEI-299): The processing of TECHLIB input source will change in the Encounter Test 11.1 release. All Verilog module definitions processed from the TECHLIB input source will automatically be assumed a technology cell. [end TEI_299] 
+
+Search Order  1:  "../outputs/dft-psynth/atpg/capeta_soc_pads.v"
+Search Order  2:  "/soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v"
+Search Order  3:  "/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v"
+
+
+
+Reading Verilog data from ../outputs/dft-psynth/atpg/capeta_soc_pads.v
+
+NC Verilog Parser complete - 14 modules, 65 gates, 0 user defined primitives.
+
+
+Reading Verilog data from /soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v
+
+NC Verilog Parser complete - 471 modules, 2311 gates, 17 user defined primitives.
+
+
+Reading Verilog data from /soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v
+
+WARNING (TEI-213): A gate instantiation of TRAN on line 3416 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVDD1ANA' cannot be modeled. 'ASSIGNMENT' will be substituted.  [end TEI_213] 
+WARNING (TEI-213): A gate instantiation of TRAN on line 3423 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVDD1DGZ' cannot be modeled. 'ASSIGNMENT' will be substituted.  [end TEI_213] 
+WARNING (TEI-213): A gate instantiation of TRAN on line 3430 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVDD2ANA' cannot be modeled. 'ASSIGNMENT' will be substituted.  [end TEI_213] 
+WARNING (TEI-213): A gate instantiation of TRAN on line 3437 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVDD2DGZ' cannot be modeled. 'ASSIGNMENT' will be substituted.  [end TEI_213] 
+WARNING (TEI-213): A gate instantiation of TRAN on line 3444 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVDD2POC' cannot be modeled. 'ASSIGNMENT' will be substituted.  [end TEI_213] 
+WARNING (TEI-213): A gate instantiation of TRAN on line 3451 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVSS1ANA' cannot be modeled. 'ASSIGNMENT' will be substituted.  [end TEI_213] 
+WARNING (TEI-213): A gate instantiation of TRAN on line 3459 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVSS1DGZ' cannot be modeled. 'ASSIGNMENT' will be substituted.  [end TEI_213] 
+WARNING (TEI-213): A gate instantiation of TRAN on line 3466 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVSS2ANA' cannot be modeled. 'ASSIGNMENT' will be substituted.  [end TEI_213] 
+WARNING (TEI-213): A gate instantiation of TRAN on line 3474 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVSS2DGZ' cannot be modeled. 'ASSIGNMENT' will be substituted.  [end TEI_213] 
+WARNING (TEI-213): A gate instantiation of TRAN on line 3481 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVSS3DGZ' cannot be modeled. 'ASSIGNMENT' will be substituted.  [end TEI_213] 
+NC Verilog Parser complete - 129 modules, 504 gates, 0 user defined primitives.
+
+
+
+Beginning netlist semantics check
+
+  Pass 1 of 2:
+WARNING (TEI-160): Instance 'rom' in 'cell capeta_soc' refers to undefined 'cell ROM_1kx32M8_tm5'. The cell will be created since blackbox=yes was specified. Cell contents file: '/home/lheck/capeta-project-trunk/tsmc-180nm/outputs/dft-psynth/atpg/capeta_soc_pads.v'.  [end TEI_160] 
+WARNING (TEI-160): Instance 'sram' in 'cell capeta_soc' refers to undefined 'cell SPR4Kx32Mux16M5'. The cell will be created since blackbox=yes was specified. Cell contents file: '/home/lheck/capeta-project-trunk/tsmc-180nm/outputs/dft-psynth/atpg/capeta_soc_pads.v'.  [end TEI_160] 
+  Pass 2 of 2:
+
+
+Build Model - Hierarchical Model Build starting:
+
+WARNING (TEI-010): The 'cell SPR4Kx32Mux16M5' has an unknown simulation function and has no contents. The 'cell SPR4Kx32Mux16M5' will be defined as a black box. [end TEI_010] 
+WARNING (TEI-192): 'cell ROM_1kx32M8_tm5' appears to be a RAM or ROM but the cell name fails syntax checking. Use RAM_A02_D005_RWBS for 2 address bits, 5 data bits, and 4 ports (read-only, write-only, read/write and reset respectively). The simulation function is set to unknown.  [end TEI_192] 
+WARNING (TEI-010): The 'cell ROM_1kx32M8_tm5' has an unknown simulation function and has no contents. The 'cell ROM_1kx32M8_tm5' will be defined as a black box. [end TEI_010] 
+WARNING (TEI-110): Pin 'NOTIFIER' of 'cell udp_dff' has no external net connection for any usage in the design. Cell contents file: '/soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v'.  [end TEI_110] 
+WARNING (TEI-110): Pin 'NOTIFIER' of 'cell udp_sedff' has no external net connection for any usage in the design. Cell contents file: '/soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v'.  [end TEI_110] 
+
+
+Number of blocks in the hierarchical model is: 79247.
+
+Build Model - Hierarchical Model Build completed.
+
+ defaultTIE = 0
+ defaultDFN = T
+
+
+Circuit Summary
+---------------
+
+Hierarchical Model:                  Flattened Model:
+    79247  Blocks                         53182  Blocks
+   244145  Pins                           53182  Nodes
+   132736  Nets
+
+Primary Inputs:                      Primary Outputs:
+       14  Input Only                        11  Output Only
+        0  Input/Output                       0  Input/Output
+       14  Total Inputs                      11  Total Outputs
+
+Tied Nets:                           Dotted Nets:
+      856  Tied to 0                          0  Two-State
+     1593  Tied to 1                          0  Three-State
+        0  Tied to X                          0  Total Dotted Nets
+     2449  Total Tied Nets
+
+Selected Primitive Functions:
+        0  Clock Chopper (CHOP) primitives 
+        0  RAMs
+        0  ROMs
+        0  TSDs
+        0  Resistors
+        0  Transistors
+     1598  MUX2s
+        0  Latches
+
+     1919  Flip-Flops
+
+Optimization removed logic for 15 of 158 cells in this design.
+
+Optimization removed a total of 2506 tied Latch Ports.
+Optimization removed a total of 4538 non-controlling inputs.
+Optimization removed a total of 19899 dangling logic nodes.
+
+Build Model - Flat Model Build completed.
+
+ Process Usage Statistics.  Accumulated Storage used during the run
+               Working Storage =          131,172,496  bytes
+                  Mapped Files =            1,204,224  bytes
+           (Paging) Swap Space =          208,556,032  bytes
+
+                      CPU Time =    0:00:01.69
+                  Elapsed Time =    0:00:07.20
+
+
+
+Build Model Controller completed.
+
+
+
+
+*******************************************************************************
+*                      Message Summary                                        *
+*******************************************************************************
+ Count  Number             First Instance of Message Text
+------- ------             ------------------------------
+
+  INFO Messages...
+      1 INFO (TEI-299): The processing of TECHLIB input source will change in the Encounter Test 11.1 release. All Verilog module definitions processed from the TECHLIB input source will automatically be assumed a technology cell.  
+
+  WARNING Messages...
+      2 WARNING (TEI-010): The 'cell SPR4Kx32Mux16M5' has an unknown simulation function and has no contents. The 'cell SPR4Kx32Mux16M5' will be defined as a black box.  
+      2 WARNING (TEI-110): Pin 'NOTIFIER' of 'cell udp_dff' has no external net connection for any usage in the design. Cell contents file: '/soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v'.   
+      2 WARNING (TEI-160): Instance 'rom' in 'cell capeta_soc' refers to undefined 'cell ROM_1kx32M8_tm5'. The cell will be created since blackbox=yes was specified. Cell contents file: '/home/lheck/capeta-project-trunk/tsmc-180nm/outputs/dft-psynth/atpg/capeta_soc_pads.v'.   
+      1 WARNING (TEI-192): 'cell ROM_1kx32M8_tm5' appears to be a RAM or ROM but the cell name fails syntax checking. Use RAM_A02_D005_RWBS for 2 address bits, 5 data bits, and 4 ports (read-only, write-only, read/write and reset respectively). The simulation function is set to unknown.   
+     10 WARNING (TEI-213): A gate instantiation of TRAN on line 3416 of file '/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v' from 'cell PVDD1ANA' cannot be modeled. 'ASSIGNMENT' will be substituted.   
+
+
+*******************************************************************************

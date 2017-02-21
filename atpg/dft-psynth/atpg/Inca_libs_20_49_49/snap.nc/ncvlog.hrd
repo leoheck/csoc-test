@@ -1,0 +1,22 @@
+//
+// File created by:  ncverilog
+// Do not modify this file
+//
+-VFILE
+/soft64/design-kits/tsmc/0.18um-cl018g/arm/sc9_base_rvt/2008q3v01/verilog/sage-x_tsmc_cl018g_rvt.v
+-VFILE
+/soft64/design-kits/tsmc/0.18um-cl018g/arm/iolib/tpz018nv_280a_r6p0-02eac0/digital/Front_End/verilog/tpz018nv_270a/tpz018nv.v
+-VFILE
+../macros/SRAM4096x32_v2/verilog/SPR4Kx32Mux16M5.v
+-VFILE
+../macros/CAPETA_ROM1024x32/verilog/ROM_1kx32M8_tm5.v
+-LIBEXT
+.v
+-LIBEXT
+.V
+-LIBEXT
+.z
+-LIBEXT
+.Z
+-LIBEXT
+.gz

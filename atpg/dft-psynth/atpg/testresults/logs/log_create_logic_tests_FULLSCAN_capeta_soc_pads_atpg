@@ -1,0 +1,149 @@
+
+INFO (TDA-005): Command Line Invocation: 
+            create_logic_tests experiment=capeta_soc_pads_atpg append=yes testmode=FULLSCAN  [end TDA_005]
+
+***********************************************************************
+Encounter(R) Test and Diagnostics 10.1.103 Jun 21, 2011 (linux26_64 ET101)
+ 
+Licensed Materials - Property of Cadence Design Systems, Inc. 
+ 
+Copyright (C) 2002-2010 Cadence Design Systems Inc. All Rights Reserved. 
+Cadence and the Cadence logo are registered trademarks. All others are 
+properties of their respective holders. 
+ 
+Copyright (C) 1994-2002 IBM Corporation. All rights reserved. 
+  IBM is a Trademark of International Business Machines Corporation. 
+Copyright (C) 2001-2003 The Trustees of Indiana University. All rights reserved. 
+Copyright (C) 1998-2001 University of Notre Dame. All rights reserved. 
+Copyright (C) 1994-1998 The Ohio State University. All rights reserved. 
+Perl Copyright 1987-2002, Larry Wall 
+
+
+***********************************************************************
+
+INFO (TDA-007): Job Information:
+            Date Started: Wednesday Sep 07 18:52:02 2016  BRT
+            Host machine is kriti, x86_64 running Linux 2.6.18-410.el5.
+            This job is process number 14377.
+[end TDA_007]
+
+INFO (TDA-009): Keywords/Values information.
+            (keywords marked with '*' have program generated values,
+             keywords marked with '+' were specified to default.)
+
+            WORKDIR=../outputs/dft-psynth/atpg
+            TESTMODE=FULLSCAN
+            EXPERIMENT=capeta_soc_pads_atpg
+
+            append=yes
+            logfile=../outputs/dft-psynth/atpg/testresults/logs/log_create_logic_tests_FULLSCAN_capeta_soc_pads_atpg_090716185202-750500000
+[end TDA_009]
+
+
+WARNING (TTC-018): [Severe] verify_test_structures issued Severe messages related to Stored Pattern tests.  Invalid test data may result.  [end TTC_018] 
+INFO (TFW-117): Encounter Test checked out a Encounter_True_Time license.  [end TFW_117] 
+**************************************************************************************
+Coverage Definitions:
+ #Faults  : Number of Active Faults (observable).
+ #Tested  : Number of Active Faults marked tested.
+ #Possibly: Number of Active Faults marked possibly tested
+            (good value is 0 or 1; fault value is X).
+ #Redund  : Number of Active Faults untestable due to redundancy.
+ #Untested: Number of Active Faults untested.
+ %TCov  (%Test Coverage)                      : #Tested / #Faults
+ %ATCov (%Adjusted TCov)                      : #Tested / (#Faults-#Redund)
+**************************************************************************************
+**************************************************************************************
+                           Testmode Statistics: FULLSCAN
+
+                         #Faults   #Tested #Possibly   #Redund #Untested  %TCov %ATCov
+Total Static               73323     15094         0         0     58229  20.59  20.59
+
+                            Global Statistics
+
+                         #Faults   #Tested #Possibly   #Redund #Untested  %TCov %ATCov
+Total Static               73456     15094         0         0     58362  20.55  20.55
+**************************************************************************************
+INFO (TCL-159): This circuit requires infinite X simulation for Primary Inputs.
+           Performance may be degraded.  [end TCL_159] 
+
+INFO (TDA-220):   --- Tests ---   Faults     ---- ATCov ----    ----- Faults -----    ------ CPU Time ------  - Elapsed Time -  [end TDA_220] 
+INFO (TDA-220):    Sim.    Eff.  Detected    Tmode    Global    Aborted   Untested       Sim.        Total                      [end TDA_220] 
+INFO (TDA-220):     32      32      37007    71.06%   70.93%          0      21219     00:00.63     00:03.80        00:05.08    [end TDA_220] 
+INFO (TDA-220):     64      63       7057    80.69%   80.54%          4      14161     00:00.76     00:07.28        00:09.53    [end TDA_220] 
+INFO (TDA-220):    128     127       6057    88.95%   88.79%          5       8101     00:00.97     00:13.45        00:17.42    [end TDA_220] 
+INFO (TDA-220):    192     186       2608    92.51%   92.34%          6       5492     00:01.07     00:17.28        00:22.28    [end TDA_220] 
+INFO (TDA-220):    256     244       1763    94.92%   94.75%          6       3726     00:01.14     00:20.33        00:26.28    [end TDA_220] 
+INFO (TDA-220):    320     300       1142    96.48%   96.30%         11       2582     00:01.19     00:22.11        00:28.62    [end TDA_220] 
+INFO (TDA-220):    384     352        614    97.32%   97.14%         11       1968     00:01.23     00:22.17        00:28.86    [end TDA_220] 
+INFO (TDA-220):    448     401        548    98.06%   97.89%         11       1420     00:01.26     00:22.22        00:29.10    [end TDA_220] 
+INFO (TDA-220):    512     454        368    98.57%   98.39%         11       1052     00:01.29     00:22.26        00:29.37    [end TDA_220] 
+INFO (TDA-220):    576     504        275    98.94%   98.76%         11        777     00:01.32     00:22.30        00:29.64    [end TDA_220] 
+INFO (TDA-220):    640     550        161    99.16%   98.98%         11        616     00:01.34     00:22.33        00:29.91    [end TDA_220] 
+INFO (TDA-220):    704     594        153    99.37%   99.19%         11        463     00:01.37     00:22.36        00:30.18    [end TDA_220] 
+INFO (TDA-220):    768     625         82    99.48%   99.30%         11        381     00:01.38     00:22.39        00:30.39    [end TDA_220] 
+INFO (TDA-220):    832     667         81    99.59%   99.41%         11        300     00:01.40     00:22.41        00:30.67    [end TDA_220] 
+INFO (TDA-220):    833     667          0    99.59%   99.41%         11        300     00:01.41     00:22.42        00:30.68    [end TDA_220] 
+INFO (TDA-220):    840     670          5    99.60%   99.42%         11        295     00:01.42     00:22.43        00:30.71    [end TDA_220] 
+INFO (TDA-220):    841     671          5    99.60%   99.42%         11        290     00:01.43     00:22.43        00:30.72    [end TDA_220] 
+
+**************************************************************************************
+                           Testmode Statistics: FULLSCAN
+
+                         #Faults   #Tested #Possibly   #Redund #Untested  %TCov %ATCov
+Total Static               73323     73020         0        13       290  99.59  99.60
+
+                            Global Statistics
+
+                         #Faults   #Tested #Possibly   #Redund #Untested  %TCov %ATCov
+Total Static               73456     73020         0        13       423  99.41  99.42
+**************************************************************************************
+
+
+              ----Final Pattern Statistics----
+
+ Test Section Type                       # Test Sequences
+----------------------------------------------------------
+ Scan                                           1
+ Logic                                          671
+----------------------------------------------------------
+ Total                                          672
+
+(I) File(s) generated (bytes and name):
+
+         348160 ../outputs/dft-psynth/atpg/tbdata/faultStatus.FULLSCAN.capeta_soc_pads_atpg
+         917342 ../outputs/dft-psynth/atpg/tbdata/TBDbin.FULLSCAN.capeta_soc_pads_atpg
+
+INFO (TDA-001): System Resource Statistics.  Maximum Storage used during the run
+           and Cumulative Time in hours:minutes:seconds:
+
+               Working Storage =           45,599,200  bytes
+                  Mapped Files =            1,253,376  bytes
+           (Paging) Swap Space =           68,157,440  bytes
+
+                      CPU Time =    0:00:22.46
+                  Elapsed Time =    0:00:30.98                    [end TDA_001]
+
+     Date Ended:  Wednesday Sep 07 18:52:34 2016  BRT
+
+INFO (TFW-119): Encounter Test checked in a Encounter_True_Time license.  [end TFW_119] 
+
+
+
+*******************************************************************************
+*                      Message Summary                                        *
+*******************************************************************************
+ Count  Number             First Instance of Message Text
+------- ------             ------------------------------
+
+  INFO Messages...
+      1 INFO (TCL-159): This circuit requires infinite X simulation for Primary Inputs.
+     19 INFO (TDA-220):   --- Tests ---   Faults     ---- ATCov ----    ----- Faults -----    ------ CPU Time ------  - Elapsed Time -   
+      1 INFO (TFW-117): Encounter Test checked out a Encounter_True_Time license.   
+      1 INFO (TFW-119): Encounter Test checked in a Encounter_True_Time license.   
+
+  WARNING [Severe] Messages...
+      1 WARNING (TTC-018): [Severe] verify_test_structures issued Severe messages related to Stored Pattern tests.  Invalid test data may result.   
+
+
+*******************************************************************************

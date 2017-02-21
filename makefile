@@ -1,5 +1,5 @@
 
-sublime_text: iverilog
+DE: iverilog
 
 ## CONFIGURE O AMBIENTE COM:
 ## source setup-env.sh
@@ -14,32 +14,23 @@ ucf = nexsy2-1200.ucf
 
 src = $(shell find ./src -name '*.v')
 
-compile: $(top).xst $(top).bit
-all: compile upload serial
-
 xst      = xst      -intstyle silent
 ngdbuild = ngdbuild -intstyle silent
 map      = map      -intstyle silent
 par      = par      -intstyle silent
 bitgen   = bitgen   -intstyle silent
 
+COMP_TIME = $(shell date +"%H%M")
+
+ise: $(top).xst $(top).bit
+all: ise upload serial
 xst: $(top).ngc;
-ngdbuild: $(top).ngd
-map: $(top).ncd
-par: $(top)-routed.ncd
-bitgen: $(top).bit
-
-FULL_TIME_TO_DISPLAY = $(shell date +"%Y-%m-%d %H_%M")
-TIME_TO_DISPLAY = $(shell date +"%H%M")
-
-# $(shell cat initial_message.txt | wc -lo)
-# $(shell cat banner | wc -l)
 
 required:
 	@ echo "Creating memories"
-	@# ./scripts/memory_gen.py "CSoC $(FULL_TIME_TO_DISPLAY) GAPH LHEC " -f banner.txt
-	@ ./scripts/memory_gen.py "$(TIME_TO_DISPLAY)" -f version.txt
-	@ ./scripts/memory_gen.py "CSoC CSoC Tester Initialized" -f initial_message.txt
+	@ ./scripts/memory_gen.py "$(COMP_TIME)" -f version.txt
+	@ ./scripts/memory_gen.py "CSoC Test Running..." -f initial_message.txt
+	@ ./scripts/state_names.sh > gtkwave/parser_states.conf
 
 $(top).xst: $(src) required
 	@ echo "Creating $(top).xst"
@@ -111,7 +102,7 @@ NORMAL = $(shell tput sgr0)
 upload:
 	/usr/bin/time -f "%E real, %U user, %S sys" \
 		djtgcfg prog -d DOnbUsb -i 1 -f $(top).bit
-	@ echo -e "\n\n $(GREEN)$(BOLD)~ DONT FORGET TO RESET THE BOARD (Version: $(FULL_TIME_TO_DISPLAY)) ~$(NORMAL) \n\n"
+	@ echo -e "\n\n $(GREEN)$(BOLD)~ DONT FORGET TO RESET THE BOARD ~$(NORMAL) \n\n"
 	@ notify-send -u critical 'RESET THE FPGA BOARD' --icon=terminix
 
 # https://wiki.openwrt.org/doc/recipes/serialbaudratespeed

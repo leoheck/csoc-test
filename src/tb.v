@@ -4,6 +4,8 @@
 
 module tb ();
 
+parameter BAUDRATE = 9600;
+
 reg rst;
 reg clk;
 
@@ -26,7 +28,7 @@ wire [7:0] csoc_data_o;
 // 50 MHz clock
 always #20 clk = !clk;
 
-csoc_test csoc (
+csoc_test #(.BAUDRATE(BAUDRATE)) csoc (
 	.clk(clk),
 	.rst(rst),
 	// UART
@@ -66,7 +68,9 @@ initial begin
 	// $display("\t\ttime,\tclk,\trst,\tenable,\tcount");
 	// $monitor("%d,\t%b,\t%b,\t%b,\t%d",$time, clk,rst,enable,count);
 
-	#250000000  $finish;
+	// #250000000  $finish;
+	#100000000  $finish;
+	// #50000000  $finish;
 
 	// $dumpoff;
 	// #40000000

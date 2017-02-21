@@ -62,17 +62,18 @@ reg [3:0] state, state_nxt;
 reg tx_start, tx_start_nxt;
 reg run_done, run_done_nxt;
 
+// MAIN_STATES
 localparam
-	INIT_STATE = 0,
-	WAIT_1 = 5,
-	WAIT_2 = 6,
-	WAIT_3 = 7,
-	WAIT_4 = 8,
-	WAIT_5 = 9,
-	WAIT_6 = 10,
-	WAIT_7 = 11,
-	WAIT_8 = 12,
-	WAIT_9 = 13,
+	INIT = 0,
+	S1 = 5,
+	S2 = 6,
+	S3 = 7,
+	S4 = 8,
+	S5 = 9,
+	S6 = 10,
+	S7 = 11,
+	S8 = 12,
+	S9 = 13,
 	INITIAL_MESSAGE = 1,
 	GET_INTERNAL_STATE = 2,
 	CSOC_RUN = 3,
@@ -80,7 +81,7 @@ localparam
 
 assign tx_start_o = tx_start;
 
-localparam MSG_SIZE = 28;
+localparam MSG_SIZE = 20;
 reg [7:0] mgs_mem [0:MSG_SIZE-1];
 reg [7:0] msg_data, msg_data_nxt;
 reg [5:0] msg_addr, msg_addr_nxt;
@@ -101,12 +102,11 @@ reg csoc_clk, csoc_clk_nxt;
 assign tx_data_o = tx_data;
 assign csoc_clk_o = csoc_clk;
 
-always @(posedge clk or negedge rstn) begin
+always @(posedge clk) begin
 	if (!rstn) begin
-		state <= INIT_STATE;
+		state <= INIT;
 		tx_start <= 0;
-		// tx_data <= 8'bz;
-		tx_data <= "\n";
+		tx_data <= 0;
 		clk_count <= 0;
 		col_break <= 0;
 		msg_data <= 0;
@@ -138,42 +138,46 @@ always @(*) begin
 	run_done_nxt = run_done;
 	case (state)
 
-		INIT_STATE: begin
-			state_nxt = WAIT_3;
-		end
-
-		WAIT_3: state_nxt = WAIT_4;
-		WAIT_4: state_nxt = WAIT_1;
-
-		WAIT_1: begin
+		INIT: begin
 			if (tx_ready_i) begin
 				tx_start_nxt = 1;
-				if (msg_addr > MSG_SIZE) begin
-					tx_data_nxt = "\n";
-				end
-				else begin
-					tx_data_nxt = msg_data;
-				end
-				state_nxt = WAIT_2;
+				state_nxt = S1;
 			end
 		end
 
-		WAIT_2: begin
-			tx_start_nxt = 0;
-			state_nxt = INITIAL_MESSAGE;
+		S1: begin
+			if (!tx_ready_i) begin
+				tx_start_nxt = 0;
+				state_nxt = S2;
+			end
 		end
 
-		INITIAL_MESSAGE: begin
+		S2: begin
 			if (tx_ready_i) begin
-				msg_addr_nxt = msg_addr + 1;
-				state_nxt = WAIT_1;
 
-				if (msg_addr > MSG_SIZE) begin
-					msg_addr_nxt = msg_addr;
-					state_nxt = PROCEDURE_DONE;
+				msg_addr_nxt = msg_addr + 1;
+
+				if (msg_addr <= MSG_SIZE) begin
+					state_nxt = S3;
 				end
+				else
+					state_nxt = PROCEDURE_DONE;
 			end
 		end
+
+		// Atualiza os dados pra saida
+		S3: begin
+
+			if (msg_addr <= MSG_SIZE) begin
+				tx_data_nxt = msg_data;
+			end
+			else begin
+				tx_data_nxt = "\n";
+			end
+
+			state_nxt = INIT;
+		end
+
 
 
 

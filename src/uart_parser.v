@@ -47,6 +47,7 @@ sevenseg ss0 (
 	.an(an)
 );
 
+
 // Serial command parser
 
 reg [3:0] state, state_nxt;
@@ -55,20 +56,16 @@ reg run_done, run_done_nxt;
 
 // MAIN_STATES
 localparam
-	INIT = 0,
-	S1 = 5,
-	S2 = 6,
-	S3 = 7,
-	S4 = 8,
-	S5 = 9,
-	S6 = 10,
-	S7 = 11,
-	S8 = 12,
-	S9 = 13,
-	INITIAL_MESSAGE = 1,
-	GET_INTERNAL_STATE = 2,
-	CSOC_RUN = 3,
-	PROCEDURE_DONE = 4;
+	INITIAL_MESSAGE = 0,  // gray
+	S1 = 1,
+	S2 = 2,
+	S3 = 3,
+	WAITING_COMMAND = 4,  // green
+	SET_CSOC_STATE = 5,   // red
+	GET_CSOC_STATE = 6,   // blue
+	EXECUTE_CSOC = 7,     // gray
+	SET_CSOC_INPUTS = 8,  // red
+	GET_CSOC_OUTPUTS = 9; // orange
 
 assign tx_start_o = tx_start;
 
@@ -82,8 +79,8 @@ initial begin
 end
 
 localparam CSOC_NREGS = 1919; // Number of registers in CSOC chain (1919)
-localparam RUN_CLKS = 10;   // Number of clock cycles for CSOC run
-localparam MAX_COLS = 70;   // Maximum number of columns for Serial TX
+localparam RUN_CLKS = 10;     // Number of clock cycles for CSOC run
+localparam MAX_COLS = 70;     // Maximum number of columns for Serial TX
 
 reg [7:0] tx_data, tx_data_nxt;
 reg [11:0] clk_count, clk_count_nxt;
@@ -93,9 +90,9 @@ reg csoc_clk, csoc_clk_nxt;
 assign tx_data_o = tx_data;
 assign csoc_clk_o = csoc_clk;
 
-always @(posedge clk) begin
+always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
-		state <= INIT;
+		state <= INITIAL_MESSAGE;
 		tx_start <= 0;
 		tx_data <= 0;
 		clk_count <= 0;
@@ -129,7 +126,7 @@ always @(*) begin
 	run_done_nxt = run_done;
 	case (state)
 
-		INIT: begin
+		INITIAL_MESSAGE: begin
 			if (tx_ready_i) begin
 				tx_start_nxt = 1;
 				state_nxt = S1;
@@ -152,7 +149,8 @@ always @(*) begin
 					state_nxt = S3;
 				end
 				else
-					state_nxt = PROCEDURE_DONE;
+
+					state_nxt = WAITING_COMMAND;
 			end
 		end
 
@@ -166,52 +164,64 @@ always @(*) begin
 				tx_data_nxt = "\n";
 			end
 
-			state_nxt = INIT;
+			state_nxt = INITIAL_MESSAGE;
+		end
+
+		WAITING_COMMAND: begin
+		end
+		SET_CSOC_STATE: begin
+		end
+		GET_CSOC_STATE: begin
+		end
+		EXECUTE_CSOC: begin
+		end
+		SET_CSOC_INPUTS: begin
+		end
+		GET_CSOC_OUTPUTS: begin
 		end
 
 
 
+		// GET_CSOC_STATE: begin
 
+		// 	if (tx_ready_i) begin
+		// 		if (col_break >= MAX_COLS-1) begin
+		// 			col_break_nxt = 0;
+		// 			tx_data_nxt = "\n";
+		// 		end
+		// 		else begin
+		// 			clk_count_nxt = clk_count + 1;
+		// 			col_break_nxt = col_break + 1;
+		// 			case (csoc_data_i[7])
+		// 				1'b0: tx_data_nxt = "0";
+		// 				1'b1: tx_data_nxt = "1";
+		// 			endcase
+		// 		end
+		// 	end
 
-		GET_INTERNAL_STATE: begin
+		// 	if (clk_count > CSOC_NREGS) begin
+		// 		clk_count_nxt = 0;
+		// 		col_break_nxt = 0;
+		// 		if (run_done) begin
 
-			if (tx_ready_i) begin
-				if (col_break >= MAX_COLS-1) begin
-					col_break_nxt = 0;
-					tx_data_nxt = "\n";
-				end
-				else begin
-					clk_count_nxt = clk_count + 1;
-					col_break_nxt = col_break + 1;
-					case (csoc_data_i[7])
-						1'b0: tx_data_nxt = "0";
-						1'b1: tx_data_nxt = "1";
-					endcase
-				end
-			end
+		// 			state_nxt = WAITING_COMMAND;
+		// 		end
+		// 		else begin
+		// 			tx_start_nxt = 0;
+		// 		end
 
-			if (clk_count > CSOC_NREGS) begin
-				clk_count_nxt = 0;
-				col_break_nxt = 0;
-				if (run_done) begin
-					state_nxt = PROCEDURE_DONE;
-				end
-				else begin
-					tx_start_nxt = 0;
-					state_nxt = CSOC_RUN;
-				end
-			end
-		end
+		// 	end
+		// end
 
-		CSOC_RUN: begin
-			if (csoc_clk) begin
-				clk_count_nxt = clk_count + 1;
-			end
-			if (clk_count > RUN_CLKS) begin
-				run_done_nxt = 1;
-				state_nxt = GET_INTERNAL_STATE;
-			end
-		end
+		// 	if (csoc_clk) begin
+
+		// 		clk_count_nxt = clk_count + 1;
+		// 	end
+		// 	if (clk_count > RUN_CLKS) begin
+		// 		run_done_nxt = 1;
+		// 		state_nxt = GET_CSOC_STATE;
+		// 	end
+		// end
 
 	endcase
 end

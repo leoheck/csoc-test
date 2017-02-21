@@ -28,16 +28,23 @@ state_list=$(sed -n '/MAIN_STATES/,/;/p' src/uart_parser.v | sed -e '1,2d' | sed
 
 IFS=$'\n'
 for i in $state_list; do
-	name=$(echo "$i" | tr '\r' ' ' | cut -d'=' -f1)
-	code=$(echo "$i" | tr '\r' ' ' | cut -d'=' -f2)
-	code_bin=$(echo "obase=2;${code}" | bc)
-	code_bin_padding=$(printf "%0${bits}d" ${code_bin})
+	name=$( echo "$i" | cut -d'=' -f1 | sed 's|//.*||g')
+	code=$( echo "$i" | cut -d'=' -f2 | sed 's|//.*||g')
 
+	# color=$(echo "$i" | cut -d'//' -f2)
+	# color="black"
+
+	code_bin=$(echo "obase=2; $code" | bc)
+	code_bin_padding=$(printf "%0${bits}d" $code_bin)
+	# code_bin_padding=$code_bin
+
+	# RANDOM COLOR
 	lines=$(cat /etc/X11/rgb.txt | sed '/^!.*/d' | wc -l)
 	line_num=$(shuf -i 0-$lines -n 1)
 	line=$(sed "${line_num}q;d" /etc/X11/rgb.txt | sed '/^!.*/d' )
-	color=$(echo $line | cut -c 15-)
-	# color_tag="?$color?"	
+	color=$(echo $line | sed 's/ \t/\t/g' | cut -c 14-)
+
+	color_tag="?$color?"
 	states="$code_bin_padding ${color_tag}$name\n$states"
 done
 

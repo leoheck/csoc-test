@@ -167,7 +167,7 @@ clean:
 	@ rm -f initial_message.txt
 	@ rm -f uart.vcd.fst
 	@ rm -f version.txt
-
+	@ rm -f gtkwave/parser_states.conf
 
 #=================================================================
 # FOSS tools
@@ -179,7 +179,7 @@ iverilog: required
 		src/uart_rx.v \
 		src/uart_tx.v \
 		src/sevenseg.v \
-		src/uart_parser.v \
+		src/cmd_parser.v \
 		src/csoc_test.v \
 		src/tb.v
 

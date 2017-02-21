@@ -62,16 +62,17 @@ reg run_done, run_done_nxt;
 
 // MAIN_STATES
 localparam
-	INITIAL_MESSAGE = 0,  // gray
+	INITIAL_MESSAGE = 0,
 	S1 = 1,
 	S2 = 2,
 	S3 = 3,
-	WAITING_COMMAND = 4,  // green
-	SET_CSOC_STATE = 5,   // red
-	GET_CSOC_STATE = 6,   // blue
-	EXECUTE_CSOC = 7,     // gray
-	SET_CSOC_INPUTS = 8,  // red
-	GET_CSOC_OUTPUTS = 9; // orange
+	WAITING_COMMAND = 4,
+	SET_DUT_STATE = 5,
+	GET_DUT_STATE = 6,
+	EXECUTE_DUT = 7,
+	SET_DUT_INPUTS = 8,
+	GET_DUT_OUTPUTS = 9,
+	S4 = 10;
 
 assign tx_start_o = tx_start;
 
@@ -85,8 +86,10 @@ initial begin
 end
 
 localparam CSOC_NREGS = 1919; // Number of registers in CSOC chain (1919)
-localparam RUN_CLKS = 10;     // Number of clock cycles for CSOC run
 localparam MAX_COLS = 70;     // Maximum number of columns for Serial TX
+localparam RUN_CLKS = 10;     // Number of clock cycles for CSOC run
+
+reg [0:15] nclks, nclks_nxt;
 
 reg [7:0] tx_data, tx_data_nxt;
 reg [11:0] clk_count, clk_count_nxt;
@@ -132,6 +135,9 @@ always @(*) begin
 	run_done_nxt = run_done;
 	case (state)
 
+		// Initial Mesasge states
+		// ===================================================
+
 		INITIAL_MESSAGE: begin
 			if (tx_ready_i) begin
 				tx_start_nxt = 1;
@@ -173,22 +179,72 @@ always @(*) begin
 			state_nxt = INITIAL_MESSAGE;
 		end
 
+
+		// Wait for commands
+		// ===================================================
+
 		WAITING_COMMAND: begin
+			if(new_rx_data) begin
+				case (rx_data)
+					"r": state_nxt = INITIAL_MESSAGE;  // reset
+					"s": state_nxt = SET_DUT_STATE;    // set the scan chain
+					"g": state_nxt = GET_DUT_STATE;    // get the scan chain
+					"e": state_nxt = EXECUTE_DUT;      // start DUT execution
+					"i": state_nxt = SET_DUT_INPUTS;   // set DUT inputs
+					"o": state_nxt = GET_DUT_OUTPUTS;  // get DUT outputs
+				endcase
+			end
 		end
-		SET_CSOC_STATE: begin
+
+		SET_DUT_STATE: begin
+			// if(new_rx_data) begin
+			// end
 		end
-		GET_CSOC_STATE: begin
-		end
-		EXECUTE_CSOC: begin
-		end
-		SET_CSOC_INPUTS: begin
-		end
-		GET_CSOC_OUTPUTS: begin
+		GET_DUT_STATE: begin
+			// if(new_rx_data) begin
+			// end
 		end
 
 
+		EXECUTE_DUT: begin
+			// if(new_rx_data) begin
+			// 	if (low_data == 1) begin
+			// 		nclks_nxt[8:15] = rx_data;
+			// 		times_nxt = 0;
+			// 		state_nxt = S4;
+			// 	end
+			// 	else begin
+			// 		nclks_nxt[0:7] = rx_data;
+			// 		times_nxt = times+1;
+			// 	end
+			// end
+		end
 
-		// GET_CSOC_STATE: begin
+		S4: begin
+			if (clk_count == nclks)
+				state_nxt = WAITING_COMMAND;
+		end
+
+
+		SET_DUT_INPUTS: begin
+			// if(new_rx_data) begin
+			// end
+		end
+		GET_DUT_OUTPUTS: begin
+			// if(new_rx_data) begin
+			// end
+		end
+
+	endcase
+end
+
+endmodule
+
+
+
+
+
+		// GET_DUT_STATE: begin
 
 		// 	if (tx_ready_i) begin
 		// 		if (col_break >= MAX_COLS-1) begin
@@ -225,11 +281,6 @@ always @(*) begin
 		// 	end
 		// 	if (clk_count > RUN_CLKS) begin
 		// 		run_done_nxt = 1;
-		// 		state_nxt = GET_CSOC_STATE;
+		// 		state_nxt = GET_DUT_STATE;
 		// 	end
 		// end
-
-	endcase
-end
-
-endmodule

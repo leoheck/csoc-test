@@ -139,51 +139,46 @@ always @(*) begin
 	case (state)
 
 		INIT_STATE: begin
-			run_done_nxt = 0;
-			tx_start_nxt = 0;
-			state_nxt = WAIT_1;
-		end
-
-		WAIT_1: begin
-			state_nxt = WAIT_2;
-		end
-		WAIT_2: begin
 			state_nxt = WAIT_3;
 		end
-		WAIT_3: begin
-			state_nxt = WAIT_4;
-		end
-		WAIT_4: begin
-			tx_start_nxt = 1;
-			state_nxt = WAIT_5;
-		end
-		WAIT_5: begin
-			state_nxt = WAIT_6;
+
+		WAIT_3: state_nxt = WAIT_4;
+		WAIT_4: state_nxt = WAIT_1;
+
+		WAIT_1: begin
+			if (tx_ready_i) begin
+				tx_start_nxt = 1;
+				if (msg_addr > MSG_SIZE) begin
+					tx_data_nxt = "\n";
+				end
+				else begin
+					tx_data_nxt = msg_data;
+				end
+				state_nxt = WAIT_2;
+			end
 		end
 
-		WAIT_6: state_nxt = WAIT_7;
-		WAIT_7: state_nxt = WAIT_8;
-		WAIT_8: state_nxt = WAIT_9;
-		WAIT_9: state_nxt = INITIAL_MESSAGE;
-
-
-		// Envia a mensagem inicial e o menu
-		// Fica neste estado ate toda mesnagem ser enviada
+		WAIT_2: begin
+			tx_start_nxt = 0;
+			state_nxt = INITIAL_MESSAGE;
+		end
 
 		INITIAL_MESSAGE: begin
 			if (tx_ready_i) begin
-				tx_start_nxt = 1;
 				msg_addr_nxt = msg_addr + 1;
-				tx_data_nxt = msg_data;
-				if (msg_addr >= MSG_SIZE-1) begin
-					tx_data_nxt = "\n";
-					state_nxt = GET_INTERNAL_STATE;
+				state_nxt = WAIT_1;
+
+				if (msg_addr > MSG_SIZE) begin
+					msg_addr_nxt = msg_addr;
+					state_nxt = PROCEDURE_DONE;
 				end
 			end
 		end
 
-		GET_INTERNAL_STATE: begin
 
+
+
+		GET_INTERNAL_STATE: begin
 
 			if (tx_ready_i) begin
 				if (col_break >= MAX_COLS-1) begin

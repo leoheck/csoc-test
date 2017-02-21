@@ -58,7 +58,7 @@ reg [1:0] state;
 reg [1:0] next_state;
 
 //-- Transition between states
-always @(posedge clk)
+always @(posedge clk or negedge rstn)
 	if (!rstn)
 		state <= IDLE;
 	else
@@ -111,9 +111,12 @@ end
 //-------------------------------------
 
 //-- Register the input data
-always @(posedge clk)
-	if (start == 1 && state == IDLE)
-		data_r <= data;
+always @(posedge clk or negedge rstn)
+	if (!rstn)
+		data_r <= 0;
+	else
+		if (start == 1 && state == IDLE)
+			data_r <= data;
 
 //-- 1 bit start + 8 bits datos + 1 bit stop
 //-- Shifter register. It stored the frame to transmit:
@@ -124,7 +127,7 @@ reg [9:0] shifter;
 //-- when load = 0, the frame is shifted right to send 1 bit,
 //--   at the baudrate determined by clk_baud
 //--  1s are introduced by the left
-always @(posedge clk)
+always @(posedge clk or negedge rstn)
 	//-- Reset
 	if (!rstn)
 		shifter <= 10'b11_1111_1111;
@@ -140,7 +143,7 @@ always @(posedge clk)
 //-- Sent bit counter
 //-- When load (=1) the counter is reset
 //-- When load = 0, the sent bits are counted (with the raising edge of clk_baud)
-always @(posedge clk)
+always @(posedge clk or negedge rstn)
 	if (!rstn)
 		bitc <= 0;
 	else if (load == 1)
@@ -151,7 +154,7 @@ always @(posedge clk)
 //-- The less significant bit is transmited through tx
 //-- It is a registed output, because tx is connected to an Asynchronous bus
 //--  and the glitches should be avoided
-always @(posedge clk)
+always @(posedge clk or negedge rstn)
 	if (!rstn)
 		tx <= 0;
 	else

@@ -184,9 +184,9 @@ iverilog: required
 		src/tb.v
 
 run:
-	#pgrep vvp | killall -q vvp
+	@# pgrep vvp | killall -q vvp
 	vvp $(top)
-	notify-send -u critical 'Simulation done! Reload gtkwave' --icon=gtkwave
+	@ notify-send -u critical 'Simulation done! Reload gtkwave' --icon=gtkwave
 
 
 # Warning! File size is 370 MB.  This might fail in recoding.

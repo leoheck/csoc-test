@@ -29,7 +29,6 @@ module csoc_test #(
 	output wire  csoc_rstn,
 	output wire  csoc_test_se,
 	output wire  csoc_test_tm,
-
 	input  wire  csoc_uart_write,
 	output wire  csoc_uart_read,
 	input  wire [7:0] csoc_data_i,
@@ -69,9 +68,9 @@ uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
 	.clk(clk),
 	.rstn(master_rst_n[0]),
+	.rx(rx),
 	.rcv(rx_rcv),
-	.data(rx_data),
-	.rx(rx)
+	.data(rx_data)
 );
 
 cmd_parser cp0 (

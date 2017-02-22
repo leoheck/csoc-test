@@ -17,11 +17,11 @@ module cmd_parser
 
 	// CSOC interface
 	output wire       csoc_clk_o,
-	output reg        csoc_rstn_o,
-	output reg        csoc_test_se_o,    // Scan Enable
-	output reg        csoc_test_tm_o,    // Test Mode
+	output wire       csoc_rstn_o,
+	output wire       csoc_test_se_o,    // Scan Enable
+	output wire       csoc_test_tm_o,    // Test Mode
 	input  wire       csoc_uart_write_i,
-	output reg        csoc_uart_read_o,
+	output wire       csoc_uart_read_o,
 	input  wire [7:0] csoc_data_i,
 	output wire [7:0] csoc_data_o
 
@@ -29,6 +29,37 @@ module cmd_parser
 	// output [1:14] PIs; // Primary input
 	// input  [1:11] POs; // Primary outputs
 );
+
+// ORIGINAL NAMES
+reg [1:14] pis, pis_nxt; // Primary input
+reg [1:11] pos, pos_nxt; // Primary outputs
+
+// FROM CADENCE ET TESTBENCH
+// part_PIs[0001] // pinName = clk_i;
+// part_PIs[0010] // pinName = reset_i;
+// part_PIs[0013] // pinName = uart_read_i;
+// part_POs[0010] // pinName = uart_write_o;
+// part_PIs[0009] // pinName = data_i[7];
+// part_PIs[0008] // pinName = data_i[6];
+// part_PIs[0007] // pinName = data_i[5];
+// part_PIs[0006] // pinName = data_i[4];
+// part_PIs[0005] // pinName = data_i[3];
+// part_PIs[0004] // pinName = data_i[2];
+// part_PIs[0003] // pinName = data_i[1];
+// part_PIs[0002] // pinName = data_i[0];
+// part_POs[0009] // pinName = data_o[7];
+// part_POs[0008] // pinName = data_o[6];
+// part_POs[0007] // pinName = data_o[5];
+// part_POs[0006] // pinName = data_o[4];
+// part_POs[0005] // pinName = data_o[3];
+// part_POs[0004] // pinName = data_o[2];
+// part_POs[0003] // pinName = data_o[1];
+// part_POs[0002] // pinName = data_o[0];
+// part_PIs[0014] // pinName = xtal_a_i;
+// part_POs[0011] // pinName = xtal_b_o;
+// part_POs[0001] // pinName = clk_o;
+// part_PIs[0012] // pinName = test_t
+// part_PIs[0011] // pinName = test_se_i;
 
 // TEST PINS
 // test_tm_i 	test_function= +TI; 	# test_mode
@@ -61,16 +92,24 @@ sevenseg ss0 (
 );
 
 
+
+
+reg csoc_rstn, csoc_rstn_nxt;
+reg csoc_test_se, csoc_test_se_nxt;
+reg csoc_test_tm, csoc_test_tm_nxt;
+reg csoc_uart_read, csoc_uart_read_nxt;
+reg [7:0] csoc_data_o_reg, csoc_data_o_nxt;
+
 // CSOC CLOCK
-reg dut_clk;
+reg csoc_clk;
 reg clk_en, clk_en_nxt;
 always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
-		dut_clk <= 0;
+		csoc_clk <= 0;
 	end
 	else
 		if (clk_en)
-			dut_clk <= ~dut_clk;
+			csoc_clk <= ~csoc_clk;
 end
 
 
@@ -82,20 +121,37 @@ reg run_done, run_done_nxt;
 
 // MAIN_STATES
 localparam
-	INITIAL_MESSAGE = 0,
-	S1 = 1,
-	S2 = 2,
-	S3 = 3,
-	WAITING_COMMAND = 4,
-	SET_DUT_STATE = 5,
-	GET_DUT_STATE = 6,
-	EXECUTE_DUT = 7,
-	SET_DUT_INPUTS = 8,
-	GET_DUT_OUTPUTS = 9,
-	S4 = 10;
+	RESET = 0,
+	INITIAL_MESSAGE = 1,
+	S1 = 2,
+	S2 = 3,
+	S3 = 4,
+	WAITING_COMMAND = 5,
+	SET_DUT_STATE = 6,
+	GET_DUT_STATE = 7,
+	EXECUTE_DUT = 8,
+	SET_DUT_INPUTS = 9,
+	GET_DUT_OUTPUTS = 10,
+	S4 = 11,
+	FREE_RUN_DUT = 12;
+
+localparam
+	RESET_CMD = "r",
+	SET_STATE_CMD = "s",
+	GET_STATE_CMD = "g",
+	SET_INPUTS_CMD = "e",
+	GET_OUTPUTS_CMD = "i",
+	EXECUTE_CMD = "o",
+	FREE_RUN_CMD = "7";
 
 assign tx_start_o = tx_start;
-assign csoc_clk_o = dut_clk;
+
+assign csoc_clk_o = csoc_clk;
+assign csoc_rstn_o = csoc_rstn;
+assign csoc_test_se_o = csoc_test_se;
+assign csoc_test_tm_o = csoc_test_tm;
+assign csoc_uart_read_o = csoc_uart_read;
+assign csoc_data_o = csoc_data_o_reg;
 
 localparam MSG_SIZE = 20;
 reg [7:0] mgs_mem [0:MSG_SIZE-1];
@@ -113,14 +169,14 @@ localparam RUN_CLKS = 10;     // Number of clock cycles for CSOC run
 reg [7:0] tx_data, tx_data_nxt;
 reg [11:0] clk_count, clk_count_nxt;
 reg [6:0] col_break, col_break_nxt;
-reg [0:15] nclks, nclks_nxt;
+reg [15:0] nclks, nclks_nxt;
 reg times, times_nxt;
 
 assign tx_data_o = tx_data;
 
 always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
-		state <= INITIAL_MESSAGE;
+		state <= RESET;
 		tx_start <= 0;
 		tx_data <= 0;
 		clk_count <= 0;
@@ -131,6 +187,12 @@ always @(posedge clk or negedge rstn) begin
 		clk_en <= 0;
 		nclks <= 0;
 		times <= 0;
+		//
+		csoc_rstn <= 0;
+		csoc_test_se <= 1;
+		csoc_test_tm <= 1;
+		csoc_uart_read <= 0;
+		csoc_data_o_reg <= 0;
 	end
 	else begin
 		state <= state_nxt;
@@ -144,6 +206,12 @@ always @(posedge clk or negedge rstn) begin
 		clk_en <= clk_en_nxt;
 		nclks <= nclks_nxt;
 		times <= times_nxt;
+		//
+		csoc_rstn <= csoc_rstn_nxt;
+		csoc_test_se <= csoc_test_se_nxt;
+		csoc_test_tm <= csoc_test_tm_nxt;
+		csoc_uart_read <= csoc_uart_read_nxt;
+		csoc_data_o_reg <= csoc_data_o_nxt;
 	end
 end
 
@@ -158,7 +226,30 @@ always @(*) begin
 	clk_en_nxt = clk_en;
 	nclks_nxt = nclks;
 	times_nxt = times;
+	//
+	csoc_rstn_nxt = csoc_rstn;
+	csoc_test_se_nxt = csoc_test_se;
+	csoc_test_tm_nxt = csoc_test_tm;
+	csoc_uart_read_nxt = csoc_uart_read;
+	csoc_data_o_nxt = csoc_data_o;
 	case (state)
+
+		// DESCRIPTION
+		// ===================================================
+
+		RESET: begin
+			//
+			csoc_rstn_nxt = 1;
+			csoc_test_se_nxt = 1;
+			csoc_test_tm_nxt = 1;
+			csoc_uart_read_nxt = 0;
+			csoc_data_o_nxt = 0;
+			//
+			msg_addr_nxt = 0;
+			//
+			state_nxt = INITIAL_MESSAGE;
+		end
+
 
 		// Initial Mesasge states
 		// ===================================================
@@ -185,9 +276,10 @@ always @(*) begin
 				if (msg_addr <= MSG_SIZE) begin
 					state_nxt = S3;
 				end
-				else
-
+				else begin
+					msg_addr_nxt = 0;
 					state_nxt = WAITING_COMMAND;
+				end
 			end
 		end
 
@@ -211,18 +303,19 @@ always @(*) begin
 		WAITING_COMMAND: begin
 			if(new_rx_data) begin
 				case (rx_data)
-					"r": state_nxt = INITIAL_MESSAGE;  // reset
-					"s": state_nxt = SET_DUT_STATE;    // set the scan chain
-					"g": state_nxt = GET_DUT_STATE;    // get the scan chain
-					"e": state_nxt = EXECUTE_DUT;      // start DUT execution
-					"i": state_nxt = SET_DUT_INPUTS;   // set DUT inputs
-					"o": state_nxt = GET_DUT_OUTPUTS;  // get DUT outputs
+					RESET_CMD:       state_nxt = RESET;            // (ok) reset
+					SET_STATE_CMD:   state_nxt = SET_DUT_STATE;    // (  ) set the scan chain
+					GET_STATE_CMD:   state_nxt = GET_DUT_STATE;    // (  ) get the scan chain
+					EXECUTE_CMD:     state_nxt = EXECUTE_DUT;      // (ok) start DUT execution for n cycles
+					FREE_RUN_CMD:    state_nxt = FREE_RUN_DUT;     // (ok) start DUT execution until stop command
+					SET_INPUTS_CMD:  state_nxt = SET_DUT_INPUTS;   // (  ) set DUT inputs
+					GET_OUTPUTS_CMD: state_nxt = GET_DUT_OUTPUTS;  // (  ) get DUT outputs
 				endcase
 			end
 		end
 
 
-		// Wait for commands
+		// DESCRIPTION
 		// ===================================================
 
 		SET_DUT_STATE: begin
@@ -230,7 +323,7 @@ always @(*) begin
 			// end
 		end
 
-		// Wait for commands
+		// DESCRIPTION
 		// ===================================================
 
 		GET_DUT_STATE: begin
@@ -238,16 +331,23 @@ always @(*) begin
 			// end
 		end
 
+		// DESCRIPTION
+		// ===================================================
 
 		EXECUTE_DUT: begin
+			csoc_rstn_nxt = 1;
+			csoc_test_se_nxt = 0;
+			csoc_test_tm_nxt = 0;
+			csoc_uart_read_nxt = 0;
+			csoc_data_o_nxt = 0;
 			if(new_rx_data) begin
 				if (times) begin
-					nclks_nxt[8:15] = rx_data;
+					nclks_nxt[7:0] = rx_data;
 					times_nxt = 0;
 					state_nxt = S4;
 				end
 				else begin
-					nclks_nxt[0:7] = rx_data;
+					nclks_nxt[15:8] = rx_data;
 					times_nxt = 1;
 				end
 			end
@@ -255,7 +355,7 @@ always @(*) begin
 
 		S4: begin
 			clk_en_nxt = 1;
-			if (dut_clk)
+			if (csoc_clk)
 				if (clk_count == nclks-1) begin
 					clk_en_nxt = 0;
 					state_nxt = WAITING_COMMAND;
@@ -265,7 +365,7 @@ always @(*) begin
 		end
 
 
-		// Wait for commands
+		// DESCRIPTION
 		// ===================================================
 
 		SET_DUT_INPUTS: begin
@@ -273,7 +373,7 @@ always @(*) begin
 			// end
 		end
 
-		// Wait for commands
+		// DESCRIPTION
 		// ===================================================
 
 		GET_DUT_OUTPUTS: begin

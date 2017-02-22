@@ -155,7 +155,7 @@ initial begin
 
 	wait_for_idle_state;
 	// reset_csoc_test;
-	// execute_dut(20);
+	execute_dut(2000);
 	// set_dut(SET_STATE_CMD, 10, "1010101010");
 	// get_dut(GET_STATE_CMD, 10);
 	// set_dut(SET_INPUTS_CMD, 14, "1010101010");

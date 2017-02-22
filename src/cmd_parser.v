@@ -31,43 +31,42 @@ module cmd_parser
 );
 
 // ORIGINAL NAMES
-reg [1:14] pis, pis_nxt; // Primary input
-reg [1:11] pos, pos_nxt; // Primary outputs
+localparam npis = 14;
+localparam npos = 11;
+reg [1:npis] pis, pis_nxt; // primary input
+reg [1:npos] pos, pos_nxt; // primary outputs
 
 // FROM CADENCE ET TESTBENCH
-// part_PIs[0001] // pinName = clk_i;
-// part_PIs[0010] // pinName = reset_i;
-// part_PIs[0013] // pinName = uart_read_i;
-// part_POs[0010] // pinName = uart_write_o;
-// part_PIs[0009] // pinName = data_i[7];
-// part_PIs[0008] // pinName = data_i[6];
-// part_PIs[0007] // pinName = data_i[5];
-// part_PIs[0006] // pinName = data_i[4];
-// part_PIs[0005] // pinName = data_i[3];
-// part_PIs[0004] // pinName = data_i[2];
-// part_PIs[0003] // pinName = data_i[1];
-// part_PIs[0002] // pinName = data_i[0];
-// part_POs[0009] // pinName = data_o[7];
-// part_POs[0008] // pinName = data_o[6];
-// part_POs[0007] // pinName = data_o[5];
-// part_POs[0006] // pinName = data_o[4];
-// part_POs[0005] // pinName = data_o[3];
-// part_POs[0004] // pinName = data_o[2];
-// part_POs[0003] // pinName = data_o[1];
-// part_POs[0002] // pinName = data_o[0];
-// part_PIs[0014] // pinName = xtal_a_i;
-// part_POs[0011] // pinName = xtal_b_o;
-// part_POs[0001] // pinName = clk_o;
-// part_PIs[0012] // pinName = test_t
-// part_PIs[0011] // pinName = test_se_i;
+// part_PIs[0001] // pinName = clk_i;          // clk_i 	    test_function= -ES;
+// part_PIs[0010] // pinName = reset_i;        // reset_i 	    test_function= +SC; 	# test_mode
+// part_PIs[0013] // pinName = uart_read_i;    //
+// part_POs[0010] // pinName = uart_write_o;   //
+// part_PIs[0009] // pinName = data_i[7];      // data_i[7] 	test_function= SI0;
+// part_PIs[0008] // pinName = data_i[6];      //
+// part_PIs[0007] // pinName = data_i[5];      //
+// part_PIs[0006] // pinName = data_i[4];      //
+// part_PIs[0005] // pinName = data_i[3];      //
+// part_PIs[0004] // pinName = data_i[2];      //
+// part_PIs[0003] // pinName = data_i[1];      //
+// part_PIs[0002] // pinName = data_i[0];      //
+// part_POs[0009] // pinName = data_o[7];      // data_o[7] 	test_function= SO0;
+// part_POs[0008] // pinName = data_o[6];      //
+// part_POs[0007] // pinName = data_o[5];      //
+// part_POs[0006] // pinName = data_o[4];      //
+// part_POs[0005] // pinName = data_o[3];      //
+// part_POs[0004] // pinName = data_o[2];      //
+// part_POs[0003] // pinName = data_o[1];      //
+// part_POs[0002] // pinName = data_o[0];      //
+// part_PIs[0014] // pinName = xtal_a_i;       //
+// part_POs[0011] // pinName = xtal_b_o;       //
+// part_POs[0001] // pinName = clk_o;          //
+// part_PIs[0012] // pinName = test_tm_i       // test_tm_i 	test_function= +TI; 	# test_mode
+// part_PIs[0011] // pinName = test_se_i;      // test_se_i 	test_function= +SE; 	# shift_enable
 
-// TEST PINS
-// test_tm_i 	test_function= +TI; 	# test_mode
-// reset_i 	    test_function= +SC; 	# test_mode
-// test_se_i 	test_function= +SE; 	# shift_enable
-// clk_i 	    test_function= -ES;
-// data_i[7] 	test_function= SI0;
-// data_o[7] 	test_function= SO0;
+
+
+
+
 
 
 // Put the bitgen creation time on display as a version
@@ -115,7 +114,7 @@ end
 
 // Serial command parser
 
-reg [3:0] state, state_nxt;
+reg [4:0] state, state_nxt;
 reg tx_start, tx_start_nxt;
 reg run_done, run_done_nxt;
 
@@ -133,7 +132,12 @@ localparam
 	SET_DUT_INPUTS = 9,
 	GET_DUT_OUTPUTS = 10,
 	S4 = 11,
-	FREE_RUN_DUT = 12;
+	FREE_RUN_DUT = 12,
+	S5 = 13,
+	S11 = 14,
+	S21 = 15,
+	S31 = 16,
+	S111 = 17;
 
 localparam
 	RESET_CMD = "r",
@@ -142,7 +146,8 @@ localparam
 	SET_INPUTS_CMD = "e",
 	GET_OUTPUTS_CMD = "i",
 	EXECUTE_CMD = "o",
-	FREE_RUN_CMD = "7";
+	FREE_RUN_CMD = "f",
+	DONE_CMD = "d";
 
 assign tx_start_o = tx_start;
 
@@ -167,7 +172,7 @@ localparam MAX_COLS = 70;     // Maximum number of columns for Serial TX
 localparam RUN_CLKS = 10;     // Number of clock cycles for CSOC run
 
 reg [7:0] tx_data, tx_data_nxt;
-reg [11:0] clk_count, clk_count_nxt;
+reg [15:0] clk_count, clk_count_nxt;
 reg [6:0] col_break, col_break_nxt;
 reg [15:0] nclks, nclks_nxt;
 reg times, times_nxt;
@@ -247,6 +252,7 @@ always @(*) begin
 			//
 			msg_addr_nxt = 0;
 			//
+			// state_nxt = WAITING_COMMAND; //INITIAL_MESSAGE; // Skip initial message for tests...
 			state_nxt = INITIAL_MESSAGE;
 		end
 
@@ -327,19 +333,73 @@ always @(*) begin
 		// ===================================================
 
 		GET_DUT_STATE: begin
-			// if(new_rx_data) begin
-			// end
+			csoc_test_se_nxt = 1;
+			csoc_test_tm_nxt = 1;
+			if(new_rx_data) begin
+				if (times) begin
+					nclks_nxt[7:0] = rx_data;
+					times_nxt = 0;
+					state_nxt = S5;
+				end
+				else begin
+					nclks_nxt[15:8] = rx_data;
+					times_nxt = 1;
+				end
+			end
 		end
+
+		S5: begin
+			if (tx_ready_i) begin
+				clk_en_nxt = 1;
+				clk_count_nxt = clk_count + 1;
+				tx_start_nxt = 1;
+				state_nxt = S111;
+			end
+		end
+
+		S111: begin
+			if(!csoc_clk) begin
+				clk_en_nxt = 0;
+				state_nxt = S11;
+			end
+		end
+
+		S11: begin
+			if (!tx_ready_i) begin
+				tx_start_nxt = 0;
+				state_nxt = S21;
+			end
+		end
+
+		S21: begin
+			if (tx_ready_i)
+				if (clk_count == nclks) begin
+					clk_en_nxt = 0;
+					clk_count_nxt = 0;
+					state_nxt = WAITING_COMMAND;
+				end
+				else
+					state_nxt = S31;
+		end
+
+		// Atualiza os dados pra saida
+		S31: begin
+			if (csoc_data_i[7])
+				tx_data_nxt = "1";
+			else
+				tx_data_nxt = "0";
+			state_nxt = S5;
+		end
+
+
+
 
 		// DESCRIPTION
 		// ===================================================
 
 		EXECUTE_DUT: begin
-			csoc_rstn_nxt = 1;
 			csoc_test_se_nxt = 0;
 			csoc_test_tm_nxt = 0;
-			csoc_uart_read_nxt = 0;
-			csoc_data_o_nxt = 0;
 			if(new_rx_data) begin
 				if (times) begin
 					nclks_nxt[7:0] = rx_data;
@@ -362,6 +422,19 @@ always @(*) begin
 				end
 				else
 					clk_count_nxt = clk_count + 1;
+		end
+
+
+		// DESCRIPTION
+		// ===================================================
+
+		FREE_RUN_DUT: begin
+			clk_en_nxt = 1;
+			if (csoc_clk)
+				clk_count_nxt = clk_count + 1;
+			if(new_rx_data)
+				if (rx_data == DONE_CMD)
+					state_nxt = WAITING_COMMAND;
 		end
 
 

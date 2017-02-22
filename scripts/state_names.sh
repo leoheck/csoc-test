@@ -20,8 +20,8 @@
 # 	CSOC_RUN = 3,
 # 	PROCEDURE_DONE = 4;
 
-bits=$(($(grep "state, state_nxt;" src/uart_parser.v | cut -d'[' -f2 | cut -d':' -f1)+1))
-state_list=$(sed -n '/MAIN_STATES/,/;/p' src/uart_parser.v | sed -e '1,2d' | sed 's/[,; \t\s\r]//g')
+bits=$(($(grep "state, state_nxt;" src/cmd_parser.v | cut -d'[' -f2 | cut -d':' -f1)+1))
+state_list=$(sed -n '/MAIN_STATES/,/;/p' src/cmd_parser.v | sed -e '1,2d' | sed 's/[,; \t\s\r]//g')
 
 # echo $bits
 # echo "$state_list"

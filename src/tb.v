@@ -6,11 +6,11 @@ module tb ();
 
 parameter BAUDRATE = 9600;
 
-reg rst;
 reg clk;
+reg rst;
+wire rstn;
 
 wire tx;
-reg rx;
 
 wire [7:0] leds;
 wire [7:0] sseg;
@@ -27,6 +27,20 @@ wire [7:0] csoc_data_o;
 
 // 50 MHz clock
 always #20 clk = !clk;
+
+reg send;
+reg [7:0] send_data;
+wire rx;
+wire ready;
+
+uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
+	.clk(clk),
+	.rstn(rstn),
+	.start(send),
+	.data(send_data),
+	.ready(ready),
+	.tx(rx)
+);
 
 csoc_test #(.BAUDRATE(BAUDRATE)) csoc (
 	.clk(clk),
@@ -49,34 +63,53 @@ csoc_test #(.BAUDRATE(BAUDRATE)) csoc (
 	.csoc_data_o(csoc_data_o)
 );
 
+assign rstn = ~rst;
+
 initial begin
 
 	$display("CSoC Test Running...");
 	$dumpfile("uart.vcd");
-	$dumpvars(0, csoc);
-	// $dumpvars(1, tb.csoc.cp0);
+	$dumpvars(0);
 
 	clk = 0;
 	rst = 1;
 
-	rx = 0;
+	send = 0;
+	send_data = 0;
+
 	csoc_uart_write = 0;
 	csoc_data_i = 0;
 
 	#70 rst = 0;
 
+	#86000000
+
+
+	// ROTINA DE EXECUCAO DO CSOC
+
+	send_data = "e";
+	send = 1;
+	@ (negedge ready)
+	@ (posedge clk) send = 0;
+	@ (posedge ready)
+
+	send_data = 8'h00;
+	send = 1;
+	@ (negedge ready)
+	@ (posedge clk) send = 0;
+	@ (posedge ready)
+
+	send_data = 8'h8;
+	send = 1;
+	@ (negedge ready)
+	@ (posedge clk) send = 0;
+	@ (posedge ready)
+
+
 	// $display("\t\ttime,\tclk,\trst,\tenable,\tcount");
 	// $monitor("%d,\t%b,\t%b,\t%b,\t%d",$time, clk,rst,enable,count);
 
-	// #250000000  $finish;
-	#100000000  $finish;
-	// #50000000  $finish;
-
-	// $dumpoff;
-	// #40000000
-	// $dumpon;
-	// #10400000;
-	// $finish;
+	#20000000 $finish;
 
 end
 

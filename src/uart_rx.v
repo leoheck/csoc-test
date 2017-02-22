@@ -45,46 +45,45 @@ reg load;    //-- Load the received character into the data register
 //-- synchronous design rules
 reg rx_r;
 
-always @(posedge clk)
+always @(posedge clk or negedge rstn)
 	if (!rstn)
 		rx_r <= 0;
 	else
 		rx_r <= rx;
 
 //-- Baud generator
-baudgen_rx #(BAUDRATE)
-	baudgen0 (
-		.rstn(rstn),
-		.clk(clk),
-		.clk_ena(bauden),
-		.clk_out(clk_baud)
-	);
+baudgen_rx #(BAUDRATE) baudgen0 (
+	.rstn(rstn),
+	.clk(clk),
+	.clk_ena(bauden),
+	.clk_out(clk_baud)
+);
 
 //-- Bit counter
 reg [3:0] bitc;
 
-always @(posedge clk)
-		if (!rstn)
-			bitc <= 0;
-		else 
-			if (clear)
-				bitc <= 4'd0;
-			else if (clear == 0 && clk_baud == 1)
-				bitc <= bitc + 1;
+always @(posedge clk or negedge rstn)
+	if (!rstn)
+		bitc <= 0;
+	else
+		if (clear)
+			bitc <= 4'd0;
+		else if (clear == 0 && clk_baud == 1)
+			bitc <= bitc + 1;
 
 
 //-- Shift register for storing the received bits
 reg [9:0] raw_data;
 
-always @(posedge clk)
-	if (!rstn) 
+always @(posedge clk or negedge rstn)
+	if (!rstn)
 		raw_data <= 0;
-	else 
+	else
 		if (clk_baud == 1)
 			raw_data <= {rx_r, raw_data[9:1]};
 
 //-- Data register. Store the character received
-always @(posedge clk)
+always @(posedge clk or negedge rstn)
 	if (!rstn)
 		data <= 0;
 	else if (load)
@@ -105,7 +104,7 @@ reg [1:0] state;
 reg [1:0] next_state;
 
 //-- Transition between states
-always @(posedge clk)
+always @(posedge clk or negedge rstn)
 	if (!rstn)
 		state <= IDLE;
 	else

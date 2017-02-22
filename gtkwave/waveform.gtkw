@@ -1,16 +1,16 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Mon Feb 20 03:49:21 2017
+[*] Wed Feb 22 01:14:08 2017
 [*]
 [dumpfile] "/home/lheck/Github/nexys2-samples/samples/verilog/csoc_test/uart.vcd"
-[dumpfile_mtime] "Mon Feb 20 03:48:46 2017"
-[dumpfile_size] 605579537
+[dumpfile_mtime] "Wed Feb 22 01:11:04 2017"
+[dumpfile_size] 185385663
 [optimize_vcd]
 [savefile] "/home/lheck/Github/nexys2-samples/samples/verilog/csoc_test/gtkwave/waveform.gtkw"
 [timestart] 0
 [size] 1600 876
 [pos] -1 -1
-*-25.353857 139612180 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-24.264841 104400000 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [markername] A1
 [treeopen] tb.
 [treeopen] tb.csoc.
@@ -20,39 +20,50 @@
 [sst_expanded] 1
 [sst_vpaned_height] 353
 @28
+tb.csoc.clk
 [color] 2
 tb.csoc.cp0.rstn
-tb.csoc.cp0.clk
 @200
 -
 @2028
 ^1 /tmp/../home/lheck/Github/nexys2-samples/samples/verilog/csoc_test/gtkwave/../../../../../../../../tmp/../home/lheck/Github/nexys2-samples/samples/verilog/csoc_test/gtkwave/parser_states.conf
 tb.csoc.cp0.state[3:0]
 @200
+>2200000000
 -
+@800200
+>0
+-RX
+@28
+tb.rx
+@22
+tb.send_data[7:0]
+@200
+-
+@28
+tb.csoc.cp0.new_rx_data
+@22
+tb.csoc.cp0.rx_data[7:0]
+@28
+tb.csoc.cp0.times
+@24
+tb.csoc.cp0.nclks[0:15]
+@1000200
+-RX
+@200
+-
+@c00200
+-TX
 @28
 tb.csoc.tx
 tb.csoc.cp0.tx_ready_i
-@200
--
-@28
 tb.csoc.cp0.tx_start
 tb.csoc.cp0.run_done
-@200
--
 @c00820
 tb.csoc.tx_data[7:0]
-@28
-(0)tb.csoc.tx_data[7:0]
-(1)tb.csoc.tx_data[7:0]
-(2)tb.csoc.tx_data[7:0]
-(3)tb.csoc.tx_data[7:0]
-(4)tb.csoc.tx_data[7:0]
-(5)tb.csoc.tx_data[7:0]
-(6)tb.csoc.tx_data[7:0]
-(7)tb.csoc.tx_data[7:0]
 @1401200
 -group_end
+-TX
 @200
 -
 @24
@@ -66,8 +77,15 @@ tb.csoc.cp0.clk_count[11:0]
 tb.csoc.cp0.col_break[6:0]
 @200
 -
+@28
+tb.csoc.cp0.csoc_clk_o
 @29
 tb.csoc.cp0.csoc_clk
+@28
+tb.csoc.cp0.clk_en
+tb.csoc.cp0.dut_clk
+@22
+tb.csoc.cp0.clk_count[11:0]
 @200
 -
 @c00200
@@ -83,15 +101,6 @@ tb.csoc.csoc_uart_write
 tb.csoc.csoc_data_i[7:0]
 @c00022
 tb.csoc.csoc_data_o[7:0]
-@28
-(0)tb.csoc.csoc_data_o[7:0]
-(1)tb.csoc.csoc_data_o[7:0]
-(2)tb.csoc.csoc_data_o[7:0]
-(3)tb.csoc.csoc_data_o[7:0]
-(4)tb.csoc.csoc_data_o[7:0]
-(5)tb.csoc.csoc_data_o[7:0]
-(6)tb.csoc.csoc_data_o[7:0]
-(7)tb.csoc.csoc_data_o[7:0]
 @1401200
 -group_end
 -CSOC

@@ -33,26 +33,26 @@
 //---------------------------------------------------------------------------------------
 
 module baudgen_rx #(
-         parameter BAUDRATE = `B115200  //-- Default baudrate
+	parameter BAUDRATE = `B115200  //-- Default baudrate
 )(
-         input wire rstn,         //-- Reset (active low)
-         input wire clk,          //-- System clock
-         input wire clk_ena,      //-- Clock enable
-         output wire clk_out      //-- Bitrate Clock output
+	input wire rstn,         //-- Reset (active low)
+	input wire clk,          //-- System clock
+	input wire clk_ena,      //-- Clock enable
+	output wire clk_out      //-- Bitrate Clock output
 );
-
-//-- Number of bits needed for storing the baudrate divisor
-// localparam N = $clog2(BAUDRATE);
-localparam N = clog2(BAUDRATE);
 
 function integer clog2;
 input integer value;
 begin
-value = value-1;
-for (clog2=0; value>0; clog2=clog2+1)
-value = value>>1;
-end
+	value = value-1;
+	for (clog2=0; value>0; clog2=clog2+1)
+		value = value>>1;
+	end
 endfunction
+
+//-- Number of bits needed for storing the baudrate divisor
+// localparam N = $clog2(BAUDRATE);
+localparam N = clog2(BAUDRATE);
 
 //-- Value for generating the pulse in the middle of the period
 localparam M2 = (BAUDRATE >> 1);
@@ -62,22 +62,20 @@ localparam M2 = (BAUDRATE >> 1);
 reg [N-1:0] divcounter = 0;
 
 //-- Contador módulo M
-always @(posedge clk)
+always @(posedge clk or negedge rstn)
+	if (!rstn)
+		divcounter <= 0;
 
-  if (!rstn)
-    divcounter <= 0;
-
-  else if (clk_ena)
-    //-- Normal working: counting. When the maximum count is reached, it starts from 0
-    divcounter <= (divcounter == BAUDRATE - 1) ? 0 : divcounter + 1;
-  else
-    //-- Counter fixed to its maximum value
-    //-- When it is resumed it start from 0
-    divcounter <= BAUDRATE - 1;
+	else if (clk_ena)
+		//-- Normal working: counting. When the maximum count is reached, it starts from 0
+		divcounter <= (divcounter == BAUDRATE - 1) ? 0 : divcounter + 1;
+	else
+		//-- Counter fixed to its maximum value
+		//-- When it is resumed it start from 0
+		divcounter <= BAUDRATE - 1;
 
 //-- The output is 1 when the counter is in the middle of the period, if clk_ena is active
 //-- It is 1 only for one system clock cycle
 assign clk_out = (divcounter == M2) ? clk_ena : 0;
-
 
 endmodule

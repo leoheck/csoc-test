@@ -112,7 +112,7 @@ endtask
 task send_task;
 input [7:0] data;
 begin
-	$display("- Sending data: 0x%h|%0d", data, data);
+	$display("- Sending data:  0x%h|%0d", data, data);
 	send_data = data;
 	send = 1;
 	@ (negedge ready)

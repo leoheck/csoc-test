@@ -28,12 +28,11 @@ Codigos de comando dentro do arquivo de ATPG (Cadence ET):
 - `900`: 
 - `901`: 
 
-
 <!-- USING for SVG images: https://rawgit.com/ -->
 
 <!-- ![Alt text](https://rawgit.com/leoheck/nexys2-samples/master/samples/verilog/csoc_test/blocks.svg) -->
-<img src="https://rawgit.com/leoheck/nexys2-samples/master/samples/verilog/csoc_test/blocks.svg" width="500px">
+<img src="https://rawgit.com/leoheck/csoc-test/master/blocks.svg" width="500px"xcxcxcdsd  >
 
 <!-- ![Alt text](https://rawgit.com/leoheck/nexys2-samples/master/samples/verilog/csoc_test/setup.svg) -->
-<img src="https://rawgit.com/leoheck/nexys2-samples/master/samples/verilog/csoc_test/setup.svg" width="800px">
+<img src="https://rawgit.com/leoheck/csoc-test/master/setup.svg" width="800px">
 

@@ -1,16 +1,16 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Wed Feb 22 20:23:43 2017
+[*] Thu Feb 23 21:52:22 2017
 [*]
-[dumpfile] "/home/leco/Github/nexys2-samples/samples/verilog/csoc_test/uart.vcd"
-[dumpfile_mtime] "Wed Feb 22 20:21:33 2017"
-[dumpfile_size] 293414724
+[dumpfile] "/home/leco/Repos/csoc-test/uart.vcd"
+[dumpfile_mtime] "Thu Feb 23 21:50:50 2017"
+[dumpfile_size] 86205180
 [optimize_vcd]
-[savefile] "/home/leco/Github/nexys2-samples/samples/verilog/csoc_test/gtkwave/waveform.gtkw"
+[savefile] "/home/leco/Repos/csoc-test/gtkwave/waveform.gtkw"
 [timestart] 0
-[size] 1600 876
+[size] 1600 875
 [pos] -1 -1
-*-24.650244 -1 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-23.526489 36300000 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [markername] A1
 [treeopen] tb.
 [treeopen] tb.part0.
@@ -26,7 +26,9 @@ tb.part0.cp0.rstn
 @200
 -
 @2028
-^1 /tmp/../home/leco/Github/nexys2-samples/samples/verilog/csoc_test/gtkwave/parser_states.conf
+^1 /tmp/../home/leco/Repos/csoc-test/gtkwave/parser_states.conf
+tb.part0.cp0.state[4:0]
+@24
 tb.part0.cp0.state[4:0]
 @200
 >2200000000
@@ -73,29 +75,32 @@ tb.part0.cp0.msg_data[7:0]
 tb.part0.cp0.clk_count[15:0]
 tb.part0.cp0.nclks[15:0]
 @28
+tb.part0.cp0.csoc_clk
 tb.part0.cp0.clk_en
+tb.part0.cp0.cont_pis[4:0]
+@24
+tb.part0.cp0.cont_pos[4:0]
 @200
 -
-@800200
--CSOC
 @28
-tb.part0.csoc_clk
-tb.part0.csoc_rstn
-tb.part0.csoc_test_se
-tb.part0.csoc_test_tm
-@1000200
--CSOC
-@800200
--TB
-@28
-tb.rcv
-@820
-tb.data_rcv[7:0]
-@28
-tb.send
-@821
-tb.send_data[7:0]
-@1000200
--TB
+tb.part0.cp0.scan_i
+@c00023
+tb.part0.part_pos_i[1:11]
+@29
+(0)tb.part0.part_pos_i[1:11]
+(1)tb.part0.part_pos_i[1:11]
+(2)tb.part0.part_pos_i[1:11]
+(3)tb.part0.part_pos_i[1:11]
+(4)tb.part0.part_pos_i[1:11]
+(5)tb.part0.part_pos_i[1:11]
+(6)tb.part0.part_pos_i[1:11]
+(7)tb.part0.part_pos_i[1:11]
+(8)tb.part0.part_pos_i[1:11]
+(9)tb.part0.part_pos_i[1:11]
+(10)tb.part0.part_pos_i[1:11]
+@1401201
+-group_end
+@22
+tb.part0.part_pis_o[1:14]
 [pattern_trace] 1
 [pattern_trace] 0

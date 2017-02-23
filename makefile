@@ -190,7 +190,7 @@ run:
 	vvp $(top)
 	@ notify-send -u critical 'Simulation done! Reload gtkwave' --icon=gtkwave
 
-sim: kill_vvp iverilog run
+sim: iverilog run
 
 wave:
 	gtkwave --slider-zoom --optimize uart.vcd -a gtkwave/waveform.gtkw

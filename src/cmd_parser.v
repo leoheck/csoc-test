@@ -29,7 +29,23 @@ reg test_se_i;
 reg test_tm_i;
 reg scan_o;
 
+function integer clog2;
+input integer value;
+begin
+	value = value-1;
+	for (clog2=0; value>0; clog2=clog2+1)
+		value = value>>1;
+	end
+endfunction
+
+localparam NPIS_WIDTH = clog2(NPIS);
+localparam NPOS_WIDTH = clog2(NPOS);
+
+reg [NPIS_WIDTH:0] cont_pis, cont_pis_nxt;
+reg [NPOS_WIDTH:0] cont_pos, cont_pos_nxt;
+
 reg [1:NPOS] part_pos;
+reg [1:NPIS] part_pis;
 
 always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
@@ -116,33 +132,53 @@ reg run_done, run_done_nxt;
 // MAIN_STATES
 localparam
 	RESET = 0,
+	AVOID_MSG = 18,
 	INITIAL_MESSAGE = 1,
 	S1 = 2,
 	S2 = 3,
 	S3 = 4,
+	//
 	WAITING_COMMAND = 5,
+	//
 	SET_DUT_STATE = 6,
+	SA1 = 26,
+	//
 	GET_DUT_STATE = 7,
+	SB5 = 27,
+	SB6 = 28,
+	//
 	EXECUTE_DUT = 8,
-	SET_DUT_INPUTS = 9,
-	GET_DUT_OUTPUTS = 10,
+	SET_INPUTS_STATE = 9,
+	//
+	GET_OUTPUTS_STATE = 10,
 	S4 = 11,
+	//
 	FREE_RUN_DUT = 12,
 	S5 = 13,
 	S11 = 14,
 	S21 = 15,
 	S31 = 16,
-	S111 = 17;
+	S111 = 17,
+	S1111 = 19,
+	//
+	SX5 = 20,
+	SX11 = 21,
+	SX21 = 22,
+	SX31 = 23,
+	SX111 = 24,
+	SX1111 = 25;
+
 
 localparam
 	RESET_CMD = "r",
 	SET_STATE_CMD = "s",
 	GET_STATE_CMD = "g",
-	SET_INPUTS_CMD = "e",
-	GET_OUTPUTS_CMD = "i",
-	EXECUTE_CMD = "o",
+	SET_INPUTS_CMD = "i",
+	GET_OUTPUTS_CMD = "o",
+	EXECUTE_CMD = "e",
 	FREE_RUN_CMD = "f",
 	DONE_CMD = "d";
+
 
 assign tx_start_o = tx_start;
 
@@ -182,6 +218,9 @@ always @(posedge clk or negedge rstn) begin
 		csoc_test_tm <= 1;
 		csoc_uart_read <= 0;
 		csoc_data_o_reg <= 0;
+		//
+		cont_pos <= 0;
+		cont_pis <= 0;
 	end
 	else begin
 		state <= state_nxt;
@@ -201,6 +240,9 @@ always @(posedge clk or negedge rstn) begin
 		csoc_test_tm <= csoc_test_tm_nxt;
 		csoc_uart_read <= csoc_uart_read_nxt;
 		csoc_data_o_reg <= csoc_data_o_nxt;
+		//
+		cont_pos <= cont_pos_nxt;
+		cont_pis <= cont_pis_nxt;
 	end
 end
 
@@ -221,6 +263,9 @@ always @(*) begin
 	csoc_test_tm_nxt = csoc_test_tm;
 	csoc_uart_read_nxt = csoc_uart_read;
 	csoc_data_o_nxt = csoc_data_o_reg;
+	//
+	cont_pos_nxt = cont_pos;
+	cont_pis_nxt = cont_pis;
 	case (state)
 
 		// DESCRIPTION
@@ -236,10 +281,13 @@ always @(*) begin
 			//
 			msg_addr_nxt = 0;
 			//
-			// state_nxt = WAITING_COMMAND; //INITIAL_MESSAGE; // Skip initial message for tests...
-			state_nxt = INITIAL_MESSAGE;
+			state_nxt = AVOID_MSG; //INITIAL_MESSAGE; // Skip initial message for tests...
+			// state_nxt = INITIAL_MESSAGE;
 		end
 
+		AVOID_MSG: begin
+			state_nxt = WAITING_COMMAND;
+		end
 
 		// Initial Mesasge states
 		// ===================================================
@@ -298,8 +346,8 @@ always @(*) begin
 					GET_STATE_CMD:   state_nxt = GET_DUT_STATE;    // (  ) get the scan chain
 					EXECUTE_CMD:     state_nxt = EXECUTE_DUT;      // (ok) start DUT execution for n cycles
 					FREE_RUN_CMD:    state_nxt = FREE_RUN_DUT;     // (ok) start DUT execution until stop command
-					SET_INPUTS_CMD:  state_nxt = SET_DUT_INPUTS;   // (  ) set DUT inputs
-					GET_OUTPUTS_CMD: state_nxt = GET_DUT_OUTPUTS;  // (  ) get DUT outputs
+					SET_INPUTS_CMD:  state_nxt = SET_INPUTS_STATE;   // (  ) set DUT inputs
+					GET_OUTPUTS_CMD: state_nxt = GET_OUTPUTS_STATE;  // (  ) get DUT outputs
 				endcase
 			end
 		end
@@ -308,9 +356,48 @@ always @(*) begin
 		// DESCRIPTION
 		// ===================================================
 
-		SET_DUT_STATE: begin
-			// if(new_rx_data) begin
-			// end
+
+		SET_DUT_STATE:  begin
+			csoc_test_se_nxt = 1;
+			csoc_test_tm_nxt = 1;
+			if(new_rx_data) begin
+				if (times) begin
+					nclks_nxt[7:0] = rx_data;
+					times_nxt = 0;
+					state_nxt = SB5;
+				end
+				else begin
+					nclks_nxt[15:8] = rx_data;
+					times_nxt = 1;
+				end
+			end
+			clk_count_nxt = 1;
+			clk_en_nxt = 0;
+		end
+
+		SB5: begin
+			if(new_rx_data) begin
+				case (rx_data)
+					"0": scan_i <= 0;
+					"1": scan_i <= 1;
+				endcase
+				clk_en_nxt = 1;
+				state_nxt = SB6;
+			end
+		end
+
+		SB6: begin
+
+			clk_count_nxt = clk_count + 1;
+			clk_en_nxt = 0;
+
+			if (clk_count >= nclks) begin
+				clk_en_nxt = 0;
+				state_nxt = WAITING_COMMAND;
+			end
+			else begin
+				state_nxt = SB5;
+			end
 		end
 
 		// DESCRIPTION
@@ -333,15 +420,27 @@ always @(*) begin
 		end
 
 		S5: begin
+			clk_en_nxt = 0;
 			if (tx_ready_i) begin
-				clk_en_nxt = 1;
+
+				if (scan_i)
+					tx_data_nxt = "1";
+				else
+					tx_data_nxt = "0";
+
 				clk_count_nxt = clk_count + 1;
-				tx_start_nxt = 1;
-				state_nxt = S111;
+				state_nxt = S1111;
 			end
 		end
 
+		S1111: begin
+			tx_start_nxt = 1;
+			clk_en_nxt = 1;
+			state_nxt = S111;
+		end
+
 		S111: begin
+			tx_start_nxt = 0;
 			if(!csoc_clk) begin
 				clk_en_nxt = 0;
 				state_nxt = S11;
@@ -425,17 +524,101 @@ always @(*) begin
 		// DESCRIPTION
 		// ===================================================
 
-		SET_DUT_INPUTS: begin
-			// if(new_rx_data) begin
-			// end
+		GET_OUTPUTS_STATE: begin
+			clk_en_nxt = 0;
+			csoc_test_se_nxt = 1;
+			csoc_test_tm_nxt = 1;
+			if(new_rx_data) begin
+				if (times) begin
+					nclks_nxt[7:0] = rx_data;
+					times_nxt = 0;
+					state_nxt = SX5;
+				end
+				else begin
+					nclks_nxt[15:8] = rx_data;
+					times_nxt = 1;
+				end
+			end
+			cont_pos_nxt = 1;
 		end
+
+		SX5: begin
+			if (tx_ready_i) begin
+				if (part_pos[cont_pos])
+					tx_data_nxt = "1";
+				else
+					tx_data_nxt = "0";
+
+				cont_pos_nxt = cont_pos + 1;
+				state_nxt = SX1111;
+			end
+		end
+
+		SX1111: begin
+			tx_start_nxt = 1;
+			state_nxt = SX111;
+		end
+
+		SX111: begin
+			tx_start_nxt = 0;
+			state_nxt = SX11;
+		end
+
+		SX11: begin
+			if (!tx_ready_i) begin
+				tx_start_nxt = 0;
+				state_nxt = SX21;
+			end
+		end
+
+		SX21: begin
+			if (tx_ready_i)
+				if (cont_pos > NPOS) begin
+					// clk_count_nxt = 1;
+					state_nxt = WAITING_COMMAND;
+				end
+				else
+					state_nxt = SX31;
+		end
+
+		// Atualiza os dados pra saida
+		SX31: begin
+			if (part_pos[cont_pos])
+				tx_data_nxt = "1";
+			else
+				tx_data_nxt = "0";
+			state_nxt = SX5;
+		end
+
 
 		// DESCRIPTION
 		// ===================================================
 
-		GET_DUT_OUTPUTS: begin
-			// if(new_rx_data) begin
-			// end
+		SET_INPUTS_STATE: begin
+			clk_en_nxt = 0;
+			csoc_test_se_nxt = 1;
+			csoc_test_tm_nxt = 1;
+			if(new_rx_data) begin
+				if (times) begin
+					nclks_nxt[7:0] = rx_data;
+					times_nxt = 0;
+					state_nxt = SA1;
+				end
+				else begin
+					nclks_nxt[15:8] = rx_data;
+					times_nxt = 1;
+				end
+			end
+			cont_pis_nxt = 1;
+		end
+
+		SA1: begin
+			if(new_rx_data) begin
+				part_pis[cont_pis] = rx_data;
+				cont_pis_nxt = cont_pis + 1;
+				if (cont_pis >= nclks)
+					state_nxt = WAITING_COMMAND;
+			end
 		end
 
 	endcase

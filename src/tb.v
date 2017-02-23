@@ -4,6 +4,7 @@
 module tb ();
 
 parameter BAUDRATE = 9600;
+localparam NREGS = 8;
 
 reg clk;
 reg rst;
@@ -30,7 +31,6 @@ wire [3:0] an;
 // Generic pat signal names to CSOC pin names
 //================================================
 
-localparam NREGS = 19;
 localparam NPIS = 14;
 localparam NPOS = 11;
 
@@ -63,6 +63,37 @@ assign part_pos[2:9] = csoc_data_o;
 assign part_pos[10]  = csoc_uart_write;
 assign part_pos[11]  = 0;
 
+reg [8*14:1] part_pos_names [1:NPOS];
+reg [8*14:1] part_pis_names [1:NPIS];
+
+initial begin
+	part_pis_names[1]  = "clk";
+	part_pis_names[2]  = "data_i_0";
+	part_pis_names[3]  = "data_i_1";
+	part_pis_names[4]  = "data_i_2";
+	part_pis_names[5]  = "data_i_3";
+	part_pis_names[6]  = "data_i_4";
+	part_pis_names[7]  = "data_i_5";
+	part_pis_names[8]  = "data_i_6";
+	part_pis_names[9]  = "data_i_7";
+	part_pis_names[10] = "rstn";
+	part_pis_names[11] = "test_se";
+	part_pis_names[12] = "test_tm";
+	part_pis_names[13] = "uart_read";
+	part_pis_names[14] = "none";
+	//
+	part_pos_names[1]  = "none";
+	part_pos_names[2]  = "data_o_0";
+	part_pos_names[3]  = "data_o_1";
+	part_pos_names[4]  = "data_o_2";
+	part_pos_names[5]  = "data_o_3";
+	part_pos_names[6]  = "data_o_4";
+	part_pos_names[7]  = "data_o_5";
+	part_pos_names[8]  = "data_o_6";
+	part_pos_names[9]  = "data_o_7";
+	part_pos_names[10] = "uart_write";
+	part_pos_names[11] = "none";
+end
 
 //================================================
 // DUT Commands
@@ -72,9 +103,9 @@ localparam
 	RESET_CMD = "r",
 	SET_STATE_CMD = "s",
 	GET_STATE_CMD = "g",
-	SET_INPUTS_CMD = "e",
-	GET_OUTPUTS_CMD = "i",
-	EXECUTE_CMD = "o",
+	SET_INPUTS_CMD = "i",
+	GET_OUTPUTS_CMD = "o",
+	EXECUTE_CMD = "e",
 	FREE_RUN_CMD = "f",
 	DONE_CMD = "d";
 
@@ -141,7 +172,7 @@ begin
 		data_ascii = " ";
 	else
 		data_ascii = data_rcv;
-	$display("- Data received: %3d|%0c|0x%h|%b", data_rcv, data_ascii, data_rcv, data_rcv);
+	$write("- Data received: %3d|%0c|0x%h|%b", data_rcv, data_ascii, data_rcv, data_rcv);
 end
 endtask
 
@@ -153,7 +184,7 @@ begin
 		data_ascii = " ";
 	else
 		data_ascii = data;
-	$display("- Sending data: -------- %3d|%0c|0x%h|%b", data, data_ascii, data, data);
+	$write("- Sending data: -------- %3d|%0c|0x%h|%b", data, data_ascii, data, data);
 	send_data = data;
 	send = 1;
 	@ (negedge ready)
@@ -169,28 +200,34 @@ endtask
 
 task reset_csoc_test;
 begin
-	$display("Reseting the DUT");
+	$display("TASK: Reseting the DUT");
 	send_task(RESET_CMD);
+	$write("\n");
 end
 endtask
 
 task execute_dut;
 input [15:0] cycles;
 begin
-	$display("Task: Executing DUT");
+	$display("TASK: Executing DUT");
 	send_task(EXECUTE_CMD);
+	$write("\n");
 	send_task(cycles[15:8]);
+	$write("\n");
 	send_task(cycles[7:0]);
+	$write("\n");
 end
 endtask
 
 task free_run_dut;
 input [15:0] cycles;
 begin
-	$display("Task: DUT running free");
+	$display("TASK: DUT running free");
 	send_task(FREE_RUN_CMD);
+	$write("\n");
 	#cycles
 	send_task(DONE_CMD);
+	$write("\n");
 	$display("- Stopped by user after %0d cycles", cycles);
 	end
 endtask
@@ -201,19 +238,26 @@ input [15:0] data_width;
 integer i;
 begin
 	case (cmd)
-		GET_STATE_CMD: $display("Task: Getting DUT internal state");
-		GET_OUTPUTS_CMD: $display("Task: Getting DUT outputs state");
+		GET_STATE_CMD: $display("TASK: Getting DUT internal state");
+		GET_OUTPUTS_CMD: $display("TASK: Getting DUT outputs state");
 		default: begin
-			$display("Task: ERROR, missing command to get DUT state");
+			$display("TASK: ERROR, missing command to get DUT state");
 			$finish;
 		end
 	endcase
 	send_task(cmd);
+	$write("\n");
 	send_task(data_width[15:8]);
+	$write("\n");
 	send_task(data_width[7:0]);
+	$write("\n");
 	for (i=0; i<data_width; i=i+1) begin
 		$write("  %4d: ", i+1);
 		recv_task;
+		if (cmd == GET_OUTPUTS_CMD)
+			$write("  %0s \n", part_pos_names[i+1]);
+		else
+			$write("\n");
 	end
 end
 endtask
@@ -225,18 +269,20 @@ input integer data;
 integer i;
 begin
 	case (cmd)
-		SET_STATE_CMD: $display("Task: Setting DUT internal state");
-		SET_INPUTS_CMD: $display("Task: Setting DUT inputs state");
+		SET_STATE_CMD: $display("TASK: Setting DUT internal state");
+		SET_INPUTS_CMD: $display("TASK: Setting DUT inputs state");
 		default: begin
 			$display("ERROR, missing command to set DUT state");
 			$finish;
 		end
 	endcase
 	send_task(cmd);
+	$write("\n");
 	send_task(data_width[15:8]);
+	$write("\n");
 	send_task(data_width[7:0]);
+	$write("\n");
 	for (i=0; i<data_width; i=i+1) begin
-		$write("  %4d: ", i+1);
 		case (data[i])
 			1: send_task("1");
 			0: send_task("0");
@@ -244,8 +290,13 @@ begin
 				$display("ERROR, missing data");
 				$finish;
 			end
-
 		endcase
+		$write(" %4d:", i+1);
+		if (cmd == SET_INPUTS_CMD)
+			$write(" %0s \n", part_pis_names[i+1]);
+		else
+			$write("\n");
+
 	end
 end
 endtask
@@ -267,17 +318,18 @@ initial begin
 	csoc_uart_write = 0;
 
 	#70 rst = 0;
-
 	wait_for_idle_state;
+
 	// reset_csoc_test;
 	// execute_dut(10);
 	// free_run_dut(12);
-	get_dut(GET_STATE_CMD, NREGS);
+	// get_dut(GET_STATE_CMD, NREGS);
 	// get_dut(GET_OUTPUTS_CMD, NPOS);
+	// set_dut(SET_STATE_CMD, NREGS, "10101010");
+	set_dut(SET_STATE_CMD, NREGS, "10001111");
 	// set_dut(SET_INPUTS_CMD, NPIS, "1010101010");
-	// set_dut(SET_STATE_CMD, NREGS, "1010101010");
-	// wait_for_idle_state;
 
+	wait_for_idle_state;
 	#1000 $finish;
 
 end

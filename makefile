@@ -7,7 +7,7 @@ DE: iverilog
 # simulation with isim
 # https://www.xilinx.com/support/documentation/sw_manuals/xilinx13_1/ism_r_entering_simulation_tcl_commands.htm
 
-top = csoc_test
+top = part_tester
 top_tb = tb
 target = xc3s1200e-fg320-4
 ucf = nexsy2-1200.ucf
@@ -160,8 +160,8 @@ clean:
 	@ rm -f fuseRelaunch.cmd
 	@ rm -f fuse.xmsgs
 	@ rm -f isim.wdb
-	@ rm -f csoc_test.twx
-	@ rm -f csoc_test.twr
+	@ rm -f part_tester.twx
+	@ rm -f part_tester.twr
 	@ rm -f usage_statistics_webtalk.html
 	@ rm -f banner.txt
 	@ rm -f initial_message.txt
@@ -180,7 +180,7 @@ iverilog: required
 		src/uart_tx.v \
 		src/sevenseg.v \
 		src/cmd_parser.v \
-		src/csoc_test.v \
+		src/part_tester.v \
 		src/tb.v
 
 run:
@@ -200,4 +200,4 @@ run:
 sim: iverilog run
 
 wave:
-	gtkwave --optimize  uart.vcd -a gtkwave/waveform.gtkw
+	gtkwave --slider-zoom --optimize uart.vcd -a gtkwave/waveform.gtkw

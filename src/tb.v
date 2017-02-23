@@ -34,6 +34,9 @@ wire csoc_uart_read;
 reg [7:0] csoc_data_i;
 wire [7:0] csoc_data_o;
 
+wire [1:14] part_pis; // primary input
+reg [1:11] part_pos; // primary outputs
+
 localparam
 	RESET_CMD = "r",
 	SET_STATE_CMD = "s",
@@ -62,7 +65,7 @@ uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 	.tx(dut_rx)
 );
 
-csoc_test #(.BAUDRATE(BAUDRATE)) csoc (
+part_tester #(.BAUDRATE(BAUDRATE)) csoc (
 	.clk(clk),
 	.rst(rst),
 	// UART
@@ -73,21 +76,22 @@ csoc_test #(.BAUDRATE(BAUDRATE)) csoc (
 	.sseg(sseg),
 	.an(an),
 	// CSoC
-	.csoc_clk(csoc_clk),
-	.csoc_rstn(csoc_rstn),
-	.csoc_test_se(csoc_test_se),
-	.csoc_test_tm(csoc_test_tm),
-	.csoc_uart_write(csoc_uart_write),
-	.csoc_uart_read(csoc_uart_read),
-	.csoc_data_i(csoc_data_i),
-	.csoc_data_o(csoc_data_o)
+	// .csoc_clk(csoc_clk),
+	// .csoc_rstn(csoc_rstn),
+	// .csoc_test_se(csoc_test_se),
+	// .csoc_test_tm(csoc_test_tm),
+	// .csoc_uart_write(csoc_uart_write),
+	// .csoc_uart_read(csoc_uart_read),
+	// .csoc_data_i(csoc_data_i),
+	// .csoc_data_o(csoc_data_o)
+	//
+	.part_pis(part_pis),
+	.part_pos(part_pos)
 );
 
 
-// 50 MHz clock
-always #20 clk = !clk;
-
-assign rstn = ~rst;
+always #20 clk = !clk; // 50 MHz clock
+assign rstn = ~rst;    // active-low reset
 
 
 //================================================
@@ -159,7 +163,7 @@ input [7:0] cmd;
 input [15:0] data_width;
 begin
 	case (cmd)
-		GET_STATE_CMD: $display("Task: Getting DUT state");
+		GET_STATE_CMD: $display("Task: Getting DUT internal state");
 		GET_OUTPUTS_CMD: $display("Task: Getting DUT outputs state");
 		default: begin
 			$display("Task: ERROR, missing command to get DUT state");
@@ -176,9 +180,32 @@ endtask
 
 task set_dut;
 input [15:0] cmd;
-input [15:0] n_regs;
+input [15:0] data_width;
 input integer data;
+integer i;
 begin
+	case (cmd)
+		SET_STATE_CMD: $display("Task: Setting DUT internal state");
+		SET_INPUTS_CMD: $display("Task: Setting DUT inputs state");
+		default: begin
+			$display("ERROR, missing command to set DUT state");
+			$finish;
+		end
+	endcase
+	send_task(cmd);
+	send_task(data_width[15:8]);
+	send_task(data_width[7:0]);
+	for (i=0; i<data_width; i=i+1) begin
+		case (data[i])
+			1: send_task("1");
+			0: send_task("0");
+			default: begin
+				$display("ERROR, missing data");
+				$finish;
+			end
+
+		endcase
+	end
 end
 endtask
 
@@ -199,18 +226,17 @@ initial begin
 	csoc_data_i = 0;
 
 	#70 rst = 0;
-
 	wait_for_idle_state;
+
 	// reset_csoc_test;
 	// execute_dut(20);
 	// free_run_dut(12);
-	get_dut(GET_STATE_CMD, 13);
-	// get_dut(GET_OUTPUTS_CMD, 10);
+	// get_dut(GET_STATE_CMD, 13);
+	get_dut(GET_OUTPUTS_CMD, 10);
 	// set_dut(SET_INPUTS_CMD, 14, "1010101010");
 	// set_dut(SET_STATE_CMD, 10, "1010101010");
 	wait_for_idle_state;
 
-	// $monitor("%d,\t%b,\t%b,\t%b,\t%d",$time, clk,rst,enable,count);
 	#1000 $finish;
 
 end

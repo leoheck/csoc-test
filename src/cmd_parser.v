@@ -1,6 +1,8 @@
 
-module cmd_parser
-(
+module cmd_parser #(
+	parameter NPIS = 14,
+	parameter NPOS = 11
+)(
 	input  wire       clk,
 	input  wire       rstn,
 
@@ -15,56 +17,27 @@ module cmd_parser
 	output wire [7:0] sseg,         // Board 7Segment Display
 	output wire [3:0] an,           // 7 Segment Display enable
 
-	// CSOC interface
-	output wire       csoc_clk_o,
-	output wire       csoc_rstn_o,
-	output wire       csoc_test_se_o,    // Scan Enable
-	output wire       csoc_test_tm_o,    // Test Mode
-	input  wire       csoc_uart_write_i,
-	output wire       csoc_uart_read_o,
-	input  wire [7:0] csoc_data_i,
-	output wire [7:0] csoc_data_o
-
-	// Mudar a interface do CSOC pra esses nomes, como no TB do Cadence Encounter Test
-	// output [1:14] PIs; // Primary input
-	// input  [1:11] POs; // Primary outputs
+	output wire [1:NPIS] part_pis,  // Part interface, primary inputs
+	input  wire [1:NPOS] part_pos   // Part interface, primary outputs
 );
 
-// ORIGINAL NAMES
-localparam npis = 14;
-localparam npos = 11;
-reg [1:npis] pis, pis_nxt; // primary input
-reg [1:npos] pos, pos_nxt; // primary outputs
+// Standard names for scan chain inputs
+wire clk_i;
+wire scan_i;
+wire reset_i;
+wire test_se_i;
+wire test_tm_i;
+wire scan_o;
+reg [1:NPOS] part_pos_reg, part_pos_nxt;
 
-// FROM CADENCE ET TESTBENCH
-// part_PIs[0001] // pinName = clk_i;          // clk_i 	    test_function= -ES;
-// part_PIs[0010] // pinName = reset_i;        // reset_i 	    test_function= +SC; 	# test_mode
-// part_PIs[0013] // pinName = uart_read_i;    //
-// part_POs[0010] // pinName = uart_write_o;   //
-// part_PIs[0009] // pinName = data_i[7];      // data_i[7] 	test_function= SI0;
-// part_PIs[0008] // pinName = data_i[6];      //
-// part_PIs[0007] // pinName = data_i[5];      //
-// part_PIs[0006] // pinName = data_i[4];      //
-// part_PIs[0005] // pinName = data_i[3];      //
-// part_PIs[0004] // pinName = data_i[2];      //
-// part_PIs[0003] // pinName = data_i[1];      //
-// part_PIs[0002] // pinName = data_i[0];      //
-// part_POs[0009] // pinName = data_o[7];      // data_o[7] 	test_function= SO0;
-// part_POs[0008] // pinName = data_o[6];      //
-// part_POs[0007] // pinName = data_o[5];      //
-// part_POs[0006] // pinName = data_o[4];      //
-// part_POs[0005] // pinName = data_o[3];      //
-// part_POs[0004] // pinName = data_o[2];      //
-// part_POs[0003] // pinName = data_o[1];      //
-// part_POs[0002] // pinName = data_o[0];      //
-// part_PIs[0014] // pinName = xtal_a_i;       //
-// part_POs[0011] // pinName = xtal_b_o;       //
-// part_POs[0001] // pinName = clk_o;          //
-// part_PIs[0012] // pinName = test_tm_i       // test_tm_i 	test_function= +TI; 	# test_mode
-// part_PIs[0011] // pinName = test_se_i;      // test_se_i 	test_function= +SE; 	# shift_enable
+assign clk_i = part_pis[01];
+assign scan_i = part_pis[09];
+assign reset_i = part_pis[10];
+assign test_se_i = part_pis[11];
+assign test_tm_i = part_pis[12];
 
-
-
+always @(posedge clk)
+	part_pos_reg[09] <= scan_o;
 
 
 
@@ -151,12 +124,12 @@ localparam
 
 assign tx_start_o = tx_start;
 
-assign csoc_clk_o = csoc_clk;
-assign csoc_rstn_o = csoc_rstn;
-assign csoc_test_se_o = csoc_test_se;
-assign csoc_test_tm_o = csoc_test_tm;
-assign csoc_uart_read_o = csoc_uart_read;
-assign csoc_data_o = csoc_data_o_reg;
+// assign csoc_clk_o = csoc_clk;
+// assign csoc_rstn_o = csoc_rstn;
+// assign csoc_test_se_o = csoc_test_se;
+// assign csoc_test_tm_o = csoc_test_tm;
+// assign csoc_uart_read_o = csoc_uart_read;
+// assign csoc_data_o = csoc_data_o_reg;
 
 localparam MSG_SIZE = 20;
 reg [7:0] mgs_mem [0:MSG_SIZE-1];
@@ -236,7 +209,7 @@ always @(*) begin
 	csoc_test_se_nxt = csoc_test_se;
 	csoc_test_tm_nxt = csoc_test_tm;
 	csoc_uart_read_nxt = csoc_uart_read;
-	csoc_data_o_nxt = csoc_data_o;
+	csoc_data_o_nxt = csoc_data_o_reg;
 	case (state)
 
 		// DESCRIPTION
@@ -384,7 +357,7 @@ always @(*) begin
 
 		// Atualiza os dados pra saida
 		S31: begin
-			if (csoc_data_i[7])
+			if (scan_i)
 				tx_data_nxt = "1";
 			else
 				tx_data_nxt = "0";

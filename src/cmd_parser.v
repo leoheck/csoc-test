@@ -17,29 +17,45 @@ module cmd_parser #(
 	output wire [7:0] sseg,         // Board 7Segment Display
 	output wire [3:0] an,           // 7 Segment Display enable
 
-	output wire [1:NPIS] part_pis,  // Part interface, primary inputs
-	input  wire [1:NPOS] part_pos   // Part interface, primary outputs
+	output reg  [1:NPIS] part_pis_o,  // Part interface, primary inputs
+	input  wire [1:NPOS] part_pos_i   // Part interface, primary outputs
 );
 
 // Standard names for scan chain inputs
-wire clk_i;
-wire scan_i;
-wire reset_i;
-wire test_se_i;
-wire test_tm_i;
-wire scan_o;
-reg [1:NPOS] part_pos_reg, part_pos_nxt;
+reg clk_i;
+reg scan_i;
+reg reset_i;
+reg test_se_i;
+reg test_tm_i;
+reg scan_o;
 
-assign clk_i = part_pis[01];
-assign scan_i = part_pis[09];
-assign reset_i = part_pis[10];
-assign test_se_i = part_pis[11];
-assign test_tm_i = part_pis[12];
+reg [1:NPOS] part_pos;
 
-always @(posedge clk)
-	part_pos_reg[09] <= scan_o;
-
-
+always @(posedge clk or negedge rstn) begin
+	if (!rstn) begin
+		part_pis_o <= 0;
+		part_pos <= 0;
+		//
+		clk_i <= 0;
+		scan_i <= 0;
+		reset_i <= 0;
+		test_se_i <= 0;
+		test_tm_i <= 0;
+		//
+		scan_o <= 0;
+	end
+	else begin
+		part_pis_o[01] <= clk_i;
+		part_pis_o[09] <= scan_i;
+		part_pis_o[10] <= reset_i;
+		part_pis_o[11] <= test_se_i;
+		part_pis_o[12] <= test_tm_i;
+		//
+		part_pos <= part_pos_i;
+		//
+		scan_o <= part_pos_i[9];
+	end
+end
 
 
 // Put the bitgen creation time on display as a version
@@ -63,6 +79,12 @@ sevenseg ss0 (
 	.an(an)
 );
 
+always @(posedge clk or negedge rstn) begin
+	if (!rstn)
+		leds <= 0;
+	else
+		leds <= 0;
+end
 
 
 
@@ -124,13 +146,6 @@ localparam
 
 assign tx_start_o = tx_start;
 
-// assign csoc_clk_o = csoc_clk;
-// assign csoc_rstn_o = csoc_rstn;
-// assign csoc_test_se_o = csoc_test_se;
-// assign csoc_test_tm_o = csoc_test_tm;
-// assign csoc_uart_read_o = csoc_uart_read;
-// assign csoc_data_o = csoc_data_o_reg;
-
 localparam MSG_SIZE = 20;
 reg [7:0] mgs_mem [0:MSG_SIZE-1];
 reg [7:0] msg_data, msg_data_nxt;
@@ -139,10 +154,6 @@ reg [5:0] msg_addr, msg_addr_nxt;
 initial begin
 	$readmemh("initial_message.txt", mgs_mem);
 end
-
-localparam CSOC_NREGS = 1919; // Number of registers in CSOC chain (1919)
-localparam MAX_COLS = 70;     // Maximum number of columns for Serial TX
-localparam RUN_CLKS = 10;     // Number of clock cycles for CSOC run
 
 reg [7:0] tx_data, tx_data_nxt;
 reg [15:0] clk_count, clk_count_nxt;

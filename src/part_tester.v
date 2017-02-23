@@ -27,8 +27,8 @@ module part_tester #(
 	output wire [3:0] an,   // -- 7Segment Display enable
 
 	// PART UNDER TEST
-	output wire [1:14] part_pis, // primary input
-	input  wire [1:11] part_pos // primary outputs
+	output wire [1:14] part_pis_o, // primary input
+	input  wire [1:11] part_pos_i // primary outputs
 );
 
 reg [1:0] master_rst_n;  // -- Master, active low, asynchonous reset, synchronous release
@@ -39,9 +39,6 @@ wire [7:0] rx_data; // -- Received data
 wire [7:0] tx_data; // -- Received data
 wire tx_start;      // --
 wire tx_ready;      // -- Transmitter ready signal
-
-// wire [1:14] part_pis;
-// wire [1:11] part_pos;
 
 // Async reset synchronization
 always @(posedge clk or posedge rst) begin
@@ -86,17 +83,8 @@ cmd_parser #(.NPIS(NPIS), .NPOS(NPOS)) cp0 (
 	.sseg(sseg),
 	.an(an),
 	//
-	// .csoc_clk_o(csoc_clk),
-	// .csoc_rstn_o(csoc_rstn),
-	// .csoc_test_se_o(csoc_test_se),
-	// .csoc_test_tm_o(csoc_test_tm),
-	// .csoc_uart_write_i(csoc_uart_write),
-	// .csoc_uart_read_o(csoc_uart_read),
-	// .csoc_data_i(csoc_data_i),
-	// .csoc_data_o(csoc_data_o)
-	//
-	.part_pis(part_pis),
-	.part_pos(part_pos)
+	.part_pis_o(part_pis_o),
+	.part_pos_i(part_pos_i)
 );
 
 endmodule

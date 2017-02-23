@@ -122,10 +122,18 @@ screen:
 #====
 
 clean:
-	@ rm -f *.xrpt
+	@ # REQUIRED DATA
+	@ rm -f initial_message.txt
+	@ rm -f version.txt
+	@ # ICARUS/GTKWAVE
+	@ rm -f $(top)
+	@ rm -f *.vcd
+	@ rm -f *.vcd.fst
+	@ rm -f gtkwave/parser_states.conf
+	@ # ISE OUTPUTS
 	@ rm -f *-routed*
-	@ rm -f *-routed_pad.tx
 	@ rm -f *.bgn
+	@ rm -f *.bit
 	@ rm -f *.bld
 	@ rm -f *.drc
 	@ rm -f *.log
@@ -140,37 +148,29 @@ clean:
 	@ rm -f *.prj
 	@ rm -f *.srp
 	@ rm -f *.svf
+	@ rm -f *.twr
+	@ rm -f *.twx
 	@ rm -f *.xrpt
+	@ rm -f *.xrpt
+	@ rm -f *.xst
 	@ rm -f *.xwbt
 	@ rm -f *_signalbrowser.*
 	@ rm -f *_summary.xml
 	@ rm -f *_usage*
+	@ rm -f fuse.xmsgs
+	@ rm -f fuseRelaunch.cmd
+	@ rm -f isim.wdb
 	@ rm -f netlist.lst
 	@ rm -f param.opt
-	@ rm -f smartpreview.twr
-	@ rm -f timing.twr
-	@ rm -rf xlnx_auto_*_xdb
-	@ rm -rf _xmsgs
-	@ rm -rf xst
-	@ rm -f *.xst
-	@ rm -f *.bit
-	@ rm -f $(top)
-	@ rm -f *.vcd
-	@ rm -rf isim
-	@ rm -f fuseRelaunch.cmd
-	@ rm -f fuse.xmsgs
-	@ rm -f isim.wdb
-	@ rm -f part_tester.twx
-	@ rm -f part_tester.twr
 	@ rm -f usage_statistics_webtalk.html
-	@ rm -f banner.txt
-	@ rm -f initial_message.txt
-	@ rm -f uart.vcd.fst
-	@ rm -f version.txt
-	@ rm -f gtkwave/parser_states.conf
+	@ rm -rf _xmsgs
+	@ rm -rf isim
+	@ rm -rf xlnx_auto_*_xdb
+	@ rm -rf xst
+
 
 #=================================================================
-# FOSS tools
+# FOSS tools: icarus verilog, gtkwave
 
 iverilog: required
 	iverilog -o $(top) \

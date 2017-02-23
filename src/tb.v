@@ -25,17 +25,48 @@ wire [7:0] leds;
 wire [7:0] sseg;
 wire [3:0] an;
 
+
+//================================================
+// Generic pat signal names to CSOC pin names
+//================================================
+
+localparam NREGS = 19;
+localparam NPIS = 14;
+localparam NPOS = 11;
+
+// Generic part signals
+wire [1:NPIS] part_pis; // primary inputs (this is output here)
+wire [1:NPOS] part_pos; // primary outputs (this is input here)
+
+// CSOC Interface
 wire csoc_clk;
 wire csoc_rstn;
 wire csoc_test_se;
 wire csoc_test_tm;
-reg csoc_uart_write;
 wire csoc_uart_read;
-reg [7:0] csoc_data_i;
-wire [7:0] csoc_data_o;
+wire csoc_data_i;
 
-wire [1:14] part_pis; // primary input
-reg [1:11] part_pos; // primary outputs
+reg csoc_uart_write;
+reg [7:0] csoc_data_o;
+
+// part inputs mapping
+assign csoc_clk = part_pis[1];
+assign csoc_data_i = part_pis[2:9];
+assign csoc_rstn = part_pis[10];
+assign csoc_test_se = part_pis[11];
+assign csoc_test_tm = part_pis[12];
+assign csoc_uart_read = part_pis[13];
+
+// part outputs mapping
+assign part_pos[1]   = 0;
+assign part_pos[2:9] = csoc_data_o;
+assign part_pos[10]  = csoc_uart_write;
+assign part_pos[11]  = 0;
+
+
+//================================================
+// DUT Commands
+//================================================
 
 localparam
 	RESET_CMD = "r",
@@ -47,6 +78,9 @@ localparam
 	FREE_RUN_CMD = "f",
 	DONE_CMD = "d";
 
+//================================================
+// Instances
+//================================================
 
 uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
 	.clk(clk),
@@ -65,7 +99,7 @@ uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 	.tx(dut_rx)
 );
 
-part_tester #(.BAUDRATE(BAUDRATE)) csoc (
+part_tester #(.BAUDRATE(BAUDRATE)) part0 (
 	.clk(clk),
 	.rst(rst),
 	// UART
@@ -75,20 +109,14 @@ part_tester #(.BAUDRATE(BAUDRATE)) csoc (
 	.leds(leds),
 	.sseg(sseg),
 	.an(an),
-	// CSoC
-	// .csoc_clk(csoc_clk),
-	// .csoc_rstn(csoc_rstn),
-	// .csoc_test_se(csoc_test_se),
-	// .csoc_test_tm(csoc_test_tm),
-	// .csoc_uart_write(csoc_uart_write),
-	// .csoc_uart_read(csoc_uart_read),
-	// .csoc_data_i(csoc_data_i),
-	// .csoc_data_o(csoc_data_o)
-	//
-	.part_pis(part_pis),
-	.part_pos(part_pos)
+	// PART TO TEST
+	.part_pis_o(part_pis),  // CSOC primary inputs  (this is output here)
+	.part_pos_i(part_pos)   // CSOC primary outputs (this is input here)
 );
 
+//================================================
+// Some signals
+//================================================
 
 always #20 clk = !clk; // 50 MHz clock
 assign rstn = ~rst;    // active-low reset
@@ -100,27 +128,36 @@ assign rstn = ~rst;    // active-low reset
 
 task wait_for_idle_state;
 begin
-	while(csoc.cp0.state != 5) #1000;
+	while(part0.cp0.state != 5) #1000;
 	$display("DUT is waiting for commands");
 end
 endtask
 
 task recv_task;
+integer data_ascii;
 begin
-	// $display("- Receiving data");
 	@ (posedge rcv)
-	$display("- Data received: 0x%h|%0d", data_rcv, data_rcv);
+	if ((data_rcv < 32) || (data_rcv > 126))
+		data_ascii = " ";
+	else
+		data_ascii = data_rcv;
+	$display("- Data received: 0x%h|%0d|%0c", data_rcv, data_rcv, data_ascii);
 end
 endtask
 
 task send_task;
 input [7:0] data;
+integer data_ascii;
 begin
-	$display("- Sending data:  0x%h|%0d", data, data);
+	if ((data < 32) || (data > 126))
+		data_ascii = " ";
+	else
+		data_ascii = data;
+	$display("- Sending data:  0x%h|%0d|%0c", data, data, data_ascii);
 	send_data = data;
 	send = 1;
 	@ (negedge ready)
-	@ (posedge clk)
+	// @ (posedge clk)
 	send = 0;
 	@ (posedge ready);
 end
@@ -161,6 +198,7 @@ endtask
 task get_dut;
 input [7:0] cmd;
 input [15:0] data_width;
+integer i;
 begin
 	case (cmd)
 		GET_STATE_CMD: $display("Task: Getting DUT internal state");
@@ -173,8 +211,10 @@ begin
 	send_task(cmd);
 	send_task(data_width[15:8]);
 	send_task(data_width[7:0]);
-	repeat (data_width)
+	for (i=0; i<data_width; i=i+1) begin
+		$write("  [%0d] ", i+1);
 		recv_task;
+	end
 end
 endtask
 
@@ -196,6 +236,7 @@ begin
 	send_task(data_width[15:8]);
 	send_task(data_width[7:0]);
 	for (i=0; i<data_width; i=i+1) begin
+		$write("  [%0d] ", i+1);
 		case (data[i])
 			1: send_task("1");
 			0: send_task("0");
@@ -222,20 +263,20 @@ initial begin
 	send = 0;
 	send_data = 0;
 
+	csoc_data_o = 8'b1010_1001;
 	csoc_uart_write = 0;
-	csoc_data_i = 0;
 
 	#70 rst = 0;
-	wait_for_idle_state;
 
-	// reset_csoc_test;
-	// execute_dut(20);
-	// free_run_dut(12);
-	// get_dut(GET_STATE_CMD, 13);
-	get_dut(GET_OUTPUTS_CMD, 10);
-	// set_dut(SET_INPUTS_CMD, 14, "1010101010");
-	// set_dut(SET_STATE_CMD, 10, "1010101010");
 	wait_for_idle_state;
+	// reset_csoc_test;
+	// execute_dut(10);
+	// free_run_dut(12);
+	// get_dut(GET_STATE_CMD, NREGS);
+	get_dut(GET_OUTPUTS_CMD, NPOS);
+	// set_dut(SET_INPUTS_CMD, NPIS, "1010101010");
+	// set_dut(SET_STATE_CMD, NREGS, "1010101010");
+	// wait_for_idle_state;
 
 	#1000 $finish;
 

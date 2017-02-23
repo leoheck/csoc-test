@@ -1,0 +1,97 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Thu Feb 23 16:46:13 2017
+[*]
+[dumpfile] "(null)"
+[optimize_vcd]
+[savefile] "/home/lheck/Github/csoc-test/gtkwave/testbench-only.gtkw"
+[timestart] 0
+[size] 1600 876
+[pos] -1 -1
+*-23.985378 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb.
+[sst_width] 200
+[signals_width] 189
+[sst_expanded] 1
+[sst_vpaned_height] 253
+@28
+tb.clk
+tb.rst
+tb.rstn
+@200
+-
+@22
+tb.send_data[7:0]
+@28
+tb.send
+tb.dut_rx
+tb.ready
+@200
+-
+@28
+tb.dut_tx
+tb.rcv
+@820
+tb.data_rcv[7:0]
+@200
+-
+@c00022
+tb.part_pis[1:14]
+@28
+(0)tb.part_pis[1:14]
+(1)tb.part_pis[1:14]
+(2)tb.part_pis[1:14]
+(3)tb.part_pis[1:14]
+(4)tb.part_pis[1:14]
+(5)tb.part_pis[1:14]
+(6)tb.part_pis[1:14]
+(7)tb.part_pis[1:14]
+(8)tb.part_pis[1:14]
+(9)tb.part_pis[1:14]
+(10)tb.part_pis[1:14]
+(11)tb.part_pis[1:14]
+(12)tb.part_pis[1:14]
+(13)tb.part_pis[1:14]
+@1401200
+-group_end
+@c00022
+tb.part_pos[1:11]
+@28
+(0)tb.part_pos[1:11]
+(1)tb.part_pos[1:11]
+(2)tb.part_pos[1:11]
+(3)tb.part_pos[1:11]
+(4)tb.part_pos[1:11]
+(5)tb.part_pos[1:11]
+(6)tb.part_pos[1:11]
+(7)tb.part_pos[1:11]
+(8)tb.part_pos[1:11]
+(9)tb.part_pos[1:11]
+(10)tb.part_pos[1:11]
+@1401200
+-group_end
+@200
+-
+@28
+tb.csoc_clk
+tb.csoc_rstn
+tb.csoc_test_se
+tb.csoc_test_tm
+tb.csoc_uart_read
+tb.csoc_data_i
+@200
+-
+@23
+tb.csoc_data_o[7:0]
+@28
+tb.csoc_uart_write
+@200
+-
+@22
+tb.an[3:0]
+tb.sseg[7:0]
+tb.leds[7:0]
+@200
+-
+[pattern_trace] 1
+[pattern_trace] 0

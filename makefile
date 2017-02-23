@@ -183,21 +183,14 @@ iverilog: required
 		src/part_tester.v \
 		src/tb.v
 
+kill_vvp:
+	@ pgrep vvp | killall -q vvp
+
 run:
-	@# pgrep vvp | killall -q vvp
 	vvp $(top)
 	@ notify-send -u critical 'Simulation done! Reload gtkwave' --icon=gtkwave
 
-
-# Warning! File size is 370 MB.  This might fail in recoding.
-# Consider converting it to the FST database format instead.  (See the
-# vcd2fst(1) manpage for more information.)
-# To disable this warning, set rc variable vcd_warning_filesize to zero.
-# Alternatively, use the -o, --optimize command line option to convert to FST
-# or the -g, --giga command line option to use dynamically compressed memory.
-
-
-sim: iverilog run
+sim: kill_vvp iverilog run
 
 wave:
 	gtkwave --slider-zoom --optimize uart.vcd -a gtkwave/waveform.gtkw

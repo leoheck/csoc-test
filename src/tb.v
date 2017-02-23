@@ -141,7 +141,7 @@ begin
 		data_ascii = " ";
 	else
 		data_ascii = data_rcv;
-	$display("- Data received: 0x%h|%0d|%0c", data_rcv, data_rcv, data_ascii);
+	$display("- Data received: %3d|%0c|0x%h|%b", data_rcv, data_ascii, data_rcv, data_rcv);
 end
 endtask
 
@@ -153,7 +153,7 @@ begin
 		data_ascii = " ";
 	else
 		data_ascii = data;
-	$display("- Sending data:  0x%h|%0d|%0c", data, data, data_ascii);
+	$display("- Sending data: -------- %3d|%0c|0x%h|%b", data, data_ascii, data, data);
 	send_data = data;
 	send = 1;
 	@ (negedge ready)
@@ -212,7 +212,7 @@ begin
 	send_task(data_width[15:8]);
 	send_task(data_width[7:0]);
 	for (i=0; i<data_width; i=i+1) begin
-		$write("  [%0d] ", i+1);
+		$write("  %4d: ", i+1);
 		recv_task;
 	end
 end
@@ -236,7 +236,7 @@ begin
 	send_task(data_width[15:8]);
 	send_task(data_width[7:0]);
 	for (i=0; i<data_width; i=i+1) begin
-		$write("  [%0d] ", i+1);
+		$write("  %4d: ", i+1);
 		case (data[i])
 			1: send_task("1");
 			0: send_task("0");
@@ -272,8 +272,8 @@ initial begin
 	// reset_csoc_test;
 	// execute_dut(10);
 	// free_run_dut(12);
-	// get_dut(GET_STATE_CMD, NREGS);
-	get_dut(GET_OUTPUTS_CMD, NPOS);
+	get_dut(GET_STATE_CMD, NREGS);
+	// get_dut(GET_OUTPUTS_CMD, NPOS);
 	// set_dut(SET_INPUTS_CMD, NPIS, "1010101010");
 	// set_dut(SET_STATE_CMD, NREGS, "1010101010");
 	// wait_for_idle_state;

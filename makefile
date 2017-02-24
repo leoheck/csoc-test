@@ -228,9 +228,10 @@ get_state_cmd:
 	echo "$(GET_STATE_CMD)" > $(dev)
 	echo "0" > $(dev)
 
+# TODO: Testar algo assim na FPGA
 get_outputs_cmd:
 	echo "$(GET_OUTPUTS_CMD)" > $(dev)
-	echo "2" > $(dev)
+	printf '%b' '\x2' > $(dev)
 
 set_state_cmd:
 	echo "$(SET_STATE_CMD)" > $(dev)

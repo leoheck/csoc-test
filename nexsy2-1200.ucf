@@ -46,7 +46,7 @@ NET "an<3>"    LOC = "F15";
 # NET "csoc_data_o<5>"  LOC = "M16";   # part_PIs[09] - JA-10   - P3-8
 # NET "csoc_data_o<6>"  LOC = "M15";   # part_PIs[05] - JA-4    - P3-4
 
-# CSOC INTERFACE                       # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
+# CSOC INTERFACE                       # ET_ATPG_NAME - NESYS2  - CSOC_TEST_BOARD
 # #GND                                 # part_PIs[  ] - JB-11   - P2-8
 # #GND                                 # part_PIs[  ] - JB-5    - P2-7
 # NET "csoc_test_tm"    LOC = "P17";   # part_PIs[11] - JB-7    - P2-5
@@ -56,7 +56,7 @@ NET "an<3>"    LOC = "F15";
 # NET "csoc_uart_write" LOC = "T18";   # part_POs[09] - JB-9    - P2-4
 # NET "csoc_rstn"       LOC = "R15";   # part_PIs[13] - JB-3    - P2-3
 
-# CSOC INTERFACE                       # ET_ATPG_NAME   - NESYS2  - CSOC_TEST_BOARD
+# CSOC INTERFACE                       # ET_ATPG_NAME - NESYS2  - CSOC_TEST_BOARD
 # NET "csoc_data_i<7>"  LOC = "H15";   # part_POs[06] - JC-7    - P1-5
 # NET "csoc_data_i<6>"  LOC = "G15";   # part_POs[02] - JC-1    - P1-1
 # NET "csoc_data_i<5>"  LOC = "F14";   # part_POs[07] - JC-8    - P1-6
@@ -69,30 +69,28 @@ NET "an<3>"    LOC = "F15";
 
 # NEW SCHEME
 # FROM CADENCE ET TESTBENCH
-NET "part_pis<1>"  LOC = "K13"; # ---> clk_i        // clk_i     test_function= -ES;
-NET "part_pis<2>"  LOC = "H16"; # ---> data_i[0]    //
-NET "part_pis<3>"  LOC = "J12"; # ---> data_i[1]    //
-NET "part_pis<4>"  LOC = "G13"; # ---> data_i[2]    //
-NET "part_pis<5>"  LOC = "G16"; # ---> data_i[3]    //
-NET "part_pis<6>"  LOC = "J16"; # ---> data_i[4]    //
-NET "part_pis<7>"  LOC = "F14"; # ---> data_i[5]    //
-NET "part_pis<8>"  LOC = "G15"; # ---> data_i[6]    //
-NET "part_pis<9>"  LOC = "H15"; # ---> data_i[7]    // data_i[7]  test_function= SI0;
-NET "part_pis<10>" LOC = "R15"; # ---> reset_i      // reset_i    test_function= +SC;  # test_mode
-NET "part_pis<11>" LOC = "M13"; # ---> test_se_i    // test_se_i  test_function= +SE;  # shift_enable
-NET "part_pis<12>" LOC = "P17"; # ---> test_tm_i    // test_tm_i  test_function= +TI;  # test_mode
-NET "part_pis<13>" LOC = "R18"; # ---> uart_read_i  //
-# NET "part_pis<14>" LOC = "";  # ---> xtal_a_i     //
-# NET "part_pos<1>" LOC = "";  # ---> clk_o        //
-NET "part_pos<2>"  LOC = "L15"; # ---> data_o[0]    //
-NET "part_pos<3>"  LOC = "L16"; # ---> data_o[1]    //
-NET "part_pos<4>"  LOC = "K12"; # ---> data_o[2]    //
-NET "part_pos<5>"  LOC = "M14"; # ---> data_o[3]    //
-NET "part_pos<6>"  LOC = "L17"; # ---> data_o[4]    //
-NET "part_pos<7>"  LOC = "M16"; # ---> data_o[5]    //
-NET "part_pos<8>"  LOC = "M15"; # ---> data_o[6]    //
-NET "part_pos<9>"  LOC = "R16"; # ---> data_o[7]    // data_o[7]  test_function= SO0;
-NET "part_pos<10>" LOC = "T18"; # ---> uart_write_o //
-# NET "part_pos<11>" LOC = "";  # ---> xtal_b_o     //
-
-
+NET "part_pis_o<1>"  LOC = "K13"; # ---> clk_i        // clk_i     test_function= -ES;
+NET "part_pis_o<2>"  LOC = "H16"; # ---> data_i[0]    //
+NET "part_pis_o<3>"  LOC = "J12"; # ---> data_i[1]    //
+NET "part_pis_o<4>"  LOC = "G13"; # ---> data_i[2]    //
+NET "part_pis_o<5>"  LOC = "G16"; # ---> data_i[3]    //
+NET "part_pis_o<6>"  LOC = "J16"; # ---> data_i[4]    //
+NET "part_pis_o<7>"  LOC = "F14"; # ---> data_i[5]    //
+NET "part_pis_o<8>"  LOC = "G15"; # ---> data_i[6]    //
+NET "part_pis_o<9>"  LOC = "H15"; # ---> data_i[7]    // data_i[7]  test_function= SI0;
+NET "part_pis_o<10>" LOC = "R15"; # ---> reset_i      // reset_i    test_function= +SC;  # test_mode
+NET "part_pis_o<11>" LOC = "M13"; # ---> test_se_i    // test_se_i  test_function= +SE;  # shift_enable
+NET "part_pis_o<12>" LOC = "P17"; # ---> test_tm_i    // test_tm_i  test_function= +TI;  # test_mode
+NET "part_pis_o<13>" LOC = "R18"; # ---> uart_read_i  //
+# NET "part_pis_o<14>" LOC = "";  # ---> xtal_a_i     //
+# NET "part_pos_i<1>"  LOC = "";  # ---> clk_o        //
+NET "part_pos_i<2>"  LOC = "L15"; # ---> data_o[0]    //
+NET "part_pos_i<3>"  LOC = "L16"; # ---> data_o[1]    //
+NET "part_pos_i<4>"  LOC = "K12"; # ---> data_o[2]    //
+NET "part_pos_i<5>"  LOC = "M14"; # ---> data_o[3]    //
+NET "part_pos_i<6>"  LOC = "L17"; # ---> data_o[4]    //
+NET "part_pos_i<7>"  LOC = "M16"; # ---> data_o[5]    //
+NET "part_pos_i<8>"  LOC = "M15"; # ---> data_o[6]    //
+NET "part_pos_i<9>"  LOC = "R16"; # ---> data_o[7]    // data_o[7]  test_function= SO0;
+NET "part_pos_i<10>" LOC = "T18"; # ---> uart_write_o //
+# NET "part_pos_i<11>" LOC = "";  # ---> xtal_b_o     //

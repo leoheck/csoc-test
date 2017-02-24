@@ -107,7 +107,7 @@ localparam
 	GET_OUTPUTS_CMD = "o",
 	EXECUTE_CMD = "e",
 	FREE_RUN_CMD = "f",
-	DONE_CMD = "d";
+	PAUSE_CMD = "p";
 
 //================================================
 // Instances
@@ -226,7 +226,7 @@ begin
 	send_task(FREE_RUN_CMD);
 	$write("\n");
 	#cycles
-	send_task(DONE_CMD);
+	send_task(PAUSE_CMD);
 	$write("\n");
 	$display("- Stopped by user after %0d cycles", cycles);
 	end

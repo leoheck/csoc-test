@@ -177,7 +177,7 @@ localparam
 	GET_OUTPUTS_CMD = "o",
 	EXECUTE_CMD = "e",
 	FREE_RUN_CMD = "f",
-	DONE_CMD = "d";
+	PAUSE_CMD = "p";
 
 
 assign tx_start_o = tx_start;
@@ -514,7 +514,7 @@ always @(*) begin
 			if (csoc_clk)
 				clk_count_nxt = clk_count + 1;
 			if(new_rx_data)
-				if (rx_data == DONE_CMD)
+				if (rx_data == PAUSE_CMD)
 					state_nxt = WAITING_COMMAND;
 		end
 

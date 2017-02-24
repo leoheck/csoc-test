@@ -113,8 +113,7 @@ baud=9600
 serial:
 	@# stty -a
 	stty sane; \
-		stty -F $(dev) $(baud) \
-			raw crtscts cs8 -cstopb -parenb
+		stty -F $(dev) $(baud) raw crtscts cs8 -cstopb -parenb
 		cat $(cat_flags) < $(dev)
 
 screen:
@@ -203,41 +202,91 @@ wave:
 # EXCHANGE DATA (BASIC TESTS)
 #============================
 
+# execute_dut:  EXECUTE_CMD, cycles[15:8], cycles[7:0]
+# free_run_dut: FREE_RUN_CMD, #cycles, send_task(DONE_CMD);
+# get_dut:      cmd, data_width[15:8], data_width[7:0]
+# set_dut:      cmd, data_width[15:8], send_task(data_width[7:0], "1", "0", ...
+
 RESET_CMD = r
 EXECUTE_CMD = e
 FREE_RUN_CMD = f
-DONE_CMD = d
+PAUSE_CMD = p
 GET_STATE_CMD = g
 GET_OUTPUTS_CMD = o
 SET_STATE_CMD = s
 SET_INPUTS_CMD = i
 
+cycles = 100
+nregs = 1919
+npis = 4
+npos = 7
+
+cycles_hex = $(shell echo "obase=16; $(cycles)" | bc | xargs printf "%04d")
+cycles_hex_lo = $(shell echo $(cycles_hex) | cut -c 1-2)
+cycles_hex_hi = $(shell echo $(cycles_hex) | cut -c 3-4)
+nregs_hex = $(shell echo "obase=16; $(nregs)" | bc | xargs printf "%04d")
+nregs_hex_lo = $(shell echo $(nregs_hex) | cut -c 1-2)
+nregs_hex_hi = $(shell echo $(nregs_hex) | cut -c 3-4)
+npis_hex = $(shell echo "obase=16; $(npis)"  | bc | xargs printf "%04d")
+npis_hex_lo = $(shell echo $(npis_hex) | cut -c 1-2)
+npis_hex_hi = $(shell echo $(npis_hex) | cut -c 3-4)
+npos_hex = $(shell echo "obase=16; $(npos)"  | bc | xargs printf "%04d")
+npos_hex_lo = $(shell echo $(npos_hex) | cut -c 1-2)
+npos_hex_hi = $(shell echo $(npos_hex) | cut -c 3-4)
+
+vars:
+	@ echo "cycles: $(cycles)"
+	@ echo "cycles_hex: $(cycles_hex)"
+	@ echo "cycles_hex_lo: $(cycles_hex_lo)"
+	@ echo "cycles_hex_hi: $(cycles_hex_hi)"
+	@ echo
+	@ echo "nregs: $(nregs)"
+	@ echo "nregs_hex: $(nregs_hex)"
+	@ echo "nregs_hex_lo: $(nregs_hex_lo)"
+	@ echo "nregs_hex_hi: $(nregs_hex_hi)"
+	@ echo
+	@ echo "npis: $(npis)"
+	@ echo "npis_hex: $(npis_hex)"
+	@ echo "npis_hex_lo: $(npis_hex_lo)"
+	@ echo "npis_hex_hi: $(npis_hex_hi)"
+	@ echo
+	@ echo "npos: $(npos)"
+	@ echo "npos_hex: $(npos_hex)"
+	@ echo "npos_hex_lo: $(npos_hex_lo)"
+	@ echo "npos_hex_hi: $(npos_hex_hi)"
+
 reset_csoc_test:
-	echo $(RESET_CMD) > $(dev)
+	printf '%s' '$(RESET_CMD)' > $(dev)
 
 execute_dut:
-	echo "$(EXECUTE_CMD)8" > $(dev)
+	printf '%s' '$(EXECUTE_CMD)' > $(dev)
+	printf '%b' '\x$(cycles_hex_hi)' > $(dev)
+	printf '%b' '\x$(cycles_hex_lo)' > $(dev)
 
 free_run_dut:
-	echo $(FREE_RUN_CMD) > $(dev)
+	printf '%s' '$(FREE_RUN_CMD)' > $(dev)
 
 stop_free_run:
-	echo $(DONE_CMD) > $(dev)
+	printf '%s' '$(PAUSE_CMD)' > $(dev)
 
 get_state_cmd:
-	echo "$(GET_STATE_CMD)" > $(dev)
-	echo "0" > $(dev)
+	printf '%s' '$(GET_STATE_CMD)' > $(dev)
+	printf '%b' '\x00' > $(dev)
+	printf '%b' '\x01' > $(dev)
 
-# TODO: Testar algo assim na FPGA
 get_outputs_cmd:
-	echo "$(GET_OUTPUTS_CMD)" > $(dev)
-	printf '%b' '\x2' > $(dev)
+	printf '%s' '$(GET_OUTPUTS_CMD)' > $(dev)
+	printf '%b' '\x$(npos_hex_hi)' > $(dev)
+	printf '%b' '\x$(npos_hex_lo)' > $(dev)
 
 set_state_cmd:
-	echo "$(SET_STATE_CMD)" > $(dev)
-	echo "8" > $(dev)
-	echo "10101010" > $(dev)
+	printf '%s' '$(SET_STATE_CMD)' > $(dev)
+	printf '%b' '\x$(nregs_hex_hi)' > $(dev)
+	printf '%b' '\x$(nregs_hex_lo)' > $(dev)
+	for i in $(seq 1 $(NREGS)); do printf '%b' '0'; done
 
 set_inputs_cmd:
-	echo $(SET_INPUTS_CMD) > $(dev)
-	echo "9" > $(dev)
+	printf '%s' '$(SET_INPUTS_CMD)' > $(dev)
+	printf '%b' '\x$(npis_hex_hi)' > $(dev)
+	printf '%b' '\x$(npis_hex_lo)' > $(dev)
+	for i in $(seq 1 $(npis)); do printf '%b' '0'; done

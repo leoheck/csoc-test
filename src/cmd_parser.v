@@ -53,7 +53,7 @@ always @(posedge clk or negedge rstn) begin
 		part_pos <= 0;
 		//
 		clk_i <= 0;
-		scan_i <= 0;
+		//scan_i <= 0;
 		reset_i <= 0;
 		test_se_i <= 0;
 		test_tm_i <= 0;
@@ -99,7 +99,7 @@ always @(posedge clk or negedge rstn) begin
 	if (!rstn)
 		leds <= 0;
 	else
-		leds <= 0;
+		leds <= part_pos_i[2:9]; // joga nos leds os pinos
 end
 
 
@@ -281,8 +281,8 @@ always @(*) begin
 			//
 			msg_addr_nxt = 0;
 			//
-			state_nxt = AVOID_MSG; //INITIAL_MESSAGE; // Skip initial message for tests...
-			// state_nxt = INITIAL_MESSAGE;
+			// state_nxt = AVOID_MSG; //INITIAL_MESSAGE; // Skip initial message for tests...
+			state_nxt = INITIAL_MESSAGE;
 		end
 
 		AVOID_MSG: begin
@@ -422,8 +422,7 @@ always @(*) begin
 		S5: begin
 			clk_en_nxt = 0;
 			if (tx_ready_i) begin
-
-				if (scan_i)
+				if (scan_o)
 					tx_data_nxt = "1";
 				else
 					tx_data_nxt = "0";
@@ -465,9 +464,8 @@ always @(*) begin
 					state_nxt = S31;
 		end
 
-		// Atualiza os dados pra saida
 		S31: begin
-			if (scan_i)
+			if (scan_o)
 				tx_data_nxt = "1";
 			else
 				tx_data_nxt = "0";

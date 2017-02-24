@@ -113,8 +113,9 @@ baud=9600
 serial:
 	@# stty -a
 	stty sane; \
-		stty -F $(dev) $(baud) crtscts
-		cat < $(dev)
+		stty -F $(dev) $(baud) \
+			raw crtscts cs8 -cstopb -parenb
+		cat $(cat_flags) < $(dev)
 
 screen:
 	screen $(dev) $(baud)
@@ -194,3 +195,48 @@ sim: iverilog run
 
 wave:
 	gtkwave --slider-zoom --optimize uart.vcd -a gtkwave/waveform.gtkw
+
+
+
+
+
+# EXCHANGE DATA (BASIC TESTS)
+#============================
+
+RESET_CMD = r
+EXECUTE_CMD = e
+FREE_RUN_CMD = f
+DONE_CMD = d
+GET_STATE_CMD = g
+GET_OUTPUTS_CMD = o
+SET_STATE_CMD = s
+SET_INPUTS_CMD = i
+
+reset_csoc_test:
+	echo $(RESET_CMD) > $(dev)
+
+execute_dut:
+	echo "$(EXECUTE_CMD)8" > $(dev)
+
+free_run_dut:
+	echo $(FREE_RUN_CMD) > $(dev)
+
+stop_free_run:
+	echo $(DONE_CMD) > $(dev)
+
+get_state_cmd:
+	echo "$(GET_STATE_CMD)" > $(dev)
+	echo "0" > $(dev)
+
+get_outputs_cmd:
+	echo "$(GET_OUTPUTS_CMD)" > $(dev)
+	echo "2" > $(dev)
+
+set_state_cmd:
+	echo "$(SET_STATE_CMD)" > $(dev)
+	echo "8" > $(dev)
+	echo "10101010" > $(dev)
+
+set_inputs_cmd:
+	echo $(SET_INPUTS_CMD) > $(dev)
+	echo "9" > $(dev)

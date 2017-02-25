@@ -11,7 +11,9 @@
 import argparse
 import itertools
 import time
+
 import os.path
+import stat
 
 try:
 	import serial
@@ -25,6 +27,12 @@ parser.add_argument('-d', '--device', default="/dev/ttyUSB0", help='Default: /de
 parser.add_argument('-b', '--baud', default="9600", help='Default: 9600')
 parser.add_argument('-f', '--atpg_file', help='Cadence ET ATPG file')
 args = parser.parse_args()
+
+try:
+	stat.S_ISBLK(os.stat(args.device).st_mode)
+except:
+	print "Device", args.device, "is missing"
+	exit()
 
 # http://www.varesano.net/blog/fabio/serial%20rs232%20connections%20python
 # configure the serial connections (the parameters differs on the device you are connecting to)

@@ -12,7 +12,8 @@ before_install:
   - wget https://sourceforge.net/projects/iverilog/files/latest/download -O verilog.tar.gz
   - tar xvzf verilog.tar.gz
   - cd verilog*
-  - sudo ./configure && make && make install
+  - ./configure && make
+  - sudo make install
 
 # install:
 # before_script:

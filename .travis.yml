@@ -7,19 +7,13 @@ language: bash
 before_install:
   - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
   - sudo apt-get -qq update
-  - sudo apt-get install iverilog -y
-  #- sudo apt-get install gperf -y
-  #- wget https://sourceforge.net/projects/iverilog/files/latest/download -O verilog.tar.gz
-  #- tar xvzf verilog.tar.gz
-  #- cd verilog*
-  #- ./configure && make
-  #- sudo make install
-  #- cd -
-  #- sudo echo "#\!/bin/bash" > /bin/notify-send
-  #- sudo chmod +x /bin/notify-send
-
-# install:
-# before_script:
+  - sudo apt-get install gperf -y
+  - wget https://sourceforge.net/projects/iverilog/files/latest/download -O verilog.tar.gz
+  - tar xvzf verilog.tar.gz
+  - cd verilog*
+  - ./configure && make
+  - sudo make install
+  - cd -
 
 script:
-  - make sim
+  - make sim notify-send=echo

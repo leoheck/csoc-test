@@ -189,9 +189,11 @@ iverilog: required
 kill_vvp:
 	@ pgrep vvp | killall -q vvp
 
+notify-send = notify-send
+
 run:
 	vvp $(top)
-	@ notify-send -u critical 'Simulation done! Reload gtkwave' --icon=gtkwave
+	@ $(notify-send) -u critical 'Simulation done! Reload gtkwave' --icon=gtkwave
 
 sim: iverilog run
 

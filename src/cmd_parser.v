@@ -166,7 +166,9 @@ localparam
 	SX21 = 22,
 	SX31 = 23,
 	SX111 = 24,
-	SX1111 = 25;
+	SX1111 = 25,
+	//
+	PAUSE_DUT = 29;
 
 
 localparam
@@ -341,17 +343,20 @@ always @(*) begin
 		WAITING_COMMAND: begin
 			if(new_rx_data) begin
 				case (rx_data)
-					RESET_CMD:       state_nxt = RESET;            // (ok) reset
-					SET_STATE_CMD:   state_nxt = SET_DUT_STATE;    // (  ) set the scan chain
-					GET_STATE_CMD:   state_nxt = GET_DUT_STATE;    // (  ) get the scan chain
-					EXECUTE_CMD:     state_nxt = EXECUTE_DUT;      // (ok) start DUT execution for n cycles
-					FREE_RUN_CMD:    state_nxt = FREE_RUN_DUT;     // (ok) start DUT execution until stop command
-					SET_INPUTS_CMD:  state_nxt = SET_INPUTS_STATE;   // (  ) set DUT inputs
-					GET_OUTPUTS_CMD: state_nxt = GET_OUTPUTS_STATE;  // (  ) get DUT outputs
+					RESET_CMD:       state_nxt = RESET;              // (ok) reset
+
+					EXECUTE_CMD:     state_nxt = EXECUTE_DUT;        // (ok) start PART execution for n cycles
+					FREE_RUN_CMD:    state_nxt = FREE_RUN_DUT;       // (ok) start PART execution until stop command
+					PAUSE_CMD:       state_nxt = PAUSE_DUT;          // (  ) pause PART execution
+
+					SET_STATE_CMD:   state_nxt = SET_DUT_STATE;      // (ok) set PART internal state
+					GET_STATE_CMD:   state_nxt = GET_DUT_STATE;      // (ok) get PART internal state
+
+					SET_INPUTS_CMD:  state_nxt = SET_INPUTS_STATE;   // (ok) set PART inputs
+					GET_OUTPUTS_CMD: state_nxt = GET_OUTPUTS_STATE;  // (ok) get PART outputs
 				endcase
 			end
 		end
-
 
 		// DESCRIPTION
 		// ===================================================
@@ -572,14 +577,12 @@ always @(*) begin
 		SX21: begin
 			if (tx_ready_i)
 				if (cont_pos > NPOS) begin
-					// clk_count_nxt = 1;
 					state_nxt = WAITING_COMMAND;
 				end
 				else
 					state_nxt = SX31;
 		end
 
-		// Atualiza os dados pra saida
 		SX31: begin
 			if (part_pos[cont_pos])
 				tx_data_nxt = "1";
@@ -617,6 +620,13 @@ always @(*) begin
 				if (cont_pis >= nclks)
 					state_nxt = WAITING_COMMAND;
 			end
+		end
+
+		// #=======================
+
+		PAUSE_DUT: begin
+			clk_en_nxt = 0;
+			state_nxt = WAITING_COMMAND;
 		end
 
 	endcase

@@ -296,7 +296,6 @@ begin
 			$write(" %0s \n", part_pis_names[i+1]);
 		else
 			$write("\n");
-
 	end
 end
 endtask

@@ -21,7 +21,7 @@
 # 	PROCEDURE_DONE = 4;
 
 bits=$(($(grep "state, state_nxt;" src/cmd_parser.v | cut -d'[' -f2 | cut -d':' -f1)+1))
-state_list=$(sed -n '/MAIN_STATES/,/;/p' src/cmd_parser.v | sed -e '1,2d' | sed 's/[,; \t\s\r]//g')
+state_list=$(sed -n '/MAIN_STATES/,/;/p' src/cmd_parser.v | sed -e '1,2d' | sed 's|[\s]*//.*||g' | sed 's/[,; \t\s\r]//g')
 
 # echo $bits
 # echo "$state_list"
@@ -48,4 +48,4 @@ for i in $state_list; do
 	states="$code_bin_padding ${color_tag}$name\n$states"
 done
 
-echo -e "$states"
+echo -e "$states" | sort

@@ -1,6 +1,6 @@
-# CADENCE ET - ATPG Generated files
+# CADENCE ET
 
-## Arquivos de ATPG gerados
+## ATPG Generated files
 
 ```
 dft-psynth --------------------------------------------------------------- ET output files

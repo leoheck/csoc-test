@@ -3,8 +3,8 @@
 ## Arquivos de ATPG gerados
 
 ```
-dft-psynth --------------------------------------------------------------- ET output files (after physical synthesis)
-`--|-- atpg -------------------------------------------------------------------------
+dft-psynth --------------------------------------------------------------- ET output files
+`--|-- atpg --------------------------------------------------------------
    |   |-- capeta_soc_pads.FULLSCAN.pinassign ---------------------------- Indicação da função dos pinos pro teste
    |   |-- capeta_soc_pads.et_netlist.v ---------------------------------- CSOC netlist (identico ao capeta_soc_pads.v)
    |   |-- capeta_soc_pads.v --------------------------------------------- CSOC netlist
@@ -26,15 +26,16 @@ dft-psynth --------------------------------------------------------------- ET ou
    `-- capeta_soc_pads_dft_setup.rpt ------------------------------------- Reports
 ```
 
-## Fluxo de geração de padroes de teste e simulacao
+## ATPG Flow
 
 1. Exportar arquivos de ATPG da sintese lógica/física
 2. Executar o Encounter Test (ET) sobre o arquivo exportado `runet.atpg`
 3. Executar `run_fullscan_sim` realiza a simulacao com os vetores de teste gerados pelo ET
 
 
+## Testbench Operation
 
-## Funcionamento do Testbench do ATPG `VER.FULLSCAN.capeta_soc_pads_atpg.mainsim.v`
+File: `VER.FULLSCAN.capeta_soc_pads_atpg.mainsim.v`
 
 - Define Variables For All Primary I/O Ports
 - Define Variables For All Shift Chains
@@ -69,7 +70,7 @@ Scan_Preconditioning_Sequencebsr_FULLSCAN --- DEFINE SCAN PRECOND BSR PROCEDURE
 Scan_Sequence_FULLSCAN ---------------------- DEFINE SCAN SEQUENCE PROCEDURE
 ```
 
-## ATPG TB Commands
+## ATPG Commands
 ```
 Codigos de comando dentro do arquivo de ATPG (Cadence ET):
 000
@@ -88,7 +89,7 @@ Codigos de comando dentro do arquivo de ATPG (Cadence ET):
 901 PATTERN --------------------------- Exemplo: 1.1.1.2.1.9
 ```
 
-# From manual
+# Command description from ET Manual
 
 ```
 100: Cabecalho do arquivo com comentarios

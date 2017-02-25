@@ -1,0 +1,16 @@
+
+dist: trusty
+sudo: required
+
+language: bash
+
+before_install:
+  - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
+  - sudo apt-get -qq update
+  - sudo apt-get install iverilog -y
+
+# install:
+# before_script:
+
+script:
+  - make

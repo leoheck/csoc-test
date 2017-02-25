@@ -15,7 +15,8 @@ before_install:
   - ./configure && make
   - sudo make install
   - cd -
-  - echo "#!/bin/bash" > /bin/notify-send; chmod +x /bin/notify-send
+  - sudo echo "#!/bin/bash" > /bin/notify-send
+  - sudo chmod +x /bin/notify-send
 
 # install:
 # before_script:

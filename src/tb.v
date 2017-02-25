@@ -157,10 +157,23 @@ assign rstn = ~rst;    // active-low reset
 // SIMPLE TASKS
 //================================================
 
+task initial_message;
+begin
+	$display("\nTASK: Receiving initial message");
+	recv_task;
+	$write("\n");
+	while(data_rcv != "\n")
+	begin
+		recv_task;
+		$write("\n");
+	end
+end
+endtask
+
 task wait_for_idle_state;
 begin
 	while(part0.cp0.state != 5) #1000;
-	$display("DUT is waiting for commands");
+	$display("\nDUT is waiting for commands");
 end
 endtask
 
@@ -200,16 +213,17 @@ endtask
 
 task reset_csoc_test;
 begin
-	$display("TASK: Reseting the DUT");
+	$display("\nTASK: Reseting the DUT");
 	send_task(RESET_CMD);
 	$write("\n");
+	initial_message;
 end
 endtask
 
 task execute_dut;
 input [15:0] cycles;
 begin
-	$display("TASK: Executing DUT");
+	$display("\nTASK: Executing DUT");
 	send_task(EXECUTE_CMD);
 	$write("\n");
 	send_task(cycles[15:8]);
@@ -222,7 +236,7 @@ endtask
 task free_run_dut;
 input [15:0] cycles;
 begin
-	$display("TASK: DUT running free");
+	$display("\nTASK: DUT running free");
 	send_task(FREE_RUN_CMD);
 	$write("\n");
 	#cycles
@@ -238,10 +252,10 @@ input [15:0] data_width;
 integer i;
 begin
 	case (cmd)
-		GET_STATE_CMD: $display("TASK: Getting DUT internal state");
-		GET_OUTPUTS_CMD: $display("TASK: Getting DUT outputs state");
+		GET_STATE_CMD: $display("\nTASK: Getting DUT internal state");
+		GET_OUTPUTS_CMD: $display("\nTASK: Getting DUT outputs state");
 		default: begin
-			$display("TASK: ERROR, missing command to get DUT state");
+			$display("\nTASK: ERROR, missing command to get DUT state");
 			$finish;
 		end
 	endcase
@@ -269,8 +283,8 @@ input integer data;
 integer i;
 begin
 	case (cmd)
-		SET_STATE_CMD: $display("TASK: Setting DUT internal state");
-		SET_INPUTS_CMD: $display("TASK: Setting DUT inputs state");
+		SET_STATE_CMD: $display("\nTASK: Setting DUT internal state");
+		SET_INPUTS_CMD: $display("\nTASK: Setting DUT inputs state");
 		default: begin
 			$display("ERROR, missing command to set DUT state");
 			$finish;
@@ -318,12 +332,7 @@ initial begin
 
 	#70 rst = 0;
 
-	while(data_rcv != "\n")
-	begin
-		recv_task;
-		$write("\n");
-	end
-
+	initial_message;
 	wait_for_idle_state;
 
 	// reset_csoc_test;
@@ -335,19 +344,29 @@ initial begin
 	// set_dut(SET_STATE_CMD, NREGS, "10001111");
 	// set_dut(SET_INPUTS_CMD, NPIS, "1010101010");
 
+	get_dut(GET_STATE_CMD, 5);
+	wait_for_idle_state;
 
-	// reset_csoc_test;
-	// execute_dut(4);
-	// free_run_dut(6);
-	// get_dut(GET_STATE_CMD, 5);
 
-	get_dut(GET_OUTPUTS_CMD, 4);
+	reset_csoc_test;
+	wait_for_idle_state;
+
+	execute_dut(4);
+	wait_for_idle_state;
+
+	free_run_dut(6);
+	wait_for_idle_state;
+
+	get_dut(GET_STATE_CMD, 5);
+	wait_for_idle_state;
+
+	get_dut(GET_OUTPUTS_CMD, 3);
 	wait_for_idle_state;
 
 	set_dut(SET_STATE_CMD, 4, "1011");
 	wait_for_idle_state;
 
-	set_dut(SET_INPUTS_CMD, 4, "1001");
+	set_dut(SET_INPUTS_CMD, 5, "1001");
 	wait_for_idle_state;
 
 	#100 $finish;

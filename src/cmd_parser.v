@@ -314,9 +314,7 @@ always @(*) begin
 
 		S2: begin
 			if (tx_ready_i) begin
-
 				msg_addr_nxt = msg_addr + 1;
-
 				if (msg_addr <= MSG_SIZE) begin
 					state_nxt = S3;
 				end
@@ -327,16 +325,13 @@ always @(*) begin
 			end
 		end
 
-		// Atualiza os dados pra saida
 		S3: begin
-
 			if (msg_addr <= MSG_SIZE) begin
 				tx_data_nxt = msg_data;
 			end
 			else begin
 				tx_data_nxt = "\n";
 			end
-
 			state_nxt = INITIAL_MESSAGE;
 		end
 
@@ -345,6 +340,11 @@ always @(*) begin
 		// ===================================================
 
 		WAITING_COMMAND: begin
+
+			nclks_nxt = 0;
+			clk_en_nxt = 0;
+			clk_count_nxt = 0;
+
 			if(new_rx_data) begin
 				case (rx_data)
 					RESET_CMD:       state_nxt = RESET;              // (ok) reset
@@ -464,7 +464,7 @@ always @(*) begin
 
 		S21: begin
 			if (tx_ready_i)
-				if (clk_count == nclks) begin
+				if (clk_count >= nclks) begin
 					clk_en_nxt = 0;
 					clk_count_nxt = 0;
 					state_nxt = WAITING_COMMAND;

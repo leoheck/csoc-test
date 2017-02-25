@@ -1,16 +1,16 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Thu Feb 23 21:52:22 2017
+[*] Sat Feb 25 16:45:51 2017
 [*]
-[dumpfile] "/home/leco/Repos/csoc-test/uart.vcd"
-[dumpfile_mtime] "Thu Feb 23 21:50:50 2017"
-[dumpfile_size] 86205180
+[dumpfile] "/home/lheck/Repos/csoc-test/uart.vcd"
+[dumpfile_mtime] "Sat Feb 25 16:45:51 2017"
+[dumpfile_size] 1175322624
 [optimize_vcd]
-[savefile] "/home/leco/Repos/csoc-test/gtkwave/waveform.gtkw"
+[savefile] "/home/lheck/Repos/csoc-test/gtkwave/waveform.gtkw"
 [timestart] 0
-[size] 1600 875
-[pos] -1 -1
-*-23.526489 36300000 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 1600 876
+[pos] -3 -26
+*-26.251337 76805900 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [markername] A1
 [treeopen] tb.
 [treeopen] tb.part0.
@@ -18,7 +18,7 @@
 [sst_width] 219
 [signals_width] 246
 [sst_expanded] 1
-[sst_vpaned_height] 353
+[sst_vpaned_height] 365
 @28
 tb.part0.clk
 [color] 2
@@ -26,7 +26,7 @@ tb.part0.cp0.rstn
 @200
 -
 @2028
-^1 /tmp/../home/leco/Repos/csoc-test/gtkwave/parser_states.conf
+^1 /home/lheck/Repos/csoc-test/gtkwave/parser_states.conf
 tb.part0.cp0.state[4:0]
 @24
 tb.part0.cp0.state[4:0]
@@ -44,8 +44,6 @@ tb.send_data[7:0]
 tb.part0.cp0.new_rx_data
 @820
 tb.part0.cp0.rx_data[7:0]
-@28
-tb.part0.cp0.times
 @1000200
 -RX
 @200
@@ -84,9 +82,9 @@ tb.part0.cp0.cont_pos[4:0]
 -
 @28
 tb.part0.cp0.scan_i
-@c00023
+@c00022
 tb.part0.part_pos_i[1:11]
-@29
+@28
 (0)tb.part0.part_pos_i[1:11]
 (1)tb.part0.part_pos_i[1:11]
 (2)tb.part0.part_pos_i[1:11]
@@ -98,7 +96,7 @@ tb.part0.part_pos_i[1:11]
 (8)tb.part0.part_pos_i[1:11]
 (9)tb.part0.part_pos_i[1:11]
 (10)tb.part0.part_pos_i[1:11]
-@1401201
+@1401200
 -group_end
 @22
 tb.part0.part_pis_o[1:14]

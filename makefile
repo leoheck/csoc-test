@@ -196,6 +196,7 @@ run:
 sim: iverilog run
 
 wave:
+	@ ./scripts/state_names.sh > gtkwave/parser_states.conf
 	gtkwave --slider-zoom --optimize uart.vcd -a gtkwave/waveform.gtkw
 
 

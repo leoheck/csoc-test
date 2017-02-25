@@ -1,5 +1,5 @@
 
-# CSoC Tests
+# CSoC Tests [![Build Status](https://travis-ci.org/leoheck/csoc-test.svg?branch=master)](https://travis-ci.org/leoheck/csoc-test)
 
 ## Files
 

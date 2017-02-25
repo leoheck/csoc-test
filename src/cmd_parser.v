@@ -195,7 +195,7 @@ reg [7:0] tx_data, tx_data_nxt;
 reg [15:0] clk_count, clk_count_nxt;
 reg [6:0] col_break, col_break_nxt;
 reg [15:0] nclks, nclks_nxt;
-reg times, times_nxt;
+reg low_byte, low_byte_nxt;
 
 assign tx_data_o = tx_data;
 
@@ -211,7 +211,7 @@ always @(posedge clk or negedge rstn) begin
 		run_done <= 0;
 		clk_en <= 0;
 		nclks <= 0;
-		times <= 0;
+		low_byte <= 0;
 		//
 		csoc_rstn <= 0;
 		csoc_test_se <= 1;
@@ -233,7 +233,7 @@ always @(posedge clk or negedge rstn) begin
 		run_done <= run_done_nxt;
 		clk_en <= clk_en_nxt;
 		nclks <= nclks_nxt;
-		times <= times_nxt;
+		low_byte <= low_byte_nxt;
 		//
 		csoc_rstn <= csoc_rstn_nxt;
 		csoc_test_se <= csoc_test_se_nxt;
@@ -256,7 +256,7 @@ always @(*) begin
 	run_done_nxt = run_done;
 	clk_en_nxt = clk_en;
 	nclks_nxt = nclks;
-	times_nxt = times;
+	low_byte_nxt = low_byte;
 	//
 	csoc_rstn_nxt = csoc_rstn;
 	csoc_test_se_nxt = csoc_test_se;
@@ -361,14 +361,14 @@ always @(*) begin
 			csoc_test_se_nxt = 1;
 			csoc_test_tm_nxt = 1;
 			if(new_rx_data) begin
-				if (times) begin
+				if (low_byte) begin
 					nclks_nxt[7:0] = rx_data;
-					times_nxt = 0;
+					low_byte_nxt = 0;
 					state_nxt = SB5;
 				end
 				else begin
 					nclks_nxt[15:8] = rx_data;
-					times_nxt = 1;
+					low_byte_nxt = 1;
 				end
 			end
 			clk_count_nxt = 1;
@@ -407,14 +407,14 @@ always @(*) begin
 			csoc_test_se_nxt = 1;
 			csoc_test_tm_nxt = 1;
 			if(new_rx_data) begin
-				if (times) begin
+				if (low_byte) begin
 					nclks_nxt[7:0] = rx_data;
-					times_nxt = 0;
+					low_byte_nxt = 0;
 					state_nxt = S5;
 				end
 				else begin
 					nclks_nxt[15:8] = rx_data;
-					times_nxt = 1;
+					low_byte_nxt = 1;
 				end
 			end
 		end
@@ -482,14 +482,14 @@ always @(*) begin
 			csoc_test_se_nxt = 0;
 			csoc_test_tm_nxt = 0;
 			if(new_rx_data) begin
-				if (times) begin
+				if (low_byte) begin
 					nclks_nxt[7:0] = rx_data;
-					times_nxt = 0;
+					low_byte_nxt = 0;
 					state_nxt = S4;
 				end
 				else begin
 					nclks_nxt[15:8] = rx_data;
-					times_nxt = 1;
+					low_byte_nxt = 1;
 				end
 			end
 		end
@@ -527,14 +527,14 @@ always @(*) begin
 			csoc_test_se_nxt = 1;
 			csoc_test_tm_nxt = 1;
 			if(new_rx_data) begin
-				if (times) begin
+				if (low_byte) begin
 					nclks_nxt[7:0] = rx_data;
-					times_nxt = 0;
+					low_byte_nxt = 0;
 					state_nxt = SX5;
 				end
 				else begin
 					nclks_nxt[15:8] = rx_data;
-					times_nxt = 1;
+					low_byte_nxt = 1;
 				end
 			end
 			cont_pos_nxt = 1;
@@ -597,14 +597,14 @@ always @(*) begin
 			csoc_test_se_nxt = 1;
 			csoc_test_tm_nxt = 1;
 			if(new_rx_data) begin
-				if (times) begin
+				if (low_byte) begin
 					nclks_nxt[7:0] = rx_data;
-					times_nxt = 0;
+					low_byte_nxt = 0;
 					state_nxt = SA1;
 				end
 				else begin
 					nclks_nxt[15:8] = rx_data;
-					times_nxt = 1;
+					low_byte_nxt = 1;
 				end
 			end
 			cont_pis_nxt = 1;

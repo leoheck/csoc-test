@@ -1,32 +1,32 @@
+# CADENCE ET - ATPG Generated files
 
-# Estudo dos arquivos de ATPG que temos
+## Arquivos de ATPG gerados
 
 ```
-dft-psynth -------------------------------------------------------------------------- ET output files (after physical synthesis)
+dft-psynth --------------------------------------------------------------- ET output files (after physical synthesis)
 `--|-- atpg -------------------------------------------------------------------------
-   |   |-- capeta_soc_pads.FULLSCAN.pinassign --------------------------------------- Indicação da função dos pinos pro teste
-   |   |-- capeta_soc_pads.et_netlist.v --------------------------------------------- CSOC netlist (identico ao capeta_soc_pads.v)
-   |   |-- capeta_soc_pads.v -------------------------------------------------------- CSOC netlist
-   |   |-- et_checks.sh ------------------------------------------------------------- Script to check TSV logs?
+   |   |-- capeta_soc_pads.FULLSCAN.pinassign ---------------------------- Indicação da função dos pinos pro teste
+   |   |-- capeta_soc_pads.et_netlist.v ---------------------------------- CSOC netlist (identico ao capeta_soc_pads.v)
+   |   |-- capeta_soc_pads.v --------------------------------------------- CSOC netlist
+   |   |-- et_checks.sh -------------------------------------------------- Script to check TSV logs?
    |   |-- ncverilog_FULLSCAN.log
-   |   |-- run_fullscan_sim --------------------------------------------------------- KSH script (run incisive simulator)
-   |   |-- runet.atpg --------------------------------------------------------------- Script de templade usando com o Encounter Test
-   |   |-- tbdata -------------------------------------------------------------------
-   |   |-- Inca_libs_20_49_49 ------------------------------------------------------- Pasta de trabalho da simulacao
-   |   `-- testresults --------------------------------------------------------------
-   |       `-- verilog -------------------------------------------------------------- Pasta com arquivos fonte
-   |           |-- VER.FULLSCAN.capeta_soc_pads_atpg.data.logic.ex1.ts2 ------------- Vertores de teste 1
-   |           |-- VER.FULLSCAN.capeta_soc_pads_atpg.data.scan.ex1.ts1 -------------- Vertores de teste 2
-   |           |-- VER.FULLSCAN.capeta_soc_pads_atpg.mainsim.v ---------------------- Main TESTBENCH
-   |           `-- cycleMap.FULLSCAN.capeta_soc_pads_atpg --------------------------- Tabela com os testes
-   |-- capeta_soc_pads.scandef ------------------------------------------------------ Definicao da(s) scan chain(s)
-   |-- capeta_soc_pads_atpg.stil ---------------------------------------------------- Standard Test Interface Language (STIL)
-   |-- capeta_soc_pads_dft_chains.rpt ----------------------------------------------- Reports
-   `-- capeta_soc_pads_dft_setup.rpt ------------------------------------------------ Reports
+   |   |-- run_fullscan_sim ---------------------------------------------- KSH script (run incisive simulator)
+   |   |-- runet.atpg ---------------------------------------------------- Script de templade usando com o Encounter Test
+   |   |-- tbdata --------------------------------------------------------
+   |   |-- Inca_libs_20_49_49 -------------------------------------------- Pasta de trabalho da simulacao
+   |   `-- testresults ---------------------------------------------------
+   |       `-- verilog --------------------------------------------------- Pasta com arquivos fonte
+   |           |-- VER.FULLSCAN.capeta_soc_pads_atpg.data.logic.ex1.ts2 -- Vertores de teste 1
+   |           |-- VER.FULLSCAN.capeta_soc_pads_atpg.data.scan.ex1.ts1 --- Vertores de teste 2
+   |           |-- VER.FULLSCAN.capeta_soc_pads_atpg.mainsim.v ----------- Main TESTBENCH
+   |           `-- cycleMap.FULLSCAN.capeta_soc_pads_atpg ---------------- Tabela com os testes
+   |-- capeta_soc_pads.scandef ------------------------------------------- Definicao da(s) scan chain(s)
+   |-- capeta_soc_pads_atpg.stil ----------------------------------------- Standard Test Interface Language (STIL)
+   |-- capeta_soc_pads_dft_chains.rpt ------------------------------------ Reports
+   `-- capeta_soc_pads_dft_setup.rpt ------------------------------------- Reports
 ```
 
-
-# Fluxo de geração de padroes de teste e simulacao
+## Fluxo de geração de padroes de teste e simulacao
 
 1. Exportar arquivos de ATPG da sintese lógica/física
 2. Executar o Encounter Test (ET) sobre o arquivo exportado `runet.atpg`
@@ -34,7 +34,7 @@ dft-psynth ---------------------------------------------------------------------
 
 
 
-# Funcionamento do Testbench do ATPG `VER.FULLSCAN.capeta_soc_pads_atpg.mainsim.v`
+## Funcionamento do Testbench do ATPG `VER.FULLSCAN.capeta_soc_pads_atpg.mainsim.v`
 
 - Define Variables For All Primary I/O Ports
 - Define Variables For All Shift Chains
@@ -49,10 +49,6 @@ dft-psynth ---------------------------------------------------------------------
 - Define Scan Precond Procedure
 - Define Scan Precond Bsr Procedure
 - Define Scan Sequence Procedure
-
-
-
-
 
 1. Os arquivos de teste são lidos
 
@@ -73,27 +69,26 @@ Scan_Preconditioning_Sequencebsr_FULLSCAN --- DEFINE SCAN PRECOND BSR PROCEDURE
 Scan_Sequence_FULLSCAN ---------------------- DEFINE SCAN SEQUENCE PROCEDURE
 ```
 
-# Comandos ATPG tarefa `sim_vector_file`
-
+## ATPG TB Commands
 ```
+Codigos de comando dentro do arquivo de ATPG (Cadence ET):
 000
 100 COMMENT
-200 stim_PIs -------------------------------- Exemplo: 0XXXXXXXX111XX
-201 stim_CIs -------------------------------- Exemplo: 0XXXXXXXX1XXXX
-202 resp_POs -------------------------------- Exemplo: 11110100010
-203 global_term_[Z] ------------------------- Valor do sinal, todos em alta impedancia (z)
-300 MODENUM_[1] stim_SLs stim_SLs ----------- Exemplo: 1 1100110011... (acho que tem blocos de 1000 dados)
-301 MODENUM_[1] resp_MLs resp_MLs ----------- Exemplo: 1 1100110011... (acho que tem blocos de 1000 dados)
-400 ----------------------------------------- test_cycle
-500 ----------------------------------------- Não encontrado nos nossos arquivos de teste
-501 ----------------------------------------- Não encontrado nos nossos arquivos de teste
-600 MODENUM_[1] SEQNUM_[1|100|2] MAX -------- Exemplo: 1 2 1919
-900 PATTERN --------------------------------- Exemplo: 1.1.1.2.1.9
-901 PATTERN --------------------------------- Exemplo: 1.1.1.2.1.9
+200 stim_PIs -------------------------- Exemplo: 0XXXXXXXX111XX
+201 stim_CIs -------------------------- Exemplo: 0XXXXXXXX1XXXX
+202 resp_POs -------------------------- Exemplo: 11110100010
+203 global_term_[Z] ------------------- Valor do sinal, todos em alta impedancia (z)
+300 MODENUM_[1] stim_SLs stim_SLs ----- Exemplo: 1 1100110011... (acho que tem blocos de 1000 dados)
+301 MODENUM_[1] resp_MLs resp_MLs ----- Exemplo: 1 1100110011... (acho que tem blocos de 1000 dados)
+400 ----------------------------------- test_cycle
+500 ----------------------------------- Não encontrado nos nossos arquivos de teste
+501 ----------------------------------- Não encontrado nos nossos arquivos de teste
+600 MODENUM_[1] SEQNUM_[1|100|2] MAX -- Exemplo: 1 2 1919
+900 PATTERN --------------------------- Exemplo: 1.1.1.2.1.9
+901 PATTERN --------------------------- Exemplo: 1.1.1.2.1.9
 ```
 
-
-# Do manual
+# From manual
 
 ```
 100: Cabecalho do arquivo com comentarios

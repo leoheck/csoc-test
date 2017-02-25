@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------------------
 
 `default_nettype none
-`include "src/baudgen.v"
 
 module part_tester #(
 	parameter BAUDRATE = `B9600,

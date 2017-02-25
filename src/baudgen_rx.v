@@ -11,8 +11,8 @@
 //-- GPL license
 //-----------------------------------------------------------------------------
 
-// `default_nettype none
-`include "src/baudgen.v"
+`default_nettype none
+`include "src/baudgen.vh"
 
 //----------------------------------------------------------------------------------------
 //-- baudgen module
@@ -41,17 +41,8 @@ module baudgen_rx #(
 	output wire clk_out      //-- Bitrate Clock output
 );
 
-function integer clog2;
-input integer value;
-begin
-	value = value-1;
-	for (clog2=0; value>0; clog2=clog2+1)
-		value = value>>1;
-	end
-endfunction
-
 //-- Number of bits needed for storing the baudrate divisor
-// localparam N = $clog2(BAUDRATE);
+`include "src/functions.vh"
 localparam N = clog2(BAUDRATE);
 
 //-- Value for generating the pulse in the middle of the period

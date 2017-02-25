@@ -172,7 +172,7 @@ begin
 		data_ascii = " ";
 	else
 		data_ascii = data_rcv;
-	$write("- Data received: %3d|%0c|0x%h|%b", data_rcv, data_ascii, data_rcv, data_rcv);
+	$write("- Data received: ------- %3d|%0c|0x%h|%b", data_rcv, data_ascii, data_rcv, data_rcv);
 end
 endtask
 
@@ -252,10 +252,10 @@ begin
 	send_task(data_width[7:0]);
 	$write("\n");
 	for (i=0; i<data_width; i=i+1) begin
-		$write("  %4d: ", i+1);
+		// $write("  %4d: ", i+1);
 		recv_task;
 		if (cmd == GET_OUTPUTS_CMD)
-			$write("  %0s \n", part_pos_names[i+1]);
+			$write(" %4d %0s \n", i+1, part_pos_names[i+1]);
 		else
 			$write("\n");
 	end
@@ -291,7 +291,7 @@ begin
 				$finish;
 			end
 		endcase
-		$write(" %4d:", i+1);
+		$write(" %4d", i+1);
 		if (cmd == SET_INPUTS_CMD)
 			$write(" %0s \n", part_pis_names[i+1]);
 		else
@@ -303,9 +303,9 @@ endtask
 
 initial begin
 
-	$display("CSoC Test Running...");
 	$dumpfile("uart.vcd");
 	$dumpvars(0);
+	$write("\nCSoC Test Running...\n");
 
 	clk = 0;
 	rst = 1;
@@ -317,6 +317,13 @@ initial begin
 	csoc_uart_write = 0;
 
 	#70 rst = 0;
+
+	while(data_rcv != "\n")
+	begin
+		recv_task;
+		$write("\n");
+	end
+
 	wait_for_idle_state;
 
 	// reset_csoc_test;
@@ -325,11 +332,25 @@ initial begin
 	// get_dut(GET_STATE_CMD, NREGS);
 	// get_dut(GET_OUTPUTS_CMD, NPOS);
 	// set_dut(SET_STATE_CMD, NREGS, "10101010");
-	set_dut(SET_STATE_CMD, NREGS, "10001111");
+	// set_dut(SET_STATE_CMD, NREGS, "10001111");
 	// set_dut(SET_INPUTS_CMD, NPIS, "1010101010");
 
+
+	// reset_csoc_test;
+	// execute_dut(4);
+	// free_run_dut(6);
+	// get_dut(GET_STATE_CMD, 5);
+
+	get_dut(GET_OUTPUTS_CMD, 4);
 	wait_for_idle_state;
-	#1000 $finish;
+
+	set_dut(SET_STATE_CMD, 4, "1011");
+	wait_for_idle_state;
+
+	set_dut(SET_INPUTS_CMD, 4, "1001");
+	wait_for_idle_state;
+
+	#100 $finish;
 
 end
 

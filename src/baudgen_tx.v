@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 `default_nettype none
-`include "src/baudgen.v"
+`include "src/baudgen.vh"
 
 //----------------------------------------------------------------------------------------
 //-- baudgen module
@@ -38,16 +38,8 @@ module baudgen_tx #(
 );
 
 //-- Number of bits needed for storing the baudrate divisor
+`include "src/functions.vh"
 localparam N = clog2(BAUDRATE);
-
-function integer clog2;
-input integer value;
-begin
-value = value-1;
-for (clog2=0; value>0; clog2=clog2+1)
-value = value>>1;
-end
-endfunction
 
 //-- Counter for implementing the divisor (it is a BAUDRATE module counter)
 //-- (when BAUDRATE is reached, it start again from 0)

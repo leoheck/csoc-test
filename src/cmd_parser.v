@@ -23,7 +23,7 @@ module cmd_parser #(
 
 // Standard names for scan chain inputs
 reg clk_i;
-reg scan_i;
+reg scan_i, scan_i_nxt;
 reg reset_i;
 reg test_se_i;
 reg test_tm_i;
@@ -70,6 +70,8 @@ always @(posedge clk or negedge rstn) begin
 		part_pos <= part_pos_i;
 		//
 		scan_o <= part_pos_i[9];
+		//
+		scan_i <= scan_i_nxt;
 	end
 end
 
@@ -268,6 +270,8 @@ always @(*) begin
 	//
 	cont_pos_nxt = cont_pos;
 	cont_pis_nxt = cont_pis;
+	//
+	scan_i_nxt = scan_i;
 	case (state)
 
 		// DESCRIPTION
@@ -383,8 +387,8 @@ always @(*) begin
 		SB5: begin
 			if(new_rx_data) begin
 				case (rx_data)
-					"0": scan_i <= 0;
-					"1": scan_i <= 1;
+					"0": scan_i_nxt = 0;
+					"1": scan_i_nxt = 1;
 				endcase
 				clk_en_nxt = 1;
 				state_nxt = SB6;
@@ -624,7 +628,7 @@ always @(*) begin
 					"1" : part_pis[cont_pis] = rx_data;
 				endcase
 				cont_pis_nxt = cont_pis + 1;
-				if (cont_pis > nclks)
+				if (cont_pis >= nclks)
 					state_nxt = WAITING_COMMAND;
 			end
 		end

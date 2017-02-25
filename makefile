@@ -175,7 +175,8 @@ clean:
 # FOSS tools: icarus verilog, gtkwave
 
 iverilog: required
-	iverilog -o $(top) \
+	iverilog \
+		-o $(top) \
 		src/baudgen_rx.v \
 		src/baudgen_tx.v \
 		src/uart_rx.v \

@@ -273,27 +273,25 @@ free_run_dut:
 stop_free_run:
 	printf '%s' '$(PAUSE_CMD)' > $(dev)
 
-get_state_cmd:
+get_state:
 	printf '%s' '$(GET_STATE_CMD)' > $(dev)
 	printf '%b' '$(cycles_hex_hi)' > $(dev)
 	printf '%b' '$(cycles_hex_lo)' > $(dev)
 
-get_outputs_cmd:
+get_outputs:
 	printf '%s' '$(GET_OUTPUTS_CMD)' > $(dev)
 	printf '%b' '$(npos_hex_hi)' > $(dev)
 	printf '%b' '$(npos_hex_lo)' > $(dev)
 
-set_state_cmd:
+set_state:
 	printf '%s' '$(SET_STATE_CMD)' > $(dev)
 	printf '%b' '$(nregs_hex_hi)' > $(dev)
 	printf '%b' '$(nregs_hex_lo)' > $(dev)
-	for i in $(seq 1 $(NREGS)); do printf '%b' '\x00'; done
+	for i in $(shell seq 1 $(cycles)); do printf '%b' '\x01' > $(dev); done
 
-set_inputs_cmd:
+set_inputs:
 	printf '%s' '$(SET_INPUTS_CMD)' > $(dev)
 	printf '%b' '$(npis_hex_hi)' > $(dev)
 	printf '%b' '$(npis_hex_lo)' > $(dev)
-	for i in $(seq 1 $(npis)); do printf '%b' '\x00'; done
+	for i in $(shell seq 1 $(npis)); do printf '%b' '\x01' > $(dev); done
 
-
-## TODO: CREATE SOME COMPLEX TASKS

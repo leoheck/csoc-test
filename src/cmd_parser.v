@@ -53,7 +53,7 @@ always @(posedge clk or negedge rstn) begin
 		part_pos <= 0;
 		//
 		clk_i <= 0;
-		//scan_i <= 0;
+		scan_i <= 0;
 		reset_i <= 0;
 		test_se_i <= 0;
 		test_tm_i <= 0;
@@ -523,6 +523,10 @@ always @(*) begin
 					state_nxt = WAITING_COMMAND;
 		end
 
+		PAUSE_DUT: begin
+			clk_en_nxt = 0;
+			state_nxt = WAITING_COMMAND;
+		end
 
 		// DESCRIPTION
 		// ===================================================
@@ -576,7 +580,7 @@ always @(*) begin
 
 		SX21: begin
 			if (tx_ready_i)
-				if (cont_pos > NPOS) begin
+				if (cont_pos > nclks) begin
 					state_nxt = WAITING_COMMAND;
 				end
 				else
@@ -615,18 +619,14 @@ always @(*) begin
 
 		SA1: begin
 			if(new_rx_data) begin
-				part_pis[cont_pis] = rx_data;
+				case (rx_data)
+					"0" : part_pis[cont_pis] = rx_data;
+					"1" : part_pis[cont_pis] = rx_data;
+				endcase
 				cont_pis_nxt = cont_pis + 1;
-				if (cont_pis >= nclks)
+				if (cont_pis > nclks)
 					state_nxt = WAITING_COMMAND;
 			end
-		end
-
-		// #=======================
-
-		PAUSE_DUT: begin
-			clk_en_nxt = 0;
-			state_nxt = WAITING_COMMAND;
 		end
 
 	endcase

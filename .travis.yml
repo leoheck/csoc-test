@@ -16,4 +16,4 @@ before_install:
   - cd -
 
 script:
-  - time make sim notify-send=echo
+  - time make sim notify-send="@#echo"

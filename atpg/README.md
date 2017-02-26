@@ -53,14 +53,8 @@ File: `VER.FULLSCAN.capeta_soc_pads_atpg.mainsim.v`
 - Define Scan Sequence Procedure
 ```
 
-1. Os arquivos de teste são lidos
 
-```
-+TESTFILE1=$WORKDIR/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.scan.ex1.ts1
-+TESTFILE2=$WORKDIR/testresults/verilog/VER.FULLSCAN.capeta_soc_pads_atpg.data.logic.ex1.ts2
-```
-
-2. São definidas algumas tarefas
+### Testbanch tasks
 
 ```
 sim_setup ----------------------------------- DEFINE SIMULATION SETUP PROCEDURE

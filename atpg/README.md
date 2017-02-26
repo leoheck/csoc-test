@@ -1,4 +1,4 @@
-# CADENCE ET
+# CADENCE Encounter Test
 
 ## ATPG Generated files
 

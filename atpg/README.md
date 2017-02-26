@@ -68,8 +68,8 @@ Scan_Sequence_FULLSCAN ---------------------- DEFINE SCAN SEQUENCE PROCEDURE
 
 ## OPCODE Definitions
 
-Manual: `et_ref_testpatterns.pdf`
-There are other opcodes which were not listed here.
+There are other opcodes which were not listed here. Manual: `et_ref_testpatterns.pdf`.
+
 
 ```
 000 ----------------------------- Stop NCSIM simulation

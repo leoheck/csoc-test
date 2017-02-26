@@ -120,21 +120,30 @@ if args.atpg_file:
 			if args.verbose >= 1:
 				print cmd, "Undefined single character", global_term
 
-		# 300 MODENUM_[1] stim_SLs stim_SLs ----- Exemplo: 1 1100110011... \n 1100110011... (acho que tem blocos de 1000 dados)
+		# 300 MODENUM_[1] stim_SLs stim_SLs ----- Exemplo: 1 1100110011... \n 1100110011... (sequencias de 1000 dados?)
 		elif cmd == 300:
 			modenum = line_splited[1]
-			if args.verbose >= 1:
-				print cmd, "Input/output stream", modenum, line_splited[2][:20] + "..."
-			if args.verbose >= 2:
-				print "BITS:", len(line_splited[2])
+			stimuli = list()
+			stimuli.append(line_splited[2])
+			i=i+1
+			line_splited = lines[i].split()
+			stimuli.append(line_splited[0])
 
-		# 301 MODENUM_[1] resp_MLs resp_MLs ----- Exemplo: 1 1100110011... (acho que tem blocos de 1000 dados)
+			if args.verbose >= 1:
+				print cmd, "Input/output stream", modenum, stimuli[0][:8] + "...",  stimuli[1][:8] + "..."
+
+
+		# 301 MODENUM_[1] resp_MLs resp_MLs ----- Exemplo: 1 1100110011... \n 1100110011... (sequencias de 1000 dados?)
 		elif cmd == 301:
 			modenum = line_splited[1]
+			stimuli = list()
+			stimuli.append(line_splited[2])
+			i=i+1
+			line_splited = lines[i].split()
+			stimuli.append(line_splited[0])
+
 			if args.verbose >= 1:
-				print cmd, "Input/output stream", modenum, line_splited[2][:20] + "..."
-				if args.verbose >= 2:
-					print "BITS:", len(line_splited[2])
+				print cmd, "Input/output stream", modenum, stimuli[0][:8] + "...",  stimuli[1][:8] + "..."
 
 		# 400 ----------------------------------- test_cycle
 		elif cmd == 400:
@@ -156,27 +165,31 @@ if args.atpg_file:
 			seqnum = line_splited[2]
 			cycles = line_splited[3]
 			if args.verbose >= 1:
-				print cmd, "Set clock pulses:", map(int,line_splited[1:])
+				print cmd, "Set clock pulses:", modenum, seqnum, cycles
 
 		# 900 PATTERN --------------------------- Exemplo: 1.1.1.2.1.9
 		elif cmd == 900:
+			pattern = line_splited[1]
 			if args.verbose >= 1:
-				print cmd, "Test pattern:", line_splited[1]
+				print cmd, "Test pattern:", pattern
 
 		# 901 PATTERN --------------------------- Exemplo: 1.1.1.2.1.9
 		elif cmd == 901:
+			pattern = line_splited[1]
 			if args.verbose >= 1:
-				print cmd, "Test pattern:", line_splited[1]
+				print cmd, "Test pattern:", pattern
 
 		# NAO É COMANDO
 		elif len(line_splited[0]) > 3:
-			if args.verbose >= 2:
-				print "BITS", len(line_splited[0])
+			# if args.verbose >= 2:
+				# print "BITS", len(line_splited[0])
 			continue
 
 		else:
 			print "Warning, missing command"
 			continue
+
+
 
 # Abre no modo iterativo
 else:

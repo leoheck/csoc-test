@@ -346,17 +346,17 @@ always @(*) begin
 
 			if(new_rx_data) begin
 				case (rx_data)
-					RESET_CMD:       state_nxt = RESET;              // (ok) reset
+					RESET_CMD:       state_nxt = RESET;              // reset the tester
 
-					EXECUTE_CMD:     state_nxt = EXECUTE_DUT;        // (ok) start PART execution for n cycles
-					FREE_RUN_CMD:    state_nxt = FREE_RUN_DUT;       // (ok) start PART execution until stop command
-					PAUSE_CMD:       state_nxt = PAUSE_DUT;          // (  ) pause PART execution
+					EXECUTE_CMD:     state_nxt = EXECUTE_DUT;        // start PART execution for n cycles
+					FREE_RUN_CMD:    state_nxt = FREE_RUN_DUT;       // start PART execution until stop command
+					PAUSE_CMD:       state_nxt = PAUSE_DUT;          // pause PART execution
 
-					SET_STATE_CMD:   state_nxt = SET_DUT_STATE;      // (ok) set PART internal state
-					GET_STATE_CMD:   state_nxt = GET_DUT_STATE;      // (ok) get PART internal state
+					SET_STATE_CMD:   state_nxt = SET_DUT_STATE;      // set PART internal state
+					GET_STATE_CMD:   state_nxt = GET_DUT_STATE;      // get PART internal state
 
-					SET_INPUTS_CMD:  state_nxt = SET_INPUTS_STATE;   // (ok) set PART inputs
-					GET_OUTPUTS_CMD: state_nxt = GET_OUTPUTS_STATE;  // (ok) get PART outputs
+					SET_INPUTS_CMD:  state_nxt = SET_INPUTS_STATE;   // set PART inputs
+					GET_OUTPUTS_CMD: state_nxt = GET_OUTPUTS_STATE;  // get PART outputs
 				endcase
 			end
 		end

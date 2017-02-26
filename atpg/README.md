@@ -71,6 +71,9 @@ Scan_Sequence_FULLSCAN ---------------------- DEFINE SCAN SEQUENCE PROCEDURE
 ```
 
 ## ATPG Commands
+
+Manual: `et_ref_testpatterns.pdf`
+
 ```
 Codigos de comando dentro do arquivo de ATPG (Cadence ET):
 000
@@ -87,20 +90,4 @@ Codigos de comando dentro do arquivo de ATPG (Cadence ET):
 600 MODENUM_[1] SEQNUM_[1|100|2] MAX -- Exemplo: 1 2 1919
 900 PATTERN --------------------------- Exemplo: 1.1.1.2.1.9
 901 PATTERN --------------------------- Exemplo: 1.1.1.2.1.9
-```
-
-# Command description from ET Manual
-
-```
-100: Cabecalho do arquivo com comentarios
-200: Campo com 14 caracteres (valores 01X), estimulos nas entradas
-201: Campo com 14 caracteres (valores 01X), estimulos nas entradas
-202: Campo com 11 caracteres (valores 01),  deve ser as valores esperados nas saidas
-203: Tem um "z"
-300: 1, ESPAÇO e STREAM de 1000 caracteres (valores 01): deve ser o stream de dados para entrada/saida
-301: 1, ESPAÇO e STREAM de 1000 caracteres (valores 01): deve ser o stream de dados para saida/entrada
-400: Sem argumentos, pode indicar o inicio do teste
-600: Duas opções: "600 1 1 1" OU "600 1 2 1919": Pode indicar o numero de pulsos de clock
-900: Numero no formato "1.2.1.13.13.1", deve indicar o "padrao de teste" sendo validado
-901: Numero no formato "1.2.1.13.13.1", deve indicar o "padrao de teste" sendo validado
 ```

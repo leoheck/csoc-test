@@ -33,7 +33,7 @@ dft-psynth --------------------------------------------------------------- ET ou
 3. Executar `run_fullscan_sim` realiza a simulacao com os vetores de teste gerados pelo ET
 
 
-## Testbench Operation
+## Test Vector Formats
 
 File: `VER.FULLSCAN.capeta_soc_pads_atpg.mainsim.v`
 
@@ -66,24 +66,25 @@ Scan_Preconditioning_Sequencebsr_FULLSCAN --- DEFINE SCAN PRECOND BSR PROCEDURE
 Scan_Sequence_FULLSCAN ---------------------- DEFINE SCAN SEQUENCE PROCEDURE
 ```
 
-## ATPG Commands
+## OPCODE Definitions
 
 Manual: `et_ref_testpatterns.pdf`
+There are other opcodes which were not listed here.
 
 ```
-Codigos de comando dentro do arquivo de ATPG (Cadence ET):
-000
-100 COMMENT
-200 stim_PIs -------------------------- Exemplo: 0XXXXXXXX111XX
-201 stim_CIs -------------------------- Exemplo: 0XXXXXXXX1XXXX
-202 resp_POs -------------------------- Exemplo: 11110100010
-203 global_term_[Z] ------------------- Valor do sinal, todos em alta impedancia (z)
-300 MODENUM_[1] stim_SLs stim_SLs ----- Exemplo: 1 1100110011... (acho que tem blocos de 1000 dados)
-301 MODENUM_[1] resp_MLs resp_MLs ----- Exemplo: 1 1100110011... (acho que tem blocos de 1000 dados)
-400 ----------------------------------- test_cycle
-500 ----------------------------------- Não encontrado nos nossos arquivos de teste
-501 ----------------------------------- Não encontrado nos nossos arquivos de teste
-600 MODENUM_[1] SEQNUM_[1|100|2] MAX -- Exemplo: 1 2 1919
-900 PATTERN --------------------------- Exemplo: 1.1.1.2.1.9
-901 PATTERN --------------------------- Exemplo: 1.1.1.2.1.9
+000 ----------------------------- Stop NCSIM simulation
+100 <comment> ------------------- Comment line
+200 <stim_PIs> ------------------ Input stimulus for primary inputs (PIs)
+201 <stim_CIs> ------------------ Input clock stimulus
+202 <resp_POs> ------------------ Expected responses for primary outputs (POs)
+203 <global_term> --------------- Global termination value applyed for bidir ports
+300 <testMode> <stim_SLs> ------- Scan input stimulus
+301 <testMode> <resp_MLs> ------- Contains the expected scan chain values from the design
+400 ----------------------------- Invokes test_cycle task
+500 ----------------------------- Start of a repeat loop
+501 ----------------------------- End of a repeat loop
+600 <testMode> <seqNum> <max> --- Invokes any SCAN preconditioning or exit sequences required by the design
+900 <patternNumber> ------------- The ATPG pattern number
+901 <patternNumber> ------------- The measure ATPG pattern number.
 ```
+

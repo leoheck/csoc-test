@@ -16,6 +16,6 @@ See instructions in [atpg folder](./atpg/).
 
 
 <!-- USING for SVG images: https://rawgit.com/ -->
-<img align="center" src="https://rawgit.com/leoheck/csoc-test/master/imgs/blocks.svg" width="600px">
-<img align="center" src="https://rawgit.com/leoheck/csoc-test/master/imgs/state-machine.svg" width="600px">
+<img align="center" src="https://rawgit.com/leoheck/csoc-test/master/imgs/blocks.svg" width="800px">
+<img align="center" src="https://rawgit.com/leoheck/csoc-test/master/imgs/state-machine.svg" width="800px">
 <img align="center" src="https://rawgit.com/leoheck/csoc-test/master/imgs/setup.svg" width="800px">

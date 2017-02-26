@@ -257,13 +257,17 @@ input [15:0] data_width;
 integer i;
 begin
 	case (cmd)
-		GET_STATE_CMD: $display("\nTASK: Getting DUT internal state for %0d cycles (%s)", data_width, data);
-		GET_OUTPUTS_CMD: $display("\nTASK: Getting DUT outputs state for %0d cycles (%s)", data_width, data);
+		GET_STATE_CMD: $display("\nTASK: Getting DUT internal state for %0d cycles (", data_width);
+		GET_OUTPUTS_CMD: $display("\nTASK: Getting DUT outputs state for %0d cycles (", data_width);
 		default: begin
 			$display("\nTASK: ERROR, missing command to get DUT state");
 			$finish;
 		end
 	endcase
+	// for (i=0; i<data_width; i=i+1) begin
+	// 	$write("%c", data[i]);
+	// end
+	$write(")\n");
 	send_task(cmd);
 	$write("\n");
 	send_task(data_width[15:8]);
@@ -288,14 +292,17 @@ input integer data;
 integer i;
 begin
 	case (cmd)
-		SET_STATE_CMD: $write("\nTASK: Setting DUT internal state for %0d cycles (%s)", data_width, data);
-		SET_INPUTS_CMD: $write("\nTASK: Setting DUT inputs state for %0d cycles (%s)", data_width, data);
+		SET_STATE_CMD: $write("\nTASK: Setting DUT internal state for %0d cycles (", data_width);
+		SET_INPUTS_CMD: $write("\nTASK: Setting DUT inputs state for %0d cycles (", data_width);
 		default: begin
 			$display("ERROR, missing command to set DUT state");
 			$finish;
 		end
 	endcase
-	$write("\n");
+	// for (i=0; i<data_width; i=i+1) begin
+	// 	$write("%c", data[i]);
+	// end
+	$write(")\n");
 	send_task(cmd);
 	$write("\n");
 	send_task(data_width[15:8]);

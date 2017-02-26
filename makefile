@@ -32,7 +32,7 @@ required:
 	@ echo "Creating memories"
 	@ ./scripts/memory_gen.py "$(COMP_TIME)" -f version.txt
 	@ ./scripts/memory_gen.py "CSoC Test Running..." -f initial_message.txt
-	@ ./scripts/state_names.sh > gtkwave/parser_states.conf
+	@ ./scripts/state_names.sh > cmd_parser_states.conf
 
 $(top).xst: $(src) required
 	@ echo "Creating $(top).xst"
@@ -131,7 +131,7 @@ clean:
 	@ rm -f $(top)
 	@ rm -f *.vcd
 	@ rm -f *.vcd.fst
-	@ rm -f gtkwave/parser_states.conf
+	@ rm -f cmd_parser_states.conf
 	@ # ISE OUTPUTS
 	@ rm -f *-routed*
 	@ rm -f *.bgn
@@ -198,8 +198,8 @@ run:
 sim: iverilog run
 
 wave:
-	@ ./scripts/state_names.sh > gtkwave/parser_states.conf
-	gtkwave --slider-zoom --optimize uart.vcd -a gtkwave/waveform.gtkw
+	@ ./scripts/state_names.sh > cmd_parser_states.conf
+	gtkwave --wish --slider-zoom --optimize uart.vcd -a gtkwave/waveform.gtkw
 
 
 

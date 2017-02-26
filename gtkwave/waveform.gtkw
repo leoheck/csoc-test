@@ -1,16 +1,16 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Sat Feb 25 16:45:51 2017
+[*] Sun Feb 26 00:43:14 2017
 [*]
 [dumpfile] "/home/lheck/Repos/csoc-test/uart.vcd"
-[dumpfile_mtime] "Sat Feb 25 16:45:51 2017"
-[dumpfile_size] 1175322624
+[dumpfile_mtime] "Sun Feb 26 00:43:14 2017"
+[dumpfile_size] 478818304
 [optimize_vcd]
 [savefile] "/home/lheck/Repos/csoc-test/gtkwave/waveform.gtkw"
 [timestart] 0
 [size] 1600 876
-[pos] -3 -26
-*-26.251337 76805900 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -1
+*-25.099403 76805900 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [markername] A1
 [treeopen] tb.
 [treeopen] tb.part0.
@@ -25,8 +25,8 @@ tb.part0.clk
 tb.part0.cp0.rstn
 @200
 -
-@2028
-^1 /home/lheck/Repos/csoc-test/gtkwave/parser_states.conf
+@2029
+^1 /home/lheck/Repos/csoc-test/cmd_parser_states.conf
 tb.part0.cp0.state[4:0]
 @24
 tb.part0.cp0.state[4:0]

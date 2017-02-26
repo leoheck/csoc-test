@@ -1,96 +1,107 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Thu Feb 23 16:46:13 2017
+[*] Sun Feb 26 00:31:51 2017
 [*]
-[dumpfile] "(null)"
+[dumpfile] "/home/lheck/Repos/csoc-test/uart.vcd"
+[dumpfile_mtime] "Sun Feb 26 00:31:51 2017"
+[dumpfile_size] 1648525312
 [optimize_vcd]
-[savefile] "/home/lheck/Github/csoc-test/gtkwave/testbench-only.gtkw"
+[savefile] "/home/lheck/Repos/csoc-test/gtkwave/testbench-only.gtkw"
 [timestart] 0
 [size] 1600 876
 [pos] -1 -1
-*-23.985378 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-27.266140 290709140 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[markername] A1
 [treeopen] tb.
+[treeopen] tb.part0.
+[treeopen] tb.part0.cp0.
 [sst_width] 200
 [signals_width] 189
 [sst_expanded] 1
 [sst_vpaned_height] 253
 @28
-tb.clk
-tb.rst
-tb.rstn
+tb.part0.clk
+[color] 2
+tb.part0.cp0.rstn
 @200
 -
-@22
-tb.send_data[7:0]
-@28
-tb.send
-tb.dut_rx
-tb.ready
+@2028
+^1 /tmp/../home/lheck/Repos/csoc-test/cmd_parser_states.conf
+tb.part0.cp0.state[4:0]
+@24
+tb.part0.cp0.state[4:0]
 @200
+>2200000000
 -
-@28
-tb.dut_tx
-tb.rcv
+@800200
+>0
+-RX
 @820
-tb.data_rcv[7:0]
+tb.send_data[7:0]
 @200
 -
-@c00022
-tb.part_pis[1:14]
-@28
-(0)tb.part_pis[1:14]
-(1)tb.part_pis[1:14]
-(2)tb.part_pis[1:14]
-(3)tb.part_pis[1:14]
-(4)tb.part_pis[1:14]
-(5)tb.part_pis[1:14]
-(6)tb.part_pis[1:14]
-(7)tb.part_pis[1:14]
-(8)tb.part_pis[1:14]
-(9)tb.part_pis[1:14]
-(10)tb.part_pis[1:14]
-(11)tb.part_pis[1:14]
-(12)tb.part_pis[1:14]
-(13)tb.part_pis[1:14]
-@1401200
--group_end
-@c00022
-tb.part_pos[1:11]
-@28
-(0)tb.part_pos[1:11]
-(1)tb.part_pos[1:11]
-(2)tb.part_pos[1:11]
-(3)tb.part_pos[1:11]
-(4)tb.part_pos[1:11]
-(5)tb.part_pos[1:11]
-(6)tb.part_pos[1:11]
-(7)tb.part_pos[1:11]
-(8)tb.part_pos[1:11]
-(9)tb.part_pos[1:11]
-(10)tb.part_pos[1:11]
-@1401200
--group_end
-@200
--
-@28
-tb.csoc_clk
-tb.csoc_rstn
-tb.csoc_test_se
-tb.csoc_test_tm
-tb.csoc_uart_read
-tb.csoc_data_i
-@200
--
-@23
-tb.csoc_data_o[7:0]
-@28
-tb.csoc_uart_write
-@200
--
+@29
+tb.part0.cp0.new_rx_data
 @22
-tb.an[3:0]
-tb.sseg[7:0]
-tb.leds[7:0]
+tb.part0.cp0.rx_data[7:0]
+@820
+tb.part0.cp0.rx_data[7:0]
+@1000200
+-RX
+@200
+-
+@800200
+-TX
+@28
+tb.part0.tx
+tb.part0.cp0.tx_ready_i
+tb.part0.cp0.tx_start
+tb.part0.cp0.run_done
+@c00820
+tb.part0.tx_data[7:0]
+@1401200
+-group_end
+@1000200
+-TX
+@200
+-
+@24
+tb.part0.cp0.msg_addr[5:0]
+@820
+tb.part0.cp0.msg_data[7:0]
+@200
+-
+@24
+tb.part0.cp0.clk_count[15:0]
+tb.part0.cp0.nclks[15:0]
+@28
+tb.part0.cp0.csoc_clk
+tb.part0.cp0.clk_en
+tb.part0.cp0.cont_pis[4:0]
+@24
+tb.part0.cp0.cont_pos[4:0]
+@200
+-
+@28
+tb.part0.cp0.scan_i
+@c00022
+tb.part0.part_pos_i[1:11]
+@28
+(0)tb.part0.part_pos_i[1:11]
+(1)tb.part0.part_pos_i[1:11]
+(2)tb.part0.part_pos_i[1:11]
+(3)tb.part0.part_pos_i[1:11]
+(4)tb.part0.part_pos_i[1:11]
+(5)tb.part0.part_pos_i[1:11]
+(6)tb.part0.part_pos_i[1:11]
+(7)tb.part0.part_pos_i[1:11]
+(8)tb.part0.part_pos_i[1:11]
+(9)tb.part0.part_pos_i[1:11]
+(10)tb.part0.part_pos_i[1:11]
+@1401200
+-group_end
+@22
+tb.part0.part_pis_o[1:14]
 @200
 -
 [pattern_trace] 1

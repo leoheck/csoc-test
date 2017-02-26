@@ -160,8 +160,10 @@ assign rstn = ~rst;    // active-low reset
 task initial_message;
 begin
 	$display("\nTASK: Receiving initial message");
-	recv_task;
-	$write("\n");
+	if(data_rcv == "\n") begin
+		recv_task;
+		$write("\n");
+	end
 	while(data_rcv != "\n")
 	begin
 		recv_task;
@@ -172,8 +174,8 @@ endtask
 
 task wait_for_idle_state;
 begin
-	while(part0.cp0.state != 5) #1000;
-	$display("\nDUT is waiting for commands");
+	while(part0.cp0.state != 5) #1;
+	// $display("\nDUT is waiting for commands");
 end
 endtask
 
@@ -182,7 +184,7 @@ integer data_ascii;
 begin
 	@ (posedge rcv)
 	if ((data_rcv < 32) || (data_rcv > 126))
-		data_ascii = " ";
+		data_ascii = "_";
 	else
 		data_ascii = data_rcv;
 	$write("- Data received: ------- %3d|%0c|0x%h|%b", data_rcv, data_ascii, data_rcv, data_rcv);
@@ -194,14 +196,14 @@ input [7:0] data;
 integer data_ascii;
 begin
 	if ((data < 32) || (data > 126))
-		data_ascii = " ";
+		data_ascii = "_";
 	else
 		data_ascii = data;
 	$write("- Sending data: -------- %3d|%0c|0x%h|%b", data, data_ascii, data, data);
 	send_data = data;
 	send = 1;
 	@ (negedge ready)
-	// @ (posedge clk)
+	@ (posedge clk)
 	send = 0;
 	@ (posedge ready);
 end
@@ -211,25 +213,27 @@ endtask
 // CSOC TASKS
 //================================================
 
-task reset_csoc_test;
+task reset_part_test;
 begin
 	$display("\nTASK: Reseting the DUT");
 	send_task(RESET_CMD);
 	$write("\n");
 	initial_message;
+	wait_for_idle_state;
 end
 endtask
 
 task execute_dut;
 input [15:0] cycles;
 begin
-	$display("\nTASK: Executing DUT");
+	$display("\nTASK: Executing DUT for %0d cycles", cycles);
 	send_task(EXECUTE_CMD);
 	$write("\n");
 	send_task(cycles[15:8]);
 	$write("\n");
 	send_task(cycles[7:0]);
 	$write("\n");
+	wait_for_idle_state;
 end
 endtask
 
@@ -243,7 +247,8 @@ begin
 	send_task(PAUSE_CMD);
 	$write("\n");
 	$display("- Stopped by user after %0d cycles", cycles);
-	end
+	wait_for_idle_state;
+end
 endtask
 
 task get_dut;
@@ -252,8 +257,8 @@ input [15:0] data_width;
 integer i;
 begin
 	case (cmd)
-		GET_STATE_CMD: $display("\nTASK: Getting DUT internal state");
-		GET_OUTPUTS_CMD: $display("\nTASK: Getting DUT outputs state");
+		GET_STATE_CMD: $display("\nTASK: Getting DUT internal state for %0d cycles (%s)", data_width, data);
+		GET_OUTPUTS_CMD: $display("\nTASK: Getting DUT outputs state for %0d cycles (%s)", data_width, data);
 		default: begin
 			$display("\nTASK: ERROR, missing command to get DUT state");
 			$finish;
@@ -266,13 +271,13 @@ begin
 	send_task(data_width[7:0]);
 	$write("\n");
 	for (i=0; i<data_width; i=i+1) begin
-		// $write("  %4d: ", i+1);
 		recv_task;
 		if (cmd == GET_OUTPUTS_CMD)
 			$write(" %4d %0s \n", i+1, part_pos_names[i+1]);
 		else
 			$write("\n");
 	end
+	wait_for_idle_state;
 end
 endtask
 
@@ -283,13 +288,14 @@ input integer data;
 integer i;
 begin
 	case (cmd)
-		SET_STATE_CMD: $display("\nTASK: Setting DUT internal state");
-		SET_INPUTS_CMD: $display("\nTASK: Setting DUT inputs state");
+		SET_STATE_CMD: $write("\nTASK: Setting DUT internal state for %0d cycles (%s)", data_width, data);
+		SET_INPUTS_CMD: $write("\nTASK: Setting DUT inputs state for %0d cycles (%s)", data_width, data);
 		default: begin
 			$display("ERROR, missing command to set DUT state");
 			$finish;
 		end
 	endcase
+	$write("\n");
 	send_task(cmd);
 	$write("\n");
 	send_task(data_width[15:8]);
@@ -311,6 +317,7 @@ begin
 		else
 			$write("\n");
 	end
+	wait_for_idle_state;
 end
 endtask
 
@@ -333,44 +340,24 @@ initial begin
 	#70 rst = 0;
 
 	initial_message;
-	wait_for_idle_state;
-
-	// reset_csoc_test;
-	// execute_dut(10);
-	// free_run_dut(12);
-	// get_dut(GET_STATE_CMD, NREGS);
-	// get_dut(GET_OUTPUTS_CMD, NPOS);
-	// set_dut(SET_STATE_CMD, NREGS, "10101010");
-	// set_dut(SET_STATE_CMD, NREGS, "10001111");
-	// set_dut(SET_INPUTS_CMD, NPIS, "1010101010");
 
 	get_dut(GET_STATE_CMD, 5);
-	wait_for_idle_state;
-
-
-	reset_csoc_test;
-	wait_for_idle_state;
-
 	execute_dut(4);
-	wait_for_idle_state;
-
 	free_run_dut(6);
-	wait_for_idle_state;
-
 	get_dut(GET_STATE_CMD, 5);
-	wait_for_idle_state;
-
 	get_dut(GET_OUTPUTS_CMD, 3);
-	wait_for_idle_state;
-
 	set_dut(SET_STATE_CMD, 4, "1011");
-	wait_for_idle_state;
-
 	set_dut(SET_INPUTS_CMD, 5, "1001");
-	wait_for_idle_state;
+
+	reset_part_test;
+	set_dut(SET_STATE_CMD, 20, "10001111100011110101");
+	get_dut(GET_STATE_CMD, NREGS);
+	get_dut(GET_OUTPUTS_CMD, NPOS);
+	execute_dut(10);
+	free_run_dut(12);
+	set_dut(SET_INPUTS_CMD, NPIS, "10101010101111");
 
 	#100 $finish;
-
 end
 
 endmodule

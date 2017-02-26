@@ -274,7 +274,7 @@ always @(*) begin
 	scan_i_nxt = scan_i;
 	case (state)
 
-		// DESCRIPTION
+
 		// ===================================================
 
 		RESET: begin
@@ -295,7 +295,7 @@ always @(*) begin
 			state_nxt = WAITING_COMMAND;
 		end
 
-		// Initial Mesasge states
+
 		// ===================================================
 
 		INITIAL_MESSAGE: begin
@@ -336,7 +336,6 @@ always @(*) begin
 		end
 
 
-		// Wait for commands
 		// ===================================================
 
 		WAITING_COMMAND: begin
@@ -362,9 +361,8 @@ always @(*) begin
 			end
 		end
 
-		// DESCRIPTION
-		// ===================================================
 
+		// ===================================================
 
 		SET_DUT_STATE:  begin
 			csoc_test_se_nxt = 1;
@@ -396,10 +394,8 @@ always @(*) begin
 		end
 
 		SB6: begin
-
 			clk_count_nxt = clk_count + 1;
 			clk_en_nxt = 0;
-
 			if (clk_count >= nclks) begin
 				clk_en_nxt = 0;
 				state_nxt = WAITING_COMMAND;
@@ -409,7 +405,7 @@ always @(*) begin
 			end
 		end
 
-		// DESCRIPTION
+
 		// ===================================================
 
 		GET_DUT_STATE: begin
@@ -482,9 +478,6 @@ always @(*) begin
 		end
 
 
-
-
-		// DESCRIPTION
 		// ===================================================
 
 		EXECUTE_DUT: begin
@@ -515,7 +508,6 @@ always @(*) begin
 		end
 
 
-		// DESCRIPTION
 		// ===================================================
 
 		FREE_RUN_DUT: begin
@@ -532,7 +524,7 @@ always @(*) begin
 			state_nxt = WAITING_COMMAND;
 		end
 
-		// DESCRIPTION
+
 		// ===================================================
 
 		GET_OUTPUTS_STATE: begin
@@ -600,7 +592,6 @@ always @(*) begin
 		end
 
 
-		// DESCRIPTION
 		// ===================================================
 
 		SET_INPUTS_STATE: begin

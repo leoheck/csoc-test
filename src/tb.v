@@ -7,7 +7,9 @@ parameter BAUDRATE = 9600;
 
 reg clk;
 reg rst;
+reg xtal;
 wire rstn;
+
 
 // transmitter
 reg send;
@@ -30,7 +32,7 @@ wire [3:0] an;
 // Generic pat signal names to CSOC pin names
 //================================================
 
-localparam NREGS = 10;
+localparam NREGS = 20;
 localparam NPIS = 14;
 localparam NPOS = 11;
 
@@ -46,8 +48,12 @@ wire csoc_test_tm;
 wire csoc_uart_read;
 wire [7:0] csoc_data_i;
 
-reg csoc_uart_write;
-reg [7:0] csoc_data_o;
+wire csoc_uart_write;
+wire [7:0] csoc_data_o;
+
+wire csoc_xtal_i;
+wire csoc_xtal_o;
+wire csoc_clk_o;
 
 // part inputs mapping
 assign csoc_clk = part_pis[1];
@@ -56,12 +62,13 @@ assign csoc_rstn = part_pis[10];
 assign csoc_test_se = part_pis[11];
 assign csoc_test_tm = part_pis[12];
 assign csoc_uart_read = part_pis[13];
+assign csoc_xtal_i = part_pos[14];
 
 // part outputs mapping
-assign part_pos[1]   = 0;
+assign part_pos[1]   = csoc_xtal_o;
 assign part_pos[2:9] = csoc_data_o;
 assign part_pos[10]  = csoc_uart_write;
-assign part_pos[11]  = 0;
+assign part_pos[11]  = csoc_clk_o;
 
 reg [8*14:1] part_pos_names [1:NPOS];
 reg [8*14:1] part_pis_names [1:NPIS];
@@ -80,9 +87,9 @@ initial begin
 	part_pis_names[11] = "test_se";
 	part_pis_names[12] = "test_tm";
 	part_pis_names[13] = "uart_read";
-	part_pis_names[14] = "none";
+	part_pis_names[14] = "xtal_i";
 	//
-	part_pos_names[1]  = "none";
+	part_pos_names[1]  = "clk_o";
 	part_pos_names[2]  = "data_o_0";
 	part_pos_names[3]  = "data_o_1";
 	part_pos_names[4]  = "data_o_2";
@@ -92,7 +99,7 @@ initial begin
 	part_pos_names[8]  = "data_o_6";
 	part_pos_names[9]  = "data_o_7";
 	part_pos_names[10] = "uart_write";
-	part_pos_names[11] = "none";
+	part_pos_names[11] = "xtal_o";
 end
 
 //================================================
@@ -141,20 +148,20 @@ part_tester #(.BAUDRATE(BAUDRATE)) part0 (
 	.sseg(sseg),
 	.an(an),
 	// PART TO TEST
-	.part_pis_o(part_pis),  // CSOC primary inputs  (this is output here)
-	.part_pos_i(part_pos)   // CSOC primary outputs (this is input here)
+	.part_pis_o(part_pis),  // Part primary inputs  (it is output here)
+	.part_pos_i(part_pos)   // Part primary outputs (it is input here)
 );
 
 csoc #(.NREGS(NREGS)) csoc0 (
 	.clk_i(csoc_clk),
 	.rstn_i(csoc_rstn),
-	.uart_read_i(csoc_uart_write),
-	.uart_write_o(csoc_uart_read),
-	.data_i(csoc_data_o),
-	.data_o(csoc_data_i),
-	.xtal_a_i(),
-	.xtal_b_o(),
-	.clk_o(),
+	.uart_read_i(csoc_uart_read),
+	.uart_write_o(csoc_uart_write),
+	.data_i(csoc_data_i),
+	.data_o(csoc_data_o),
+	.xtal_a_i(xtal), // csoc_xtal_i
+	.xtal_b_o(csoc_xtal_o),
+	.clk_o(csoc_clk_o),
 	.test_tm_i(csoc_test_tm),
 	.test_se_i(csoc_test_se)
 );
@@ -166,6 +173,9 @@ csoc #(.NREGS(NREGS)) csoc0 (
 always #20 clk = !clk; // 50 MHz clock
 assign rstn = ~rst;    // active-low reset
 
+// External clock (clk)
+// always #60 xtal = !xtal; // 16.66 MHz clock
+// assign csoc_xtal_i = xtal;
 
 //================================================
 // SIMPLE TASKS
@@ -271,8 +281,8 @@ input [15:0] data_width;
 integer i;
 begin
 	case (cmd)
-		GET_STATE_CMD: $display("\nTASK: Getting DUT internal state for %0d cycles (", data_width);
-		GET_OUTPUTS_CMD: $display("\nTASK: Getting DUT outputs state for %0d cycles (", data_width);
+		GET_STATE_CMD: $write("\nTASK: Getting DUT internal state for %0d cycles (", data_width);
+		GET_OUTPUTS_CMD: $write("\nTASK: Getting DUT outputs state for %0d cycles (", data_width);
 		default: begin
 			$display("\nTASK: ERROR, missing command to get DUT state");
 			$finish;
@@ -351,32 +361,35 @@ initial begin
 
 	clk = 0;
 	rst = 1;
+	xtal = 0;
 
 	send = 0;
 	send_data = 0;
-
-	csoc_data_o = 8'b1010_1001;
-	csoc_uart_write = 0;
 
 	#70 rst = 0;
 
 	initial_message;
 
-	get_dut(GET_STATE_CMD, 5);
-	execute_dut(4);
-	free_run_dut(6);
-	get_dut(GET_STATE_CMD, 5);
-	get_dut(GET_OUTPUTS_CMD, 3);
-	set_dut(SET_STATE_CMD, 4, "1011");
-	set_dut(SET_INPUTS_CMD, 5, "1001");
+	// SIMULATE USER/ATPG COMMANDS FROM A SERIAL CONNECTION
 
-	reset_part_test;
-	set_dut(SET_STATE_CMD, 20, "10001111100011110101");
+	set_dut(SET_STATE_CMD, NREGS, "10001111100011110101");
 	get_dut(GET_STATE_CMD, NREGS);
-	get_dut(GET_OUTPUTS_CMD, NPOS);
-	execute_dut(10);
-	free_run_dut(12);
-	set_dut(SET_INPUTS_CMD, NPIS, "10101010101111");
+
+	// get_dut(GET_STATE_CMD, 5);
+	// execute_dut(4);
+	// free_run_dut(6);
+	// get_dut(GET_STATE_CMD, 5);
+	// get_dut(GET_OUTPUTS_CMD, 3);
+	// set_dut(SET_STATE_CMD, 4, "1011");
+	// set_dut(SET_INPUTS_CMD, 5, "1001");
+
+	// reset_part_test;
+	// set_dut(SET_STATE_CMD, 20, "10001111100011110101");
+	// get_dut(GET_STATE_CMD, NREGS);
+	// get_dut(GET_OUTPUTS_CMD, NPOS);
+	// execute_dut(10);
+	// free_run_dut(12);
+	// set_dut(SET_INPUTS_CMD, NPIS, "10101010101111");
 
 	#100 $finish;
 end

@@ -22,7 +22,7 @@ module cmd_parser #(
 );
 
 // Standard names for scan chain inputs
-reg clk_i;
+wire clk_i;
 reg scan_i, scan_i_nxt;
 reg reset_i;
 reg test_se_i;
@@ -52,7 +52,6 @@ always @(posedge clk or negedge rstn) begin
 		part_pis_o <= 0;
 		part_pos <= 0;
 		//
-		clk_i <= 0;
 		scan_i <= 0;
 		reset_i <= 0;
 		test_se_i <= 0;
@@ -124,6 +123,7 @@ always @(posedge clk or negedge rstn) begin
 			csoc_clk <= ~csoc_clk;
 end
 
+assign clk_i = csoc_clk;
 
 // Serial command parser
 
@@ -595,7 +595,6 @@ always @(*) begin
 		// ===================================================
 
 		SET_INPUTS_STATE: begin
-			clk_en_nxt = 0;
 			csoc_test_se_nxt = 1;
 			csoc_test_tm_nxt = 1;
 			if(new_rx_data) begin
@@ -613,14 +612,20 @@ always @(*) begin
 		end
 
 		SA1: begin
+			// if (csoc_clk)
+				clk_en_nxt = 1;
+
 			if(new_rx_data) begin
 				case (rx_data)
 					"0" : part_pis[cont_pis] = rx_data;
 					"1" : part_pis[cont_pis] = rx_data;
 				endcase
+				clk_en_nxt = 1;
 				cont_pis_nxt = cont_pis + 1;
-				if (cont_pis >= nclks)
+				if (cont_pis >= nclks) begin
+					clk_en_nxt = 0;
 					state_nxt = WAITING_COMMAND;
+				end
 			end
 		end
 

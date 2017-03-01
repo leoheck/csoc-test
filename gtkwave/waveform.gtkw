@@ -1,39 +1,39 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Sun Feb 26 00:43:14 2017
+[*] Wed Mar  1 13:22:58 2017
 [*]
 [dumpfile] "/home/lheck/Repos/csoc-test/uart.vcd"
-[dumpfile_mtime] "Sun Feb 26 00:43:14 2017"
-[dumpfile_size] 478818304
+[dumpfile_mtime] "Wed Mar  1 13:22:58 2017"
+[dumpfile_size] 23465984
 [optimize_vcd]
 [savefile] "/home/lheck/Repos/csoc-test/gtkwave/waveform.gtkw"
-[timestart] 0
-[size] 1600 876
+[timestart] 1031
+[size] 2048 1128
 [pos] -1 -1
-*-25.099403 76805900 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-7.639266 -1 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [markername] A1
 [treeopen] tb.
 [treeopen] tb.part0.
 [treeopen] tb.part0.cp0.
-[sst_width] 219
+[sst_width] 200
 [signals_width] 246
 [sst_expanded] 1
-[sst_vpaned_height] 365
+[sst_vpaned_height] 488
 @28
 tb.part0.clk
 [color] 2
 tb.part0.cp0.rstn
 @200
 -
-@2029
-^1 /home/lheck/Repos/csoc-test/cmd_parser_states.conf
+@2028
+^1 /tmp/../home/lheck/Repos/csoc-test/gtkwave/../../../../../tmp/../home/lheck/Repos/csoc-test/gtkwave/../cmd_parser_states.conf
 tb.part0.cp0.state[4:0]
 @24
 tb.part0.cp0.state[4:0]
 @200
 >2200000000
 -
-@800200
+@c00200
 >0
 -RX
 @820
@@ -44,11 +44,11 @@ tb.send_data[7:0]
 tb.part0.cp0.new_rx_data
 @820
 tb.part0.cp0.rx_data[7:0]
-@1000200
+@1401200
 -RX
 @200
 -
-@800200
+@c00200
 -TX
 @28
 tb.part0.tx
@@ -59,7 +59,6 @@ tb.part0.cp0.run_done
 tb.part0.tx_data[7:0]
 @1401200
 -group_end
-@1000200
 -TX
 @200
 -
@@ -98,7 +97,61 @@ tb.part0.part_pos_i[1:11]
 (10)tb.part0.part_pos_i[1:11]
 @1401200
 -group_end
-@22
+@c00022
 tb.part0.part_pis_o[1:14]
+@28
+(0)tb.part0.part_pis_o[1:14]
+(1)tb.part0.part_pis_o[1:14]
+(2)tb.part0.part_pis_o[1:14]
+(3)tb.part0.part_pis_o[1:14]
+(4)tb.part0.part_pis_o[1:14]
+(5)tb.part0.part_pis_o[1:14]
+(6)tb.part0.part_pis_o[1:14]
+(7)tb.part0.part_pis_o[1:14]
+(8)tb.part0.part_pis_o[1:14]
+(9)tb.part0.part_pis_o[1:14]
+(10)tb.part0.part_pis_o[1:14]
+(11)tb.part0.part_pis_o[1:14]
+(12)tb.part0.part_pis_o[1:14]
+(13)tb.part0.part_pis_o[1:14]
+@1401200
+-group_end
+@200
+-
+@800200
+-CSOC
+@28
+tb.csoc0.clk_i
+tb.csoc0.clk
+tb.csoc0.rstn
+@c00022
+tb.csoc0.data_i[7:0]
+@28
+(0)tb.csoc0.data_i[7:0]
+(1)tb.csoc0.data_i[7:0]
+(2)tb.csoc0.data_i[7:0]
+(3)tb.csoc0.data_i[7:0]
+(4)tb.csoc0.data_i[7:0]
+(5)tb.csoc0.data_i[7:0]
+(6)tb.csoc0.data_i[7:0]
+(7)tb.csoc0.data_i[7:0]
+@1401200
+-group_end
+@22
+tb.csoc0.data_o[7:0]
+tb.csoc0.data_ir[7:0]
+tb.csoc0.data_or[7:0]
+@28
+tb.csoc0.test_se
+tb.csoc0.test_tm
+tb.csoc0.uart_read
+tb.csoc0.uart_write
+@29
+tb.xtal
+@28
+tb.csoc_clk_o
+tb.csoc_xtal_o
+@1000200
+-CSCO
 [pattern_trace] 1
 [pattern_trace] 0

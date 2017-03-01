@@ -4,7 +4,6 @@
 module tb ();
 
 parameter BAUDRATE = 9600;
-localparam NREGS = 8;
 
 reg clk;
 reg rst;
@@ -31,6 +30,7 @@ wire [3:0] an;
 // Generic pat signal names to CSOC pin names
 //================================================
 
+localparam NREGS = 10;
 localparam NPIS = 14;
 localparam NPOS = 11;
 
@@ -44,7 +44,7 @@ wire csoc_rstn;
 wire csoc_test_se;
 wire csoc_test_tm;
 wire csoc_uart_read;
-wire csoc_data_i;
+wire [7:0] csoc_data_i;
 
 reg csoc_uart_write;
 reg [7:0] csoc_data_o;
@@ -143,6 +143,20 @@ part_tester #(.BAUDRATE(BAUDRATE)) part0 (
 	// PART TO TEST
 	.part_pis_o(part_pis),  // CSOC primary inputs  (this is output here)
 	.part_pos_i(part_pos)   // CSOC primary outputs (this is input here)
+);
+
+csoc #(.NREGS(NREGS)) csoc0 (
+	.clk_i(csoc_clk),
+	.rstn_i(csoc_rstn),
+	.uart_read_i(csoc_uart_write),
+	.uart_write_o(csoc_uart_read),
+	.data_i(csoc_data_o),
+	.data_o(csoc_data_i),
+	.xtal_a_i(),
+	.xtal_b_o(),
+	.clk_o(),
+	.test_tm_i(csoc_test_tm),
+	.test_se_i(csoc_test_se)
 );
 
 //================================================

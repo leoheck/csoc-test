@@ -143,22 +143,6 @@ def get_outputs_state(noutputs):
 #==========================================================
 
 
-# Codigos de comando dentro do arquivo de ATPG (Cadence ET):
-# 000
-# 100 COMMENT
-# 200 stim_PIs -------------------------- Example: 0XXXXXXXX111XX
-# 201 stim_CIs -------------------------- Example: 0XXXXXXXX1XXXX
-# 202 resp_POs -------------------------- Example: 11110100010
-# 203 global_term_[Z] ------------------- Valor do sinal, todos em alta impedancia (z)
-# 300 MODENUM_[1] stim_SLs stim_SLs ----- Example: 1 1100110011... (acho que tem blocos de 1000 dados)
-# 301 MODENUM_[1] resp_MLs resp_MLs ----- Example: 1 1100110011... (acho que tem blocos de 1000 dados)
-# 400 ----------------------------------- test_cycle
-# 500 ----------------------------------- Não encontrado nos nossos arquivos de teste
-# 501 ----------------------------------- Não encontrado nos nossos arquivos de teste
-# 600 MODENUM_[1] SEQNUM_[1|100|2] MAX -- Example: 1 2 1919
-# 900 PATTERN --------------------------- Example: 1.1.1.2.1.9
-# 901 PATTERN --------------------------- Example: 1.1.1.2.1.9
-
 # Execusao por arquivo (script)
 if args.atpg_file:
 
@@ -178,45 +162,69 @@ if args.atpg_file:
 
 		cmd = int(line_splited[0])
 
-		# 000
+		# 000 ----------------------------------- Stops NCSIM simulation
 		if cmd == 000:
 			if args.verbose >= 1:
-				print cmd, "Starting tests?"
+				print cmd, "Starting tests"
 
-		# 100 COMMENT
+		# 100 ----------------------------------- Comment line
 		if cmd == 100:
 			comment = ' '.join(line_splited[2:])
 			if args.verbose >= 1:
 				print cmd, comment
 			continue
 
+		# 101 ----------------------------------- Starts the oscillator pins
+		if cmd == 101:
+			pi = line_splited[1]
+
+		# 102 ----------------------------------- Stops the oscillator pins
+		if cmd == 102:
+			pi = line_splited[1]
+
 		# 200 stim_PIs -------------------------- Example: 0XXXXXXXX111XX
+		# This line contains the input stimulus for the PIs. stim_PIs is the variable that is set.
 		elif cmd == 200:
 			stim_PIs = line_splited[1]
 			if args.verbose >= 1:
 				print cmd, "Inputs stimuli:", stim_PIs
 
 		# 201 stim_CIs -------------------------- Example: 0XXXXXXXX1XXXX
+		# This line contains input clock stimulus. stim_CIs is the variable that is set.
 		elif cmd == 201:
 			stim_CIs = line_splited[1]
 			if args.verbose >= 1:
 				print cmd, "Input comparison stimuli:", stim_CIs
 
 		# 202 resp_POs -------------------------- Example: 11110100010
+		# This line contains the expected PO responses. resp_POs is the variable that is set.
 		elif cmd == 202:
 			resp_POs = line_splited[1]
 			if args.verbose >= 1:
 				print cmd, "Output responses:", resp_POs
 
-
-
-		# 203 global_term_[Z] ------------------- Valor do sinal, todos em alta impedancia (z)
+		# 203 global_term_[Z] -------------------
+		# This line contains the global termination value that is applied to all design bidirectional pins.
+		# global_term is the variable that is set.
 		elif cmd == 203:
 			global_term = line_splited[1]
 			if args.verbose >= 1:
 				print cmd, "Undefined single character", global_term
 
-		# 300 MODENUM_[1] stim_SLs stim_SLs ----- Example: 1 1100110011... \n 1100110011... (sequencias de 1000 dados?)
+		# 204 ----------------------------------- Stops the oscillator pins
+		# This line contains the scan input stimulus values for stim_SSs. These are the skewed scan latch input stimulus values.
+		if cmd == 204:
+			stim_SSs = line_splited[1]
+
+		# 205 ----------------------------------- Stops the oscillator pins
+		# This line contains the scan input stimulus values for stim_CSs. These are the skewed scan latch stimulus values from a CORE logic test pattern set.
+		if cmd == 205:
+			stim_CSs = line_splited[1]
+
+		# 300 MODENUM_[1] stim_SLs stim_SLs ----- Example: 1 1100110011... \n 1100110011...
+		# 300 <testModeNumber> <stim_SLs>:
+		# Note: If write_vectors scanvariables=byregister, the opcode definition is as follows:
+		# 300 <testModeNumber> <regNumber><stim_SLs>:
 		elif cmd == 300:
 			modenum = line_splited[1]
 			stim_SLs = list()
@@ -227,7 +235,11 @@ if args.atpg_file:
 			if args.verbose >= 1:
 				print cmd, "Input/output stream", modenum, stim_SLs[0][:10] + "...",  stim_SLs[1][:10] + "..."
 
-		# 301 MODENUM_[1] resp_MLs resp_MLs ----- Example: 1 1100110011... \n 1100110011... (sequencias de 1000 dados?)
+
+		# 301 MODENUM_[1] resp_MLs resp_MLs ----- Example: 1 1100110011... \n 1100110011...
+		# 301 <testModeNumber> <resp_MLs>:
+		# Note: If write_vectors scanvariables=byregister, the opcode definition is as follows:
+		# 301 <testModeNumber> <regNumber><resp_MLs>:
 		elif cmd == 301:
 			modenum = line_splited[1]
 			resp_MLs = list()
@@ -240,6 +252,7 @@ if args.atpg_file:
 				print cmd, "Input/output stream", modenum, resp_MLs[0][:10] + "...",  resp_MLs[1][:10] + "..."
 
 		# 400 ----------------------------------- test_cycle
+		# This line invokes the test_cycle task. This task applies the functional capture sequence
 		elif cmd == 400:
 			if args.verbose >= 1:
 				print cmd, "Start test"
@@ -254,6 +267,16 @@ if args.atpg_file:
 			print "Command", cmd, "not implemented yet."
 
 		# 600 MODENUM_[1] SEQNUM_[1|100|2] MAX -- Example: 1 2 1919
+		# 600 <testModeNumber> <sequenceNumber><MAX>:
+
+		# This line invokes any SCAN  preconditioning or SCAN exit
+		# sequences required by the design. Every test mode (testModeNumber)
+		# in the design can have a unique sequence (sequenceNumber) to
+		# enter or exit scan shift mode. A verilog task is defined for mode and the tasks
+		# are invoked as needed. In addition, there can be other special sequences
+		# such as a MISR RESET sequence for OPMISRPLUS compression logic. If
+		# used, MAX defines the number of cycles or the cycle number
+
 		elif cmd == 600:
 			modenum = line_splited[1]
 			seqnum = line_splited[2]
@@ -262,6 +285,7 @@ if args.atpg_file:
 				print cmd, "Set clock pulses:", modenum, seqnum, cycles
 
 		# 900 PATTERN --------------------------- Example: 1.1.1.2.1.9
+		# This line contains the ATPG pattern number.
 		elif cmd == 900:
 			pattern = line_splited[1]
 			if args.verbose >= 1:
@@ -274,6 +298,7 @@ if args.atpg_file:
 
 
 		# 901 PATTERN --------------------------- Example: 1.1.1.2.1.9
+		# This line contains the measure ATPG pattern number.
 		elif cmd == 901:
 			pattern = line_splited[1]
 			if args.verbose >= 1:
@@ -281,8 +306,6 @@ if args.atpg_file:
 
 		# NAO É COMANDO
 		elif len(line_splited[0]) > 3:
-			# if args.verbose >= 2:
-				# print "BITS", len(line_splited[0])
 			continue
 
 		else:

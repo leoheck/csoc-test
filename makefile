@@ -184,6 +184,7 @@ iverilog: required
 		src/sevenseg.v \
 		src/cmd_parser.v \
 		src/part_tester.v \
+		src/csoc.v \
 		src/tb.v
 
 kill_vvp:

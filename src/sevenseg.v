@@ -1,7 +1,7 @@
 
 module sevenseg
 (
-	input wire            clk,
+	input wire        clk,
 	input wire        rstn,
 	input wire  [7:0] display_0,
 	input wire  [7:0] display_1,

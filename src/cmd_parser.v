@@ -1,5 +1,6 @@
 
 module cmd_parser #(
+	parameter SHOW_INIT_MSG = 1,
 	parameter NPIS = 14,
 	parameter NPOS = 11
 )(
@@ -29,15 +30,8 @@ reg test_se_i;
 reg test_tm_i;
 reg scan_o;
 
-function integer clog2;
-input integer value;
-begin
-	value = value-1;
-	for (clog2=0; value>0; clog2=clog2+1)
-		value = value>>1;
-	end
-endfunction
-
+//-- Number of bits needed for storing the baudrate divisor
+`include "src/functions.vh"
 localparam NPIS_WIDTH = clog2(NPIS);
 localparam NPOS_WIDTH = clog2(NPOS);
 
@@ -60,11 +54,11 @@ always @(posedge clk or negedge rstn) begin
 		scan_o <= 0;
 	end
 	else begin
-		part_pis_o[01] <= clk_i;
+		part_pis_o[01] <= csoc_clk; //clk_i;
 		part_pis_o[09] <= scan_i;
-		part_pis_o[10] <= reset_i;
-		part_pis_o[11] <= test_se_i;
-		part_pis_o[12] <= test_tm_i;
+		part_pis_o[10] <= csoc_rstn; //reset_i;
+		part_pis_o[11] <= csoc_test_se; //test_se_i;
+		part_pis_o[12] <= csoc_test_tm; //test_tm_i;
 		//
 		part_pos <= part_pos_i;
 		//
@@ -131,6 +125,7 @@ reg [4:0] state, state_nxt;
 reg tx_start, tx_start_nxt;
 reg run_done, run_done_nxt;
 
+// TODO: REORGANIZE STATES
 // MAIN_STATES
 localparam
 	RESET = 0,
@@ -287,8 +282,10 @@ always @(*) begin
 			//
 			msg_addr_nxt = 0;
 			//
-			// state_nxt = AVOID_MSG; //INITIAL_MESSAGE; // Skip initial message for tests...
-			state_nxt = INITIAL_MESSAGE;
+			if (SHOW_INIT_MSG)
+				state_nxt = INITIAL_MESSAGE;
+			else
+				state_nxt = AVOID_MSG;
 		end
 
 		AVOID_MSG: begin
@@ -340,6 +337,7 @@ always @(*) begin
 
 		WAITING_COMMAND: begin
 
+			csoc_rstn_nxt = 1;
 			nclks_nxt = 0;
 			clk_en_nxt = 0;
 			clk_count_nxt = 0;
@@ -372,14 +370,15 @@ always @(*) begin
 					nclks_nxt[7:0] = rx_data;
 					low_byte_nxt = 0;
 					state_nxt = SB5;
+					//
+					clk_count_nxt = 1;
+					clk_en_nxt = 0;
 				end
 				else begin
 					nclks_nxt[15:8] = rx_data;
 					low_byte_nxt = 1;
 				end
 			end
-			clk_count_nxt = 1;
-			clk_en_nxt = 0;
 		end
 
 		SB5: begin
@@ -416,6 +415,9 @@ always @(*) begin
 					nclks_nxt[7:0] = rx_data;
 					low_byte_nxt = 0;
 					state_nxt = S5;
+					//
+					clk_count_nxt = 1;
+					clk_en_nxt = 0;
 				end
 				else begin
 					nclks_nxt[15:8] = rx_data;
@@ -459,8 +461,15 @@ always @(*) begin
 		end
 
 		S21: begin
+
+			// if (clk_count > nclks) begin
+			// 	clk_en_nxt = 0;
+			// 	clk_count_nxt = 0;
+			// 	state_nxt = WAITING_COMMAND;
+			// end
+
 			if (tx_ready_i)
-				if (clk_count >= nclks) begin
+				if (clk_count > nclks) begin
 					clk_en_nxt = 0;
 					clk_count_nxt = 0;
 					state_nxt = WAITING_COMMAND;
@@ -576,7 +585,7 @@ always @(*) begin
 
 		SX21: begin
 			if (tx_ready_i)
-				if (cont_pos > nclks) begin
+				if (cont_pos >= nclks) begin
 					state_nxt = WAITING_COMMAND;
 				end
 				else

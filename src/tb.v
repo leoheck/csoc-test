@@ -32,7 +32,7 @@ wire [3:0] an;
 // Generic pat signal names to CSOC pin names
 //================================================
 
-localparam NREGS = 20;
+localparam NREGS = 6;
 localparam NPIS = 14;
 localparam NPOS = 11;
 
@@ -137,7 +137,9 @@ uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 	.tx(dut_rx)
 );
 
-part_tester #(.BAUDRATE(BAUDRATE)) part0 (
+localparam SHOW_INIT_MSG = 0;
+
+part_tester #(.SHOW_INIT_MSG(SHOW_INIT_MSG), .BAUDRATE(BAUDRATE)) part0 (
 	.clk(clk),
 	.rst(rst),
 	// UART
@@ -281,17 +283,13 @@ input [15:0] data_width;
 integer i;
 begin
 	case (cmd)
-		GET_STATE_CMD: $write("\nTASK: Getting DUT internal state for %0d cycles (", data_width);
-		GET_OUTPUTS_CMD: $write("\nTASK: Getting DUT outputs state for %0d cycles (", data_width);
+		GET_STATE_CMD: $write("\nTASK: Getting DUT internal state for %0d cycles\n", data_width);
+		GET_OUTPUTS_CMD: $write("\nTASK: Getting DUT outputs state for %0d cycles\n", data_width);
 		default: begin
 			$display("\nTASK: ERROR, missing command to get DUT state");
 			$finish;
 		end
 	endcase
-	// for (i=0; i<data_width; i=i+1) begin
-	// 	$write("%c", data[i]);
-	// end
-	$write(")\n");
 	send_task(cmd);
 	$write("\n");
 	send_task(data_width[15:8]);
@@ -303,7 +301,7 @@ begin
 		if (cmd == GET_OUTPUTS_CMD)
 			$write(" %4d %0s \n", i+1, part_pos_names[i+1]);
 		else
-			$write("\n");
+			$write(" %4d cycles\n", i+1);
 	end
 	wait_for_idle_state;
 end
@@ -316,17 +314,14 @@ input integer data;
 integer i;
 begin
 	case (cmd)
-		SET_STATE_CMD: $write("\nTASK: Setting DUT internal state for %0d cycles (", data_width);
-		SET_INPUTS_CMD: $write("\nTASK: Setting DUT inputs state for %0d cycles (", data_width);
+		SET_STATE_CMD: $write("\nTASK: Setting DUT internal state for %0d cycles", data_width);
+		SET_INPUTS_CMD: $write("\nTASK: Setting DUT inputs state for %0d cycles", data_width);
 		default: begin
 			$display("ERROR, missing command to set DUT state");
 			$finish;
 		end
 	endcase
-	// for (i=0; i<data_width; i=i+1) begin
-	// 	$write("%c", data[i]);
-	// end
-	$write(")\n");
+	$write(" (%0s)\n", data);
 	send_task(cmd);
 	$write("\n");
 	send_task(data_width[15:8]);
@@ -334,19 +329,30 @@ begin
 	send_task(data_width[7:0]);
 	$write("\n");
 	for (i=0; i<data_width; i=i+1) begin
-		case (data[i])
+		// MANDA O VALOR DA STRING (NAO TA FUNCIONANDO DIREITO AINDA)
+		// case (data[i])
+			// 1: send_task("1");
+			// 0: send_task("0");
+			// default: begin
+				// $display("ERROR, missing data");
+				// $finish;
+			// end
+		// endcase
+
+		case (i)
+			0: send_task("1");
 			1: send_task("1");
-			0: send_task("0");
-			default: begin
-				$display("ERROR, missing data");
-				$finish;
-			end
+			2: send_task("0");
+			3: send_task("0");
+			4: send_task("1");
+			default: send_task("0");
 		endcase
-		$write(" %4d", i+1);
+
+		$write(" %4d ", i+1);
 		if (cmd == SET_INPUTS_CMD)
 			$write(" %0s \n", part_pis_names[i+1]);
 		else
-			$write("\n");
+			$write("cycles \n");
 	end
 	wait_for_idle_state;
 end
@@ -368,11 +374,12 @@ initial begin
 
 	#70 rst = 0;
 
-	initial_message;
+	if (SHOW_INIT_MSG)
+		initial_message;
 
 	// SIMULATE USER/ATPG COMMANDS FROM A SERIAL CONNECTION
 
-	set_dut(SET_STATE_CMD, NREGS, "10001111100011110101");
+	set_dut(SET_STATE_CMD, NREGS, "111111");
 	get_dut(GET_STATE_CMD, NREGS);
 
 	// get_dut(GET_STATE_CMD, 5);

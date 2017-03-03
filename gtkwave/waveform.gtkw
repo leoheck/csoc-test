@@ -1,16 +1,16 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Wed Mar  1 13:22:58 2017
+[*] Fri Mar  3 03:52:35 2017
 [*]
 [dumpfile] "/home/lheck/Repos/csoc-test/uart.vcd"
-[dumpfile_mtime] "Wed Mar  1 13:22:58 2017"
-[dumpfile_size] 23465984
+[dumpfile_mtime] "Fri Mar  3 03:52:35 2017"
+[dumpfile_size] 198131712
 [optimize_vcd]
 [savefile] "/home/lheck/Repos/csoc-test/gtkwave/waveform.gtkw"
-[timestart] 1031
+[timestart] 0
 [size] 2048 1128
 [pos] -1 -1
-*-7.639266 -1 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-23.485588 35110000 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [markername] A1
 [treeopen] tb.
 [treeopen] tb.part0.
@@ -26,7 +26,7 @@ tb.part0.cp0.rstn
 @200
 -
 @2028
-^1 /tmp/../home/lheck/Repos/csoc-test/gtkwave/../../../../../tmp/../home/lheck/Repos/csoc-test/gtkwave/../cmd_parser_states.conf
+^1 /tmp/../home/lheck/Repos/csoc-test/gtkwave/../../../../../tmp/../home/lheck/Repos/csoc-test/gtkwave/../../../../../tmp/../home/lheck/Repos/csoc-test/gtkwave/../cmd_parser_states.conf
 tb.part0.cp0.state[4:0]
 @24
 tb.part0.cp0.state[4:0]
@@ -122,8 +122,6 @@ tb.part0.part_pis_o[1:14]
 -CSOC
 @28
 tb.csoc0.clk_i
-tb.csoc0.clk
-tb.csoc0.rstn
 @c00022
 tb.csoc0.data_i[7:0]
 @28
@@ -137,20 +135,35 @@ tb.csoc0.data_i[7:0]
 (7)tb.csoc0.data_i[7:0]
 @1401200
 -group_end
+@28
+tb.csoc0.rstn_i
+tb.csoc0.test_se_i
+tb.csoc0.test_tm_i
+tb.csoc0.uart_read_i
+tb.csoc0.xtal_a_i
+@200
+-
+@800023
+tb.csoc0.ffs_chain[5:0]
+@29
+(0)tb.csoc0.ffs_chain[5:0]
+(1)tb.csoc0.ffs_chain[5:0]
+(2)tb.csoc0.ffs_chain[5:0]
+(3)tb.csoc0.ffs_chain[5:0]
+(4)tb.csoc0.ffs_chain[5:0]
+(5)tb.csoc0.ffs_chain[5:0]
+@1001201
+-group_end
+@200
+-
+@28
+tb.csoc0.clk_o
 @22
 tb.csoc0.data_o[7:0]
-tb.csoc0.data_ir[7:0]
 tb.csoc0.data_or[7:0]
 @28
-tb.csoc0.test_se
-tb.csoc0.test_tm
-tb.csoc0.uart_read
-tb.csoc0.uart_write
-@29
-tb.xtal
-@28
-tb.csoc_clk_o
-tb.csoc_xtal_o
+tb.csoc0.uart_write_o
+tb.csoc0.xtal_b_o
 @1000200
 -CSCO
 [pattern_trace] 1

@@ -9,6 +9,7 @@
 `default_nettype none
 
 module part_tester #(
+	parameter SHOW_INIT_MSG = 1,
 	parameter BAUDRATE = `B9600,
 	parameter NPIS = 14,
 	parameter NPOS = 11
@@ -67,7 +68,12 @@ uart_rx #(.BAUDRATE(BAUDRATE)) rx0 (
 	.data(rx_data)
 );
 
-cmd_parser #(.NPIS(NPIS), .NPOS(NPOS)) cp0 (
+cmd_parser #(
+	.SHOW_INIT_MSG(SHOW_INIT_MSG),
+	.NPIS(NPIS),
+	.NPOS(NPOS)
+)
+cp0 (
 	.clk(clk),
 	.rstn(master_rst_n[0]),
 	//

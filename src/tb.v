@@ -10,7 +10,6 @@ reg rst;
 reg xtal;
 wire rstn;
 
-
 // transmitter
 reg send;
 reg [7:0] send_data;
@@ -321,7 +320,7 @@ begin
 			$finish;
 		end
 	endcase
-	$write(" (%0s)\n", data);
+	// $write(" (%0s)\n", data);
 	send_task(cmd);
 	$write("\n");
 	send_task(data_width[15:8]);

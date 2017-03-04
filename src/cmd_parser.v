@@ -142,6 +142,7 @@ localparam
 	//
 	GET_DUT_STATE = 7,
 	SB5 = 27,
+	SB51 = 30,
 	SB6 = 28,
 	//
 	EXECUTE_DUT = 8,
@@ -388,6 +389,13 @@ always @(*) begin
 					"1": scan_i_nxt = 1;
 				endcase
 				clk_en_nxt = 1;
+				state_nxt = SB51;
+			end
+		end
+
+		SB51: begin
+			if (!csoc_clk) begin
+				clk_en_nxt = 0;
 				state_nxt = SB6;
 			end
 		end
@@ -396,7 +404,6 @@ always @(*) begin
 			clk_count_nxt = clk_count + 1;
 			clk_en_nxt = 0;
 			if (clk_count >= nclks) begin
-				clk_en_nxt = 0;
 				state_nxt = WAITING_COMMAND;
 			end
 			else begin

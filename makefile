@@ -193,7 +193,7 @@ kill_vvp:
 notify-send = notify-send
 
 run:
-	vvp $(top)
+	vvp -n $(top)
 	@ $(notify-send) -u critical 'Simulation done! Reload gtkwave' --icon=gtkwave
 
 sim: iverilog run

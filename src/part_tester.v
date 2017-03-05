@@ -28,7 +28,7 @@ module part_tester #(
 
 	// PART UNDER TEST
 	output wire [1:14] part_pis_o, // primary input
-	input  wire [1:11] part_pos_i // primary outputs
+	input  wire [1:11] part_pos_i  // primary outputs
 );
 
 reg [1:0] master_rst_n;  // -- Master, active low, asynchonous reset, synchronous release

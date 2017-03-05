@@ -1,24 +1,22 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Fri Mar  3 03:52:35 2017
+[*] Sun Mar  5 02:09:17 2017
 [*]
-[dumpfile] "/home/lheck/Repos/csoc-test/uart.vcd"
-[dumpfile_mtime] "Fri Mar  3 03:52:35 2017"
-[dumpfile_size] 198131712
+[dumpfile] "(null)"
 [optimize_vcd]
 [savefile] "/home/lheck/Repos/csoc-test/gtkwave/waveform.gtkw"
 [timestart] 0
-[size] 2048 1128
+[size] 1600 876
 [pos] -1 -1
-*-23.485588 35110000 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-23.604370 68930000 57000000000 59000000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [markername] A1
 [treeopen] tb.
 [treeopen] tb.part0.
 [treeopen] tb.part0.cp0.
 [sst_width] 200
-[signals_width] 246
-[sst_expanded] 1
-[sst_vpaned_height] 488
+[signals_width] 291
+[sst_expanded] 0
+[sst_vpaned_height] 365
 @28
 tb.part0.clk
 [color] 2
@@ -26,7 +24,7 @@ tb.part0.cp0.rstn
 @200
 -
 @2028
-^1 /tmp/../home/lheck/Repos/csoc-test/gtkwave/../../../../../tmp/../home/lheck/Repos/csoc-test/gtkwave/../../../../../tmp/../home/lheck/Repos/csoc-test/gtkwave/../cmd_parser_states.conf
+^1 /tmp/../home/lheck/Repos/csoc-test/gtkwave/../../../../../tmp/../home/lheck/Repos/csoc-test/gtkwave/../../../../../tmp/../home/lheck/Repos/csoc-test/gtkwave/../../../../../tmp/../home/lheck/Repos/csoc-test/gtkwave/../cmd_parser_states.conf
 tb.part0.cp0.state[4:0]
 @24
 tb.part0.cp0.state[4:0]
@@ -48,7 +46,7 @@ tb.part0.cp0.rx_data[7:0]
 -RX
 @200
 -
-@c00200
+@800200
 -TX
 @28
 tb.part0.tx
@@ -59,6 +57,7 @@ tb.part0.cp0.run_done
 tb.part0.tx_data[7:0]
 @1401200
 -group_end
+@1000200
 -TX
 @200
 -
@@ -77,45 +76,6 @@ tb.part0.cp0.clk_en
 tb.part0.cp0.cont_pis[4:0]
 @24
 tb.part0.cp0.cont_pos[4:0]
-@200
--
-@28
-tb.part0.cp0.scan_i
-@c00022
-tb.part0.part_pos_i[1:11]
-@28
-(0)tb.part0.part_pos_i[1:11]
-(1)tb.part0.part_pos_i[1:11]
-(2)tb.part0.part_pos_i[1:11]
-(3)tb.part0.part_pos_i[1:11]
-(4)tb.part0.part_pos_i[1:11]
-(5)tb.part0.part_pos_i[1:11]
-(6)tb.part0.part_pos_i[1:11]
-(7)tb.part0.part_pos_i[1:11]
-(8)tb.part0.part_pos_i[1:11]
-(9)tb.part0.part_pos_i[1:11]
-(10)tb.part0.part_pos_i[1:11]
-@1401200
--group_end
-@c00022
-tb.part0.part_pis_o[1:14]
-@28
-(0)tb.part0.part_pis_o[1:14]
-(1)tb.part0.part_pis_o[1:14]
-(2)tb.part0.part_pis_o[1:14]
-(3)tb.part0.part_pis_o[1:14]
-(4)tb.part0.part_pis_o[1:14]
-(5)tb.part0.part_pis_o[1:14]
-(6)tb.part0.part_pis_o[1:14]
-(7)tb.part0.part_pis_o[1:14]
-(8)tb.part0.part_pis_o[1:14]
-(9)tb.part0.part_pis_o[1:14]
-(10)tb.part0.part_pis_o[1:14]
-(11)tb.part0.part_pis_o[1:14]
-(12)tb.part0.part_pis_o[1:14]
-(13)tb.part0.part_pis_o[1:14]
-@1401200
--group_end
 @200
 -
 @800200
@@ -140,30 +100,54 @@ tb.csoc0.rstn_i
 tb.csoc0.test_se_i
 tb.csoc0.test_tm_i
 tb.csoc0.uart_read_i
-tb.csoc0.xtal_a_i
 @200
 -
-@800023
+@28
+tb.part0.cp0.scan_i
+tb.part0.cp0.scan_o
+@c00028
 tb.csoc0.ffs_chain[5:0]
-@29
+@28
 (0)tb.csoc0.ffs_chain[5:0]
 (1)tb.csoc0.ffs_chain[5:0]
 (2)tb.csoc0.ffs_chain[5:0]
 (3)tb.csoc0.ffs_chain[5:0]
 (4)tb.csoc0.ffs_chain[5:0]
 (5)tb.csoc0.ffs_chain[5:0]
-@1001201
+@1401200
 -group_end
 @200
 -
 @28
 tb.csoc0.clk_o
-@22
+@c00023
 tb.csoc0.data_o[7:0]
+@29
+(0)tb.csoc0.data_o[7:0]
+(1)tb.csoc0.data_o[7:0]
+(2)tb.csoc0.data_o[7:0]
+(3)tb.csoc0.data_o[7:0]
+(4)tb.csoc0.data_o[7:0]
+(5)tb.csoc0.data_o[7:0]
+(6)tb.csoc0.data_o[7:0]
+(7)tb.csoc0.data_o[7:0]
+@1401201
+-group_end
+@c00022
 tb.csoc0.data_or[7:0]
 @28
+(0)tb.csoc0.data_or[7:0]
+(1)tb.csoc0.data_or[7:0]
+(2)tb.csoc0.data_or[7:0]
+(3)tb.csoc0.data_or[7:0]
+(4)tb.csoc0.data_or[7:0]
+(5)tb.csoc0.data_or[7:0]
+(6)tb.csoc0.data_or[7:0]
+(7)tb.csoc0.data_or[7:0]
+@1401200
+-group_end
+@28
 tb.csoc0.uart_write_o
-tb.csoc0.xtal_b_o
 @1000200
 -CSCO
 [pattern_trace] 1

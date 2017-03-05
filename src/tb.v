@@ -230,6 +230,7 @@ begin
 	@ (negedge ready)
 	@ (posedge clk)
 	send = 0;
+	send_data = 0;
 	@ (posedge ready);
 end
 endtask
@@ -313,8 +314,8 @@ input integer data;
 integer i;
 begin
 	case (cmd)
-		SET_STATE_CMD: $write("\nTASK: Setting DUT internal state for %0d cycles", data_width);
-		SET_INPUTS_CMD: $write("\nTASK: Setting DUT inputs state for %0d cycles", data_width);
+		SET_STATE_CMD: $write("\nTASK: Setting DUT internal state for %0d cycles\n", data_width);
+		SET_INPUTS_CMD: $write("\nTASK: Setting DUT inputs state for %0d cycles\n", data_width);
 		default: begin
 			$display("ERROR, missing command to set DUT state");
 			$finish;
@@ -340,10 +341,11 @@ begin
 
 		case (i)
 			0: send_task("1");
-			1: send_task("1");
-			2: send_task("0");
+			1: send_task("0");
+			2: send_task("1");
 			3: send_task("0");
-			4: send_task("1");
+			4: send_task("0");
+			5: send_task("1");
 			default: send_task("0");
 		endcase
 
@@ -353,6 +355,8 @@ begin
 		else
 			$write("cycles \n");
 	end
+	// if (cmd != SET_INPUTS_CMD)
+	// 	$write("\n");
 	wait_for_idle_state;
 end
 endtask
@@ -360,7 +364,7 @@ endtask
 
 initial begin
 
-	$dumpfile("uart.vcd");
+	$dumpfile("part_tester.vcd");
 	$dumpvars(0);
 	$write("\nCSoC Test Running...\n");
 
@@ -379,7 +383,7 @@ initial begin
 	// SIMULATE USER/ATPG COMMANDS FROM A SERIAL CONNECTION
 
 	set_dut(SET_STATE_CMD, NREGS, "111111");
-	get_dut(GET_STATE_CMD, NREGS);
+	get_dut(GET_STATE_CMD, NREGS+2);
 
 	// get_dut(GET_STATE_CMD, 5);
 	// execute_dut(4);

@@ -144,6 +144,7 @@ localparam
 	SB5 = 27,
 	SB51 = 30,
 	SB6 = 28,
+	SXX = 31,
 	//
 	EXECUTE_DUT = 8,
 	SET_INPUTS_STATE = 9,
@@ -338,6 +339,9 @@ always @(*) begin
 
 		WAITING_COMMAND: begin
 
+			csoc_test_se_nxt = 0;
+			csoc_test_tm_nxt = 0;
+
 			csoc_rstn_nxt = 1;
 			nclks_nxt = 0;
 			clk_en_nxt = 0;
@@ -404,7 +408,10 @@ always @(*) begin
 			clk_count_nxt = clk_count + 1;
 			clk_en_nxt = 0;
 			if (clk_count >= nclks) begin
+				scan_i_nxt = 0;
 				state_nxt = WAITING_COMMAND;
+				if (csoc_clk)
+					clk_en_nxt = 1; // baixa o clock pra ir pro waiting...
 			end
 			else begin
 				state_nxt = SB5;
@@ -417,14 +424,13 @@ always @(*) begin
 		GET_DUT_STATE: begin
 			csoc_test_se_nxt = 1;
 			csoc_test_tm_nxt = 1;
+			clk_en_nxt = 0;
+			clk_count_nxt = 0;
 			if(new_rx_data) begin
 				if (low_byte) begin
 					nclks_nxt[7:0] = rx_data;
 					low_byte_nxt = 0;
 					state_nxt = S5;
-					//
-					clk_count_nxt = 1;
-					clk_en_nxt = 0;
 				end
 				else begin
 					nclks_nxt[15:8] = rx_data;
@@ -434,7 +440,6 @@ always @(*) begin
 		end
 
 		S5: begin
-			clk_en_nxt = 0;
 			if (tx_ready_i) begin
 				if (scan_o)
 					tx_data_nxt = "1";
@@ -442,56 +447,64 @@ always @(*) begin
 					tx_data_nxt = "0";
 
 				clk_count_nxt = clk_count + 1;
+				tx_start_nxt = 1;
 				state_nxt = S1111;
 			end
 		end
 
 		S1111: begin
-			tx_start_nxt = 1;
-			clk_en_nxt = 1;
-			state_nxt = S111;
-		end
-
-		S111: begin
 			tx_start_nxt = 0;
-			if(!csoc_clk) begin
-				clk_en_nxt = 0;
+			if (!tx_ready_i) begin
+				clk_en_nxt = 1;
 				state_nxt = S11;
 			end
 		end
 
 		S11: begin
-			if (!tx_ready_i) begin
-				tx_start_nxt = 0;
-				state_nxt = S21;
+			clk_en_nxt = 0;
+			if (clk_count > nclks) begin
+				clk_en_nxt = 0;
+				clk_count_nxt = 0;
+				state_nxt = WAITING_COMMAND;
+			end
+			else begin
+				state_nxt = S5;
 			end
 		end
 
-		S21: begin
 
-			// if (clk_count > nclks) begin
-			// 	clk_en_nxt = 0;
-			// 	clk_count_nxt = 0;
-			// 	state_nxt = WAITING_COMMAND;
-			// end
 
-			if (tx_ready_i)
-				if (clk_count > nclks) begin
-					clk_en_nxt = 0;
-					clk_count_nxt = 0;
-					state_nxt = WAITING_COMMAND;
-				end
-				else
-					state_nxt = S31;
-		end
+		// S11: begin
+		// 	if (!tx_ready_i) begin
+		// 		state_nxt = S21;
+		// 	end
+		// end
 
-		S31: begin
-			if (scan_o)
-				tx_data_nxt = "1";
-			else
-				tx_data_nxt = "0";
-			state_nxt = S5;
-		end
+		// S21: begin
+
+		// 	// if (clk_count > nclks) begin
+		// 	// 	clk_en_nxt = 0;
+		// 	// 	clk_count_nxt = 0;
+		// 	// 	state_nxt = WAITING_COMMAND;
+		// 	// end
+
+		// 	if (tx_ready_i)
+		// 		if (clk_count > nclks) begin
+		// 			clk_en_nxt = 0;
+		// 			clk_count_nxt = 0;
+		// 			state_nxt = WAITING_COMMAND;
+		// 		end
+		// 		else
+		// 			state_nxt = S31;
+		// end
+
+		// S31: begin
+		// 	if (scan_o)
+		// 		tx_data_nxt = "1";
+		// 	else
+		// 		tx_data_nxt = "0";
+		// 	state_nxt = S5;
+		// end
 
 
 		// ===================================================
@@ -641,6 +654,8 @@ always @(*) begin
 				if (cont_pis >= nclks) begin
 					clk_en_nxt = 0;
 					state_nxt = WAITING_COMMAND;
+					if (!csoc_clk)
+						clk_en_nxt = 1;
 				end
 			end
 		end

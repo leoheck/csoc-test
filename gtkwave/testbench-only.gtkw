@@ -2,7 +2,7 @@
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
 [*] Sun Feb 26 00:31:51 2017
 [*]
-[dumpfile] "/home/lheck/Repos/csoc-test/uart.vcd"
+[dumpfile] "/home/lheck/Repos/csoc-test/part_tester.vcd"
 [dumpfile_mtime] "Sun Feb 26 00:31:51 2017"
 [dumpfile_size] 1648525312
 [optimize_vcd]

@@ -136,7 +136,7 @@ uart_tx #(.BAUDRATE(BAUDRATE)) tx0 (
 	.tx(dut_rx)
 );
 
-localparam SHOW_INIT_MSG = 0;
+localparam SHOW_INIT_MSG = 1;
 
 part_tester #(.SHOW_INIT_MSG(SHOW_INIT_MSG), .BAUDRATE(BAUDRATE)) part0 (
 	.clk(clk),
@@ -361,6 +361,10 @@ begin
 end
 endtask
 
+integer seed;
+integer cmd;
+integer cont;
+integer cycles;
 
 initial begin
 
@@ -382,8 +386,10 @@ initial begin
 
 	// SIMULATE USER/ATPG COMMANDS FROM A SERIAL CONNECTION
 
-	set_dut(SET_STATE_CMD, NREGS, "111111");
-	get_dut(GET_STATE_CMD, NREGS);
+	// get_dut(GET_OUTPUTS_CMD, NPOS);
+
+	// set_dut(SET_STATE_CMD, NREGS, "111111");
+	// get_dut(GET_STATE_CMD, NREGS);
 
 	// get_dut(GET_STATE_CMD, 5);
 	// execute_dut(4);
@@ -401,7 +407,27 @@ initial begin
 	// free_run_dut(12);
 	// set_dut(SET_INPUTS_CMD, NPIS, "10101010101111");
 
+	// Gera comandos aleatorios...
+	for (cont=0; cont<30; cont=cont+1)
+	begin
+		cmd = $urandom%7;
+		cycles = $urandom%100;
+		$write("\n#> Command %0d\n", cmd);
+		case (cmd)
+			1: execute_dut(cycles);
+			2: free_run_dut(cycles);
+			3: set_dut(SET_STATE_CMD, cycles, "1011");
+			4: set_dut(SET_INPUTS_CMD, NPIS, "10001010111111");
+			5: get_dut(GET_STATE_CMD, cycles);
+			6: get_dut(GET_OUTPUTS_CMD, NPOS);
+			default: reset_part_test;
+		endcase
+	end
+
 	#1000 $finish;
 end
 
 endmodule
+
+
+

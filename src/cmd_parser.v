@@ -581,7 +581,7 @@ always @(*) begin
 
 		SX21: begin
 			if (tx_ready_i)
-				if (cont_pos >= nclks) begin
+				if (cont_pos > nclks) begin
 					state_nxt = WAITING_COMMAND;
 				end
 				else

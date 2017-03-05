@@ -47,7 +47,7 @@ always @(*) begin
 	xtal_b_nxt = xtal_b;
 	if (test_se_i) begin
 		ffs_chain_nxt = {data_i[0], ffs_chain[NREGS-1:1]};
-		data_or_nxt = ffs_chain[0];
+		data_or_nxt = {7'h0, ffs_chain[0]};
 	end
 	else begin
 		ffs_chain_nxt = ffs_chain;

@@ -340,7 +340,7 @@ begin
 		// endcase
 
 		case (i)
-			0: send_task("1");
+			0: send_task("1"); // dado na saida depois de 6 ciclos...
 			1: send_task("0");
 			2: send_task("1");
 			3: send_task("0");
@@ -383,7 +383,7 @@ initial begin
 	// SIMULATE USER/ATPG COMMANDS FROM A SERIAL CONNECTION
 
 	set_dut(SET_STATE_CMD, NREGS, "111111");
-	get_dut(GET_STATE_CMD, NREGS+2);
+	get_dut(GET_STATE_CMD, NREGS);
 
 	// get_dut(GET_STATE_CMD, 5);
 	// execute_dut(4);
@@ -401,7 +401,7 @@ initial begin
 	// free_run_dut(12);
 	// set_dut(SET_INPUTS_CMD, NPIS, "10101010101111");
 
-	#100 $finish;
+	#1000 $finish;
 end
 
 endmodule

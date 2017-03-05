@@ -41,6 +41,14 @@ reg [NPOS_WIDTH:0] cont_pos, cont_pos_nxt;
 reg [1:NPOS] part_pos;
 reg [1:NPIS] part_pis;
 
+reg csoc_clk;
+reg clk_en, clk_en_nxt;
+reg csoc_rstn, csoc_rstn_nxt;
+reg csoc_test_se, csoc_test_se_nxt;
+reg csoc_test_tm, csoc_test_tm_nxt;
+reg csoc_uart_read, csoc_uart_read_nxt;
+reg [7:0] csoc_data_o_reg, csoc_data_o_nxt;
+
 always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
 		part_pis_o <= 0;
@@ -98,16 +106,7 @@ always @(posedge clk or negedge rstn) begin
 end
 
 
-
-reg csoc_rstn, csoc_rstn_nxt;
-reg csoc_test_se, csoc_test_se_nxt;
-reg csoc_test_tm, csoc_test_tm_nxt;
-reg csoc_uart_read, csoc_uart_read_nxt;
-reg [7:0] csoc_data_o_reg, csoc_data_o_nxt;
-
 // CSOC CLOCK
-reg csoc_clk;
-reg clk_en, clk_en_nxt;
 always @(posedge clk or negedge rstn) begin
 	if (!rstn) begin
 		csoc_clk <= 0;
